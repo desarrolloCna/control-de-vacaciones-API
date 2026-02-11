@@ -89,3 +89,35 @@ export const consultarEmpleadosUltimoAnioDao = async (idEmpleado) => {
         throw error;
     }
 }
+
+export const consultarEmpleadosSinVacacionesDao = async () => {
+    try{
+        const query = `WITH dias_periodos AS (
+                        SELECT 
+                            idEmpleado, 
+                            periodo, 
+                            COALESCE(SUM(diasAcreditados), 0) - COALESCE(SUM(diasDebitados), 0) AS saldoDias
+                        FROM historial_vacaciones 
+                        GROUP BY idEmpleado, periodo
+                    )
+                    SELECT DISTINCT e.idEmpleado, e.idInfoPersonal,
+                    concat(ip.primerNombre, ' ', ip.segundoNombre, ' ', ip.primerapEllido, ' ', ip.segundoApellido)Nombre
+                    FROM empleados e
+                    INNER JOIN dias_periodos pa ON e.idEmpleado = pa.idEmpleado 
+                        AND CAST(pa.periodo AS INTEGER) = CAST(strftime('%Y','now') AS INTEGER) - 1
+                        AND pa.saldoDias = 0
+                    INNER JOIN dias_periodos pac ON e.idEmpleado = pac.idEmpleado 
+                        AND CAST(pac.periodo AS INTEGER) = CAST(strftime('%Y','now') AS INTEGER)
+                        AND pac.saldoDias > 0
+                    INNER JOIN infoPersonalEmpleados ip on e.idInfoPersonal = ip.idInfoPersonal
+                    WHERE e.fechaIngreso BETWEEN date('now', '-1 year') AND date('now');`;
+
+        const result = await Connection.execute(query);
+
+        return result.rows;
+
+    }catch(error){
+        console.log("Error en consultarEmpleadosSinVacacionesDao:", error);
+        throw error;
+    }
+}
