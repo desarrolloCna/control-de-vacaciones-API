@@ -133,7 +133,7 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
     currentY += 14;
     doc.text(`•   Fin de vacaciones: ${formatDateToDisplay(employeeData.fechaFinVacaciones)}`, 70, currentY);
     currentY += 14;
-    doc.text(`•   Reincorporación a laboral: ${formatDateToDisplay(employeeData.fechaRetornoLabores)}`, 70, currentY);
+    doc.text(`•   Reincorporación a labores: ${formatDateToDisplay(employeeData.fechaRetornoLabores)}`, 70, currentY);
     currentY += 18;
 
     /* =====================================================
