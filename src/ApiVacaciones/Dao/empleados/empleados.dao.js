@@ -94,23 +94,44 @@ export const consultarEmpleadosSinVacacionesDao = async () => {
     try{
         const query = `WITH dias_periodos AS (
                         SELECT 
-                            idEmpleado, 
-                            periodo, 
+                            idEmpleado,
                             COALESCE(SUM(diasAcreditados), 0) - COALESCE(SUM(diasDebitados), 0) AS saldoDias
                         FROM historial_vacaciones 
-                        GROUP BY idEmpleado, periodo
+                        WHERE CAST(periodo AS INTEGER) < CAST(strftime('%Y','now') AS INTEGER)
+                        GROUP BY idEmpleado
+                    ),
+                    dias_actuales AS (
+                        SELECT 
+                            idEmpleado,
+                            COALESCE(SUM(diasAcreditados), 0) - COALESCE(SUM(diasDebitados), 0) AS saldoDias
+                        FROM historial_vacaciones 
+                        WHERE CAST(periodo AS INTEGER) = CAST(strftime('%Y','now') AS INTEGER)
+                        GROUP BY idEmpleado
                     )
-                    SELECT DISTINCT e.idEmpleado, e.idInfoPersonal,
-                    concat(ip.primerNombre, ' ', ip.segundoNombre, ' ', ip.primerapEllido, ' ', ip.segundoApellido)Nombre
-                    FROM empleados e
-                    INNER JOIN dias_periodos pa ON e.idEmpleado = pa.idEmpleado 
-                        AND CAST(pa.periodo AS INTEGER) = CAST(strftime('%Y','now') AS INTEGER) - 1
-                        AND pa.saldoDias = 0
-                    INNER JOIN dias_periodos pac ON e.idEmpleado = pac.idEmpleado 
-                        AND CAST(pac.periodo AS INTEGER) = CAST(strftime('%Y','now') AS INTEGER)
-                        AND pac.saldoDias > 0
-                    INNER JOIN infoPersonalEmpleados ip on e.idInfoPersonal = ip.idInfoPersonal
-                    WHERE e.fechaIngreso BETWEEN date('now', '-1 year') AND date('now');`;
+                    SELECT 
+                        e.idEmpleado, 
+                        ip.idInfoPersonal,
+                        CONCAT(ip.primerNombre, ' ', ip.segundoNombre, ' ', ip.primerApellido, ' ', ip.segundoApellido) AS Nombre
+                    FROM empleados e 
+                    JOIN infopersonalEmpleados ip ON e.idInfoPersonal = ip.idInfoPersonal 
+                    JOIN dias_periodos dp ON dp.idEmpleado = e.idEmpleado
+                    LEFT JOIN dias_actuales da ON da.idEmpleado = e.idEmpleado
+                    WHERE e.fechaIngreso <= DATE('now', '-1 year')
+                    GROUP BY e.idEmpleado, e.fechaIngreso, ip.primerNombre, ip.segundoNombre, ip.primerApellido, ip.segundoApellido
+                    HAVING dp.saldoDias = 0
+
+                    UNION ALL
+
+                    SELECT 
+                        e.idEmpleado, 
+                        ip.idInfoPersonal,
+                        CONCAT(ip.primerNombre, ' ', ip.segundoNombre, ' ', ip.primerApellido, ' ', ip.segundoApellido) AS Nombre
+                    FROM empleados e 
+                    JOIN infopersonalEmpleados ip ON e.idInfoPersonal = ip.idInfoPersonal 
+                    JOIN historial_vacaciones h ON e.idEmpleado = h.idEmpleado 
+                    WHERE e.fechaIngreso BETWEEN DATE('now', '-1 year') AND DATE('now')
+                    GROUP BY e.idEmpleado, e.fechaIngreso, ip.primerNombre, ip.segundoNombre, ip.primerApellido, ip.segundoApellido
+                    HAVING COALESCE(SUM(h.diasAcreditados), 0) - COALESCE(SUM(h.diasDebitados), 0) > 0;`;
 
         const result = await Connection.execute(query);
 
