@@ -1,4 +1,4 @@
-import { obtenerInfoDPIDao } from "../../Dao/DPI/GetDatosCui.dao.js";
+import { obtenerInfoDPIDao } from "../../dao/dpi/getdatoscui.dao.js";
 
 
 export const obtenerInfoDPIServices = async (idDpi) => {

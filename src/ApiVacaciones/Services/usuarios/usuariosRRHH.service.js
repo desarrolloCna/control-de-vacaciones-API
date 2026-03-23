@@ -1,4 +1,4 @@
-import { UsuariosRRHHDao } from "../../Dao/usuarios/usuariosRRHH.dao.js";
+import { UsuariosRRHHDao } from "../../dao/usuarios/usuariosrrhh.dao.js";
 
 export const UsuariosRRHHService = {
     obtenerUsuariosRRHH: async () => {

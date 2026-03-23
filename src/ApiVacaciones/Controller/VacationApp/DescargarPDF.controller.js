@@ -1,9 +1,9 @@
-import { getSolicitudesByIdSolcitudDao } from "../../Dao/VacationApp/GetSolicitudById.Dao.js";
-import { consultarPeriodosYDiasPorEmpeladoDao } from "../../Dao/VacationApp/HistorialVacaciones/ConsultasHistorial.dao.js";
-import { consultarCoordinadorService } from "../../Services/Coordinadores/Coordinadores.Service.js";
-import { generateVacationRequestPDF } from "../../Services/PDFGenerator/PDFGenerator.service.js";
-import { obtenerPeriodosParaVacaciones } from "../../Services/VacationApp/HisotrialVacaciones/CalculoDeDias.service.js";
-import { Connection } from "../../Dao/Connection/ConexionSqlite.dao.js";
+import { getSolicitudesByIdSolcitudDao } from "../../dao/vacationapp/getsolicitudbyid.dao.js";
+import { consultarPeriodosYDiasPorEmpeladoDao } from "../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
+import { consultarCoordinadorService } from "../../services/coordinadores/coordinadores.service.js";
+import { generateVacationRequestPDF } from "../../services/pdfgenerator/pdfgenerator.service.js";
+import { obtenerPeriodosParaVacaciones } from "../../services/vacationapp/hisotrialvacaciones/calculodedias.service.js";
+import { Connection } from "../../dao/connection/conexionsqlite.dao.js";
 
 export const descargarPDFController = async (req, res) => {
     try {

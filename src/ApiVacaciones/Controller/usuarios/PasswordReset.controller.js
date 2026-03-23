@@ -1,4 +1,4 @@
-import { requestPasswordResetService } from "../../Services/usuarios/PasswordReset.service.js";
+import { requestPasswordResetService } from "../../services/usuarios/passwordreset.service.js";
 
 export const requestPasswordResetController = async (req, res) => {
     try {

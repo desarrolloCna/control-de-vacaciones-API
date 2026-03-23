@@ -1,4 +1,4 @@
-import { IngresarInformacionDpiDao } from "../../Dao/DPI/InfoDPI.dao.js";
+import { IngresarInformacionDpiDao } from "../../dao/dpi/infodpi.dao.js";
 
 export const IngresarInfoDpiServices = async (data) => {
     try{

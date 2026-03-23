@@ -2,7 +2,7 @@ import {
   getNotificacionesByEmpleadoDao, 
   marcarNotificacionLeidaDao,
   crearNotificacionDao
-} from "../../Dao/Notificaciones/Notificaciones.dao.js";
+} from "../../dao/notificaciones/notificaciones.dao.js";
 
 export const getNotificacionesService = async (idEmpleado) => {
   if (!idEmpleado) {

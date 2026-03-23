@@ -1,4 +1,4 @@
-import { consultarCoordinadorDao, consultarCoordinadoresListDao, registrarCoordinadorDao } from "../../Dao/Coordinadores/Coordinadores.Dao.js";
+import { consultarCoordinadorDao, consultarCoordinadoresListDao, registrarCoordinadorDao } from "../../dao/coordinadores/coordinadores.dao.js";
 
 
 

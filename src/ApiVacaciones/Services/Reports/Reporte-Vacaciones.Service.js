@@ -1,4 +1,4 @@
-import { vacacionesReportDao } from "../../Dao/Reports/Reporte-Vacaciones.Dao.js";
+import { vacacionesReportDao } from "../../dao/reports/reporte-vacaciones.dao.js";
 
 export const vacacionesReportService = async (unidad) => {
     try{

@@ -1,4 +1,4 @@
-import { vacacionesReportService } from "../../Services/Reports/Reporte-Vacaciones.Service.js";
+import { vacacionesReportService } from "../../services/reports/reporte-vacaciones.service.js";
 
 
 export const vacaciosReportController = async (req, res) => {

@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { consultarSolicitudesPorEmpleadoController, getSolicitudesByIdController } from "../../Controller/VacationApp/GetSolicitudesById.controller.js";
-import { actualizarEstadoSolicitudConroller, IngresarSolicitudController } from "../../Controller/VacationApp/ModificarSolicitud.controller.js";
-import { consultarDiasSolicitadosPorAnioController, getSolicitudesController } from "../../Controller/VacationApp/GetSolicitudes.Controller.js";
-import { actualizarSaldoManualController, acreditarDiasPorPeriodoController, debitarDiasPorPeriodoController } from "../../Controller/VacationApp/HisotoriaVacaciones/ControlDeDias.controller.js";
-import {  consultarDiasDebitadosPorAnioController, consultarDiasDisponiblesController, obtenerHistorialPorEmpleadoController } from "../../Controller/VacationApp/HisotoriaVacaciones/ConsultasHistorial.controller.js";
-import { descargarPDFController } from "../../Controller/VacationApp/DescargarPDF.controller.js";
+import { consultarSolicitudesPorEmpleadoController, getSolicitudesByIdController } from "../../controller/vacationapp/getsolicitudesbyid.controller.js";
+import { actualizarEstadoSolicitudConroller, IngresarSolicitudController } from "../../controller/vacationapp/modificarsolicitud.controller.js";
+import { consultarDiasSolicitadosPorAnioController, getSolicitudesController } from "../../controller/vacationapp/getsolicitudes.controller.js";
+import { actualizarSaldoManualController, acreditarDiasPorPeriodoController, debitarDiasPorPeriodoController } from "../../controller/vacationapp/hisotoriavacaciones/controldedias.controller.js";
+import {  consultarDiasDebitadosPorAnioController, consultarDiasDisponiblesController, obtenerHistorialPorEmpleadoController } from "../../controller/vacationapp/hisotoriavacaciones/consultashistorial.controller.js";
+import { descargarPDFController } from "../../controller/vacationapp/descargarpdf.controller.js";
 
 export const VacationAppRoute = Router();
 

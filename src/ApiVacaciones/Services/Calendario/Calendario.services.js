@@ -1,4 +1,4 @@
-import { getVacacionesAutorizadasGlobalDao } from "../../Dao/Calendario/Calendario.dao.js";
+import { getVacacionesAutorizadasGlobalDao } from "../../dao/calendario/calendario.dao.js";
 
 export const getCalendarioVacacionesService = async (unidad, idRol, puesto) => {
   try {

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { IngresarNivelEducativoController } from "../../Controller/nivelEducativo/nivelEducativo.controller.js";
-import { obtenerNivelEducativoInfoController } from "../../Controller/nivelEducativo/GetNivelEducativo.controller.js";
+import { IngresarNivelEducativoController } from "../../controller/niveleducativo/niveleducativo.controller.js";
+import { obtenerNivelEducativoInfoController } from "../../controller/niveleducativo/getniveleducativo.controller.js";
 
 
 export const nivelEducativoRoute = Router();

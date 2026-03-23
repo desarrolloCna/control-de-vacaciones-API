@@ -1,4 +1,4 @@
-import { getLoginDataDao } from "../../Dao/Login/login.dao.js";
+import { getLoginDataDao } from "../../dao/login/login.dao.js";
 
 
 export const loginServices = async (data) => {

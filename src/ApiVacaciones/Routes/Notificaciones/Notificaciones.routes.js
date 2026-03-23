@@ -3,7 +3,7 @@ import {
   getNotificacionesController, 
   marcarNotificacionLeidaController,
   crearNotificacionController
-} from "../../Controller/Notificaciones/Notificaciones.controller.js";
+} from "../../controller/notificaciones/notificaciones.controller.js";
 
 export const notificacionesRoute = Router();
 

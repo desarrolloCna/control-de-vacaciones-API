@@ -1,6 +1,6 @@
-import { actualizarDatosLaboralesDao, actualizarInfoPersonalDao, actualizarNivelEducativoDao, actualizarPertenenciaSoLiDao, actualizarDatosMedicosDao, actualizarInfoDpiDao, obtenerEmpleadoPorInfoPersonalDao } from "../../Dao/empleados/ActualizarData.dao.js";
-import { ActualizarRolUsuarioDao } from "../../Dao/usuarios/usuarios.dao.js";
-import { UpsertCoordinadorDao, DesactivarCoordinadorDao } from "../../Dao/Coordinadores/Coordinadores.Dao.js";
+import { actualizarDatosLaboralesDao, actualizarInfoPersonalDao, actualizarNivelEducativoDao, actualizarPertenenciaSoLiDao, actualizarDatosMedicosDao, actualizarInfoDpiDao, obtenerEmpleadoPorInfoPersonalDao } from "../../dao/empleados/actualizardata.dao.js";
+import { ActualizarRolUsuarioDao } from "../../dao/usuarios/usuarios.dao.js";
+import { UpsertCoordinadorDao, DesactivarCoordinadorDao } from "../../dao/coordinadores/coordinadores.dao.js";
 
 export const actualizarDatosLaboralesController = async (req, res) => {
     try {

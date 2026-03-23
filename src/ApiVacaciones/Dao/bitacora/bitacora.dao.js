@@ -1,4 +1,4 @@
-import { Connection } from "../Connection/ConexionSqlite.dao.js";
+import { Connection } from "../connection/conexionsqlite.dao.js";
 
 export const registrarBitacoraDao = async (data) => {
     try {

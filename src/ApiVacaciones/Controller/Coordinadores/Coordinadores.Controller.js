@@ -1,4 +1,4 @@
-import { consultarCoordinadoresListService, consultarCoordinadorService, registrarCoordinadorServices } from "../../Services/Coordinadores/Coordinadores.Service.js";
+import { consultarCoordinadoresListService, consultarCoordinadorService, registrarCoordinadorServices } from "../../services/coordinadores/coordinadores.service.js";
 
 
 

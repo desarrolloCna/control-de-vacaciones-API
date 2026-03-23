@@ -1,4 +1,4 @@
-import { formatDateToDisplay } from "../Services/Utils/DateUtils.js";
+import { formatDateToDisplay } from "../services/utils/dateutils.js";
 
 const plantillaAutorizacionDeVacaciones = (data) => {
     const estado = data?.estadoSolicitud?.toLowerCase() || "no especificado";

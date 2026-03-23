@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { GetSuspensionesController, ingresarSuspensionController } from "../../Controller/Suspensiones/Suspensiones.Controller.js";
+import { GetSuspensionesController, ingresarSuspensionController } from "../../controller/suspensiones/suspensiones.controller.js";
 
 
 export const suspensionesRoute = Router();

@@ -1,9 +1,9 @@
 
-import { getDatosContactoEmpleadoDao } from "../../Dao/empleados/GetDataEmpleados.dao.js";
-import { ObtenerNombresDao } from "../../Dao/informacionPersonal/infoPersonalEmple.dao.js";
-import { CrearUsuarioDao } from "../../Dao/usuarios/usuarios.dao.js";
-import { EnviarMailServices } from "../email/enviarEmail.service.js";
-import { GenerarPassword, GenerarUsuarioService } from "../generalServices/userGenerator.service.js";
+import { getDatosContactoEmpleadoDao } from "../../dao/empleados/getdataempleados.dao.js";
+import { ObtenerNombresDao } from "../../dao/informacionpersonal/infopersonalemple.dao.js";
+import { CrearUsuarioDao } from "../../dao/usuarios/usuarios.dao.js";
+import { EnviarMailServices } from "../email/enviaremail.service.js";
+import { GenerarPassword, GenerarUsuarioService } from "../generalservices/usergenerator.service.js";
 
 
 export const CrearUsuarioService = async (data) => {

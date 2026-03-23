@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { loginController } from "../../Controller/login/login.controller.js";
-import { requestPasswordResetController } from "../../Controller/usuarios/PasswordReset.controller.js";
+import { loginController } from "../../controller/login/login.controller.js";
+import { requestPasswordResetController } from "../../controller/usuarios/passwordreset.controller.js";
 
 export const loginRout = Router();
 

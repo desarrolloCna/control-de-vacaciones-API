@@ -2,7 +2,7 @@ import {
   getNotificacionesService, 
   marcarLeidaService,
   crearNotificacionService
-} from "../../Services/Notificaciones/Notificaciones.services.js";
+} from "../../services/notificaciones/notificaciones.services.js";
 
 /**
  * @swagger

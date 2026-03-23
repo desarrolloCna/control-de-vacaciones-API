@@ -1,4 +1,4 @@
-import { consultarDiasDebitadosPorAnioServices, consultarDiasDisponiblesServices, obtenerHistorialPorEmpleadoService } from "../../../Services/VacationApp/HisotrialVacaciones/ConsultasHistorial.service.js";
+import { consultarDiasDebitadosPorAnioServices, consultarDiasDisponiblesServices, obtenerHistorialPorEmpleadoService } from "../../../services/vacationapp/hisotrialvacaciones/consultashistorial.service.js";
 
 export const obtenerHistorialPorEmpleadoController = async (req, res) => {
     const { idEmpleado } = req.query; 

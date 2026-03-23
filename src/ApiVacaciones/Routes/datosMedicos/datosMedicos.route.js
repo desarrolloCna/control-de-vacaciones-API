@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { IngresarDatosMedicosController } from "../../Controller/datosMedicos/datosMedicos.controller.js";
-import { obtenerDatosMedicosController } from "../../Controller/datosMedicos/GetDatosMedicos.controller.js";
+import { IngresarDatosMedicosController } from "../../controller/datosmedicos/datosmedicos.controller.js";
+import { obtenerDatosMedicosController } from "../../controller/datosmedicos/getdatosmedicos.controller.js";
 
 
 export const datosMedicosRoute = Router();

@@ -1,4 +1,4 @@
-import { Connection } from "../../Dao/Connection/ConexionSqlite.dao.js";
+import { Connection } from "../../dao/connection/conexionsqlite.dao.js";
 
 // DAO interno auxiliar
 export const actualizarCelularDao = async (idEmpleado, nuevoCelular) => {

@@ -1,4 +1,4 @@
-import { consultarSolicitudesPorEmpleadoDao, getSolicitudesByIdDao } from "../../Dao/VacationApp/GetSolicitudById.Dao.js";
+import { consultarSolicitudesPorEmpleadoDao, getSolicitudesByIdDao } from "../../dao/vacationapp/getsolicitudbyid.dao.js";
 
 
 export const getSolicitudesByIdServices = async (idEmpleado, idInfoPersonal) => {

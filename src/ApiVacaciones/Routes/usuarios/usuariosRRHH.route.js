@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UsuariosRRHHController } from "../../Controller/usuarios/usuariosRRHH.controller.js";
+import { UsuariosRRHHController } from "../../controller/usuarios/usuariosrrhh.controller.js";
 
 export const usuariosRRHHRoute = Router();
 

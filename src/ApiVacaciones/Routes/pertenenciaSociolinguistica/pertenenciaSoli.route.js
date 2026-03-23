@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { IngresarPertenenciaSoLiController } from "../../Controller/pertenenciaSociolinguistica/pertenenciaSoLi.controller.js";
-import { obtenerPertenenciaSoliController } from "../../Controller/pertenenciaSociolinguistica/GetPertenenciaSoli.controller.js";
+import { IngresarPertenenciaSoLiController } from "../../controller/pertenenciasociolinguistica/pertenenciasoli.controller.js";
+import { obtenerPertenenciaSoliController } from "../../controller/pertenenciasociolinguistica/getpertenenciasoli.controller.js";
 
 
 export const pertenenciaSoLiRoute = Router();

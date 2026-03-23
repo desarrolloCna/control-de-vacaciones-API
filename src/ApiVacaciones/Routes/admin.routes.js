@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { registrarBitacoraController, obtenerBitacoraController } from "../Controller/bitacora/bitacora.controller.js";
-import { BitacoraRestaurarController } from "../Controller/bitacora/restaurar.controller.js";
-import { UsuariosRRHHController } from "../Controller/usuarios/usuariosRRHH.controller.js";
+import { registrarBitacoraController, obtenerBitacoraController } from "../controller/bitacora/bitacora.controller.js";
+import { BitacoraRestaurarController } from "../controller/bitacora/restaurar.controller.js";
+import { UsuariosRRHHController } from "../controller/usuarios/usuariosrrhh.controller.js";
 
 export const adminRoute = Router();
 

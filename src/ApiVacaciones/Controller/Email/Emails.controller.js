@@ -1,4 +1,4 @@
-import { EnviarCorreoElectronicoServices } from "../../Services/email/Emails.service.js";
+import { EnviarCorreoElectronicoServices } from "../../services/email/emails.service.js";
 
 
 export const enviarEmailController = async (req, res) => {

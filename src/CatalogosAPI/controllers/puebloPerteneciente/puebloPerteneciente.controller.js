@@ -1,4 +1,4 @@
-import { getPuebloPertenecienteServices } from "../../services/puebloPerteneciente/puebloPerteneciente.services.js";
+import { getPuebloPertenecienteServices } from "../../services/puebloperteneciente/puebloperteneciente.services.js";
 
 export const getPuebloPertenecienteController = async (req, res) =>{
     try{

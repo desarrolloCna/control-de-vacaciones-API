@@ -1,4 +1,4 @@
-import { getNivelEducativoServices } from "../../services/nivelEducativo/nivelEducativo.services.js";
+import { getNivelEducativoServices } from "../../services/niveleducativo/niveleducativo.services.js";
 
 export const getNivelEducativoController = async (req, res) =>{
     try{

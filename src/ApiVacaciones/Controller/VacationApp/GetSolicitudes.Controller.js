@@ -1,4 +1,4 @@
-import { consultarDiasSolicitadosPorAnioServices, getSolicitudesServices } from "../../Services/VacationApp/GetSolicitudes.service.js";
+import { consultarDiasSolicitadosPorAnioServices, getSolicitudesServices } from "../../services/vacationapp/getsolicitudes.service.js";
 
 export const getSolicitudesController = async (req, res) => {
     const { idCoordinador } = req.query; 

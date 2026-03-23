@@ -1,4 +1,4 @@
-import { IngresarInfoDpiServices } from "../../Services/DPI/informacionDPI.service.js";
+import { IngresarInfoDpiServices } from "../../services/dpi/informaciondpi.service.js";
 
 
 export const IngresarInfoDpiController = async (req, res) => {

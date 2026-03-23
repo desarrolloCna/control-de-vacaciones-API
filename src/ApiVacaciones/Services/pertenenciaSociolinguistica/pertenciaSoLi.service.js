@@ -1,4 +1,4 @@
-import { IngresarPertenenciaSoLi } from "../../Dao/pertenenciaSociolinguistica/pertenenciaSoLi.dao.js";
+import { IngresarPertenenciaSoLi } from "../../dao/pertenenciasociolinguistica/pertenenciasoli.dao.js";
 
 
 export const IngresarPertenenciaSoLiServices = async (data) => {

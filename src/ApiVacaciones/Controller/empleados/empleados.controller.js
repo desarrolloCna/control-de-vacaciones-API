@@ -1,4 +1,4 @@
-import { IngresarEmpleadosService } from "../../Services/empleados/empleados.service.js";
+import { IngresarEmpleadosService } from "../../services/empleados/empleados.service.js";
 
 
 export const IngresarEmpleadoController = async (req, res) => {

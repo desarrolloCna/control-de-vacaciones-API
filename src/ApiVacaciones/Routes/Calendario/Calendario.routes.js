@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCalendarioController } from "../../Controller/Calendario/Calendario.controller.js";
+import { getCalendarioController } from "../../controller/calendario/calendario.controller.js";
 
 export const calendarioRoute = Router();
 

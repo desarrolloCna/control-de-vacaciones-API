@@ -1,4 +1,4 @@
-import { getEstadoCivilDao } from "../../dao/estadosCivil/estadosCivil.dao.js";
+import { getEstadoCivilDao } from "../../dao/estadoscivil/estadoscivil.dao.js";
 
 
 

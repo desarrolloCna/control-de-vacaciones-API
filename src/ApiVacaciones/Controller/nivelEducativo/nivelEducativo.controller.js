@@ -1,4 +1,4 @@
-import { IngresarNivelEducativoService } from "../../Services/nivelEducativo/nivelEducativo.service.js";
+import { IngresarNivelEducativoService } from "../../services/niveleducativo/niveleducativo.service.js";
 
 
 export const IngresarNivelEducativoController = async (req, res) => {

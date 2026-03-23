@@ -1,4 +1,4 @@
-import { transporter } from "./Transporter.js";
+import { transporter } from "./transporter.js";
 
 export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, bufferPDF) => {
   const estadoTexto = data.estadoSolicitud?.toLowerCase() === "autorizadas" ? "Autorizadas" : "Rechazadas"

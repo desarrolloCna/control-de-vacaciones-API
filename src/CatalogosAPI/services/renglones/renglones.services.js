@@ -1,4 +1,4 @@
-import { getRenglonesDao } from "../../dao/renglon/renglonPresupuestario.dao.js";
+import { getRenglonesDao } from "../../dao/renglon/renglonpresupuestario.dao.js";
 
 
 export const getRenglonesServices = async () =>{

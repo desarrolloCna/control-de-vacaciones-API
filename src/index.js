@@ -3,29 +3,29 @@ import express from "express";
 import cors from "cors"; // Importa cors como una función
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import { catalogosRoute } from "./CatalogosAPI/routes/catalogos/catalogos.route.js";
-import { dpiRoute } from "./ApiVacaciones/Routes/DPI/informacionDPI.route.js";
-import { infoEmpleRoute } from "./ApiVacaciones/Routes/informacionPersonal/infoPersonalEmple.route.js";
-import { familiaresRoute } from "./ApiVacaciones/Routes/familiares/familiarEmple.route.js";
-import { nivelEducativoRoute } from "./ApiVacaciones/Routes/nivelEducativo/nivelEducativo.routes.js";
-import { pertenenciaSoLiRoute } from "./ApiVacaciones/Routes/pertenenciaSociolinguistica/pertenenciaSoli.route.js";
-import { datosMedicosRoute } from "./ApiVacaciones/Routes/datosMedicos/datosMedicos.route.js";
-import { empleadosRoute } from "./ApiVacaciones/Routes/empleados/empleados.routes.js";
-import { loginRout } from "./ApiVacaciones/Routes/login/login.route.js";
-import { diasFestivos } from "./ApiVacaciones/Routes/DiasFestivos/DiasFestivos.routes.js";
-import { VacationAppRoute } from "./ApiVacaciones/Routes/VacationApp/VacationApp.routes.js";
-import { reportsRoute } from "./ApiVacaciones/Routes/Reports/Reports.routes.js";
-import { suspensionesRoute } from "./ApiVacaciones/Routes/Suspensiones/Suspensiones.routes.js";
-import { coordinadoresRoute } from "./ApiVacaciones/Routes/Coordinadores/Coordinadores.routes.js";
-import { emailRoute } from "./ApiVacaciones/Routes/Email/Emails.routes.js";
-import { vacacionesespecialesRoute } from "./ApiVacaciones/modules/vacacionesespeciales/vacacionesespeciales.routes.js";
-import { administracionvacacionesRoute } from "./ApiVacaciones/modules/GestionVacacionesRRHH/administracionvacaciones.route.js";
-import { notificacionesRoute } from "./ApiVacaciones/Routes/Notificaciones/Notificaciones.routes.js";
-import { calendarioRoute } from "./ApiVacaciones/Routes/Calendario/Calendario.routes.js";
-import { autoservicioRouter } from "./ApiVacaciones/Routes/Autoservicio/autoservicio.routes.js";
-import { adminRoute } from "./ApiVacaciones/Routes/admin.routes.js";
+import { catalogosRoute } from "./catalogosapi/routes/catalogos/catalogos.route.js";
+import { dpiRoute } from "./apivacaciones/routes/dpi/informaciondpi.route.js";
+import { infoEmpleRoute } from "./apivacaciones/routes/informacionpersonal/infopersonalemple.route.js";
+import { familiaresRoute } from "./apivacaciones/routes/familiares/familiaremple.route.js";
+import { nivelEducativoRoute } from "./apivacaciones/routes/niveleducativo/niveleducativo.routes.js";
+import { pertenenciaSoLiRoute } from "./apivacaciones/routes/pertenenciasociolinguistica/pertenenciasoli.route.js";
+import { datosMedicosRoute } from "./apivacaciones/routes/datosmedicos/datosmedicos.route.js";
+import { empleadosRoute } from "./apivacaciones/routes/empleados/empleados.routes.js";
+import { loginRout } from "./apivacaciones/routes/login/login.route.js";
+import { diasFestivos } from "./apivacaciones/routes/diasfestivos/diasfestivos.routes.js";
+import { VacationAppRoute } from "./apivacaciones/routes/vacationapp/vacationapp.routes.js";
+import { reportsRoute } from "./apivacaciones/routes/reports/reports.routes.js";
+import { suspensionesRoute } from "./apivacaciones/routes/suspensiones/suspensiones.routes.js";
+import { coordinadoresRoute } from "./apivacaciones/routes/coordinadores/coordinadores.routes.js";
+import { emailRoute } from "./apivacaciones/routes/email/emails.routes.js";
+import { vacacionesespecialesRoute } from "./apivacaciones/modules/vacacionesespeciales/vacacionesespeciales.routes.js";
+import { administracionvacacionesRoute } from "./apivacaciones/modules/gestionvacacionesrrhh/administracionvacaciones.route.js";
+import { notificacionesRoute } from "./apivacaciones/routes/notificaciones/notificaciones.routes.js";
+import { calendarioRoute } from "./apivacaciones/routes/calendario/calendario.routes.js";
+import { autoservicioRouter } from "./apivacaciones/routes/autoservicio/autoservicio.routes.js";
+import { adminRoute } from "./apivacaciones/routes/admin.routes.js";
 import { setupSwagger } from "./docs/swagger.js";
-import frasesRoutes from "./ApiVacaciones/Routes/utilidades/frases.routes.js";
+import frasesRoutes from "./apivacaciones/routes/utilidades/frases.routes.js";
 
 const app = express();
 app.use(helmet()); // Protecciones básicas HTTP
@@ -46,7 +46,7 @@ app.use('/api/', limiter);
 
 app.use(express.json());
 
-import { verifyToken } from "./MiddleWares/authMiddleware.js";
+import { verifyToken } from "./middlewares/authmiddleware.js";
 
 // --- PUBLIC ROUTES ---
 app.use('/api/', loginRout);

@@ -1,8 +1,8 @@
-import { consultarDiasDebitadosPorAnioDao, consultarDiasDisponiblesDao, obtenerHistorialPorEmpleadoDao, obtenerDatosEmpleadoParaAcumulacionDao } from "../../../Dao/VacationApp/HistorialVacaciones/ConsultasHistorial.dao.js";
+import { consultarDiasDebitadosPorAnioDao, consultarDiasDisponiblesDao, obtenerHistorialPorEmpleadoDao, obtenerDatosEmpleadoParaAcumulacionDao } from "../../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
 import dayjs from "dayjs";
 import { consultarGestionVacacionesEspecialesDao } from "../../../modules/vacacionesespeciales/vacacionesespeciales.dao.js";
 
-import { acreditarDiasPorPeriodoService } from "./ControlDeDias.service.js";
+import { acreditarDiasPorPeriodoService } from "./controldedias.service.js";
 
 export const obtenerHistorialPorEmpleadoService = async (idEmpleado) => {
     try{

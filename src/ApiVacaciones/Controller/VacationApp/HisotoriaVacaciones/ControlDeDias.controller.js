@@ -1,4 +1,4 @@
-import { actualizarSaldoManualService, acreditarDiasPorPeriodoService, debitarDiasPorPeriodoService } from "../../../Services/VacationApp/HisotrialVacaciones/ControlDeDias.service.js";
+import { actualizarSaldoManualService, acreditarDiasPorPeriodoService, debitarDiasPorPeriodoService } from "../../../services/vacationapp/hisotrialvacaciones/controldedias.service.js";
 
 
 export const acreditarDiasPorPeriodoController = async (req, res) => {

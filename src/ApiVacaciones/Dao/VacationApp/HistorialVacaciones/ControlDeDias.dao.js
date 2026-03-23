@@ -1,4 +1,4 @@
-import { Connection } from "../../Connection/ConexionSqlite.dao.js";
+import { Connection } from "../../connection/conexionsqlite.dao.js";
 
 /**
  * Inserta múltiples registros de vacaciones en la tabla `historial_vacaciones` para un lote de periodos.

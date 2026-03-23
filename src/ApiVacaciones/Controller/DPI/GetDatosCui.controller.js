@@ -1,4 +1,4 @@
-import { obtenerInfoDPIServices } from "../../Services/DPI/GetDatosCUi.services.js";
+import { obtenerInfoDPIServices } from "../../services/dpi/getdatoscui.services.js";
 
 
 export const obtenerInfoDPIController = async (req, res) => {

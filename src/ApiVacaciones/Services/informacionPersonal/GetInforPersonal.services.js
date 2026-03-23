@@ -1,4 +1,4 @@
-import { obtenerInfoPersonalDao } from "../../Dao/informacionPersonal/GetInfoPersonal.dao.js";
+import { obtenerInfoPersonalDao } from "../../dao/informacionpersonal/getinfopersonal.dao.js";
 
 
 

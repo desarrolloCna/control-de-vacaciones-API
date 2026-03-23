@@ -1,10 +1,10 @@
-import { GenerarPlantillasCorreos } from "../../../PlantillasCorreos/plantilas.js";
-import { EnviarMailSolicitudDeVacaciones } from "../../email/EnvioEmailVacacionesAutorizadas.service.js";
-import { generateVacationRequestPDF } from "../../PDFGenerator/PDFGenerator.service.js";
-import { consultarCoordinadorService } from "../../Coordinadores/Coordinadores.Service.js";
-import { getSolicitudesByIdSolcitudDao } from "../../../Dao/VacationApp/GetSolicitudById.Dao.js";
-import { consultarPeriodosYDiasPorEmpeladoDao } from "../../../Dao/VacationApp/HistorialVacaciones/ConsultasHistorial.dao.js";
-import { obtenerPeriodosParaVacaciones } from "../../VacationApp/HisotrialVacaciones/CalculoDeDias.service.js";
+import { GenerarPlantillasCorreos } from "../../../plantillascorreos/plantilas.js";
+import { EnviarMailSolicitudDeVacaciones } from "../../email/envioemailvacacionesautorizadas.service.js";
+import { generateVacationRequestPDF } from "../../pdfgenerator/pdfgenerator.service.js";
+import { consultarCoordinadorService } from "../../coordinadores/coordinadores.service.js";
+import { getSolicitudesByIdSolcitudDao } from "../../../dao/vacationapp/getsolicitudbyid.dao.js";
+import { consultarPeriodosYDiasPorEmpeladoDao } from "../../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
+import { obtenerPeriodosParaVacaciones } from "../../vacationapp/hisotrialvacaciones/calculodedias.service.js";
 
 export const notificarSolicitudVacacionesIngresada = async (data) => {
   try {

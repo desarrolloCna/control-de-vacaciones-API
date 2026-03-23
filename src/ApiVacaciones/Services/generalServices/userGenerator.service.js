@@ -1,4 +1,4 @@
-import { consultarExistenciaUsuarioDao } from "../../Dao/usuarios/usuarios.dao.js";
+import { consultarExistenciaUsuarioDao } from "../../dao/usuarios/usuarios.dao.js";
 
 
 export const GenerarUsuarioService = async (data) => {

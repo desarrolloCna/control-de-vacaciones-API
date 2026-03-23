@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { actualizarCelularController, cambiarPasswordController } from "../../Controller/Autoservicio/autoservicio.controller.js";
+import { actualizarCelularController, cambiarPasswordController } from "../../controller/autoservicio/autoservicio.controller.js";
 
 export const autoservicioRouter = Router();
 

@@ -1,4 +1,4 @@
-import { obtenerInfoPersonalServices } from "../../Services/informacionPersonal/GetInforPersonal.services.js";
+import { obtenerInfoPersonalServices } from "../../services/informacionpersonal/getinforpersonal.services.js";
 
 
 export const obtenerInfoPersonalController = async (req, res) => {

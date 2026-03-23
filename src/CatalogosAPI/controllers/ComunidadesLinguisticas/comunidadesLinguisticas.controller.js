@@ -1,4 +1,4 @@
-import { getComunidadesLinguisticasServices } from "../../services/comunidadesLinguisticas/comunidadesLinguisticas.services.js";
+import { getComunidadesLinguisticasServices } from "../../services/comunidadeslinguisticas/comunidadeslinguisticas.services.js";
 
 export const getComunidadesLinguisticasController = async (req, res) =>{
     try{

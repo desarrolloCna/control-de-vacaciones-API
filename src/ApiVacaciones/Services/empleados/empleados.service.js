@@ -1,7 +1,7 @@
-import { handleServiceError } from "../../../MiddleWares/handleServiceError.js";
-import { IngresarEmpleadoDao } from "../../Dao/empleados/empleados.dao.js";
-import { registrarCoordinadorServices } from "../Coordinadores/Coordinadores.Service.js";
-import { obtenerInfoPersonalServices } from "../informacionPersonal/GetInforPersonal.services.js";
+import { handleServiceError } from "../../../middlewares/handleserviceerror.js";
+import { IngresarEmpleadoDao } from "../../dao/empleados/empleados.dao.js";
+import { registrarCoordinadorServices } from "../coordinadores/coordinadores.service.js";
+import { obtenerInfoPersonalServices } from "../informacionpersonal/getinforpersonal.services.js";
 import { CrearUsuarioService } from "../usuarios/usuarios.service.js";
 
 

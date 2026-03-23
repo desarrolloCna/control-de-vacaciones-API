@@ -1,4 +1,4 @@
-import { obtenerFamiliaresDao } from "../../Dao/familiares/GetDatosFamiliares.dao.js";
+import { obtenerFamiliaresDao } from "../../dao/familiares/getdatosfamiliares.dao.js";
 
 
 export const obtenerFamiliaresService = async (idEmpleado) => {

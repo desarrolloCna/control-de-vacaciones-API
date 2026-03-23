@@ -35,7 +35,7 @@ const options = {
     ],
   },
   // Rutas donde buscará comentarios JSDoc para construir la documentación:
-  apis: ['./src/ApiVacaciones/Controller/**/*.js', './src/routes/**/*.js'],
+  apis: ['./src/apivacaciones/controller/**/*.js', './src/routes/**/*.js'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

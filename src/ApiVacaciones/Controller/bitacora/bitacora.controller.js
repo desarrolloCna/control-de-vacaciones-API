@@ -1,4 +1,4 @@
-import { registrarBitacoraService, obtenerBitacoraService } from "../../Services/bitacora/bitacora.service.js";
+import { registrarBitacoraService, obtenerBitacoraService } from "../../services/bitacora/bitacora.service.js";
 
 export const registrarBitacoraController = async (req, res) => {
     try {

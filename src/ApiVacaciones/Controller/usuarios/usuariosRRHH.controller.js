@@ -1,4 +1,4 @@
-import { UsuariosRRHHService } from "../../Services/usuarios/usuariosRRHH.service.js";
+import { UsuariosRRHHService } from "../../services/usuarios/usuariosrrhh.service.js";
 
 export const UsuariosRRHHController = {
     obtenerUsuariosRRHH: async (req, res) => {

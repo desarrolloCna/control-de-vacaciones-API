@@ -1,4 +1,4 @@
-import { obtenerNivelEducativoInfoSerices } from "../../Services/nivelEducativo/GetNivelEducativo.service.js";
+import { obtenerNivelEducativoInfoSerices } from "../../services/niveleducativo/getniveleducativo.service.js";
 
 
 export const obtenerNivelEducativoInfoController = async (req, res) => {

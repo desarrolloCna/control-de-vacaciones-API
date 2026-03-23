@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { IngresarInfoDpiController } from "../../Controller/DPI/informacionDPI.controller.js";
-import { obtenerInfoDPIController } from "../../Controller/DPI/GetDatosCui.controller.js";
-import { actualizarInfoDpiController } from "../../Controller/empleados/ActualizarData.controller.js";
+import { IngresarInfoDpiController } from "../../controller/dpi/informaciondpi.controller.js";
+import { obtenerInfoDPIController } from "../../controller/dpi/getdatoscui.controller.js";
+import { actualizarInfoDpiController } from "../../controller/empleados/actualizardata.controller.js";
 
 export const dpiRoute = Router();
 

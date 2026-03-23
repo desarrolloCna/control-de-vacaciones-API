@@ -1,4 +1,4 @@
-import { obtenerPertenenciaSoliServices } from "../../Services/pertenenciaSociolinguistica/GetPertenenciaSoLi.service.js";
+import { obtenerPertenenciaSoliServices } from "../../services/pertenenciasociolinguistica/getpertenenciasoli.service.js";
 
 
 

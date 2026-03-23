@@ -1,6 +1,6 @@
-import { findUserByDpiOrUsernameDao, updateTemporaryPasswordDao } from "../../Dao/usuarios/PasswordReset.Dao.js";
-import { GenerarPassword } from "../generalServices/userGenerator.service.js";
-import { EnviarMailServices } from "../email/enviarEmail.service.js";
+import { findUserByDpiOrUsernameDao, updateTemporaryPasswordDao } from "../../dao/usuarios/passwordreset.dao.js";
+import { GenerarPassword } from "../generalservices/usergenerator.service.js";
+import { EnviarMailServices } from "../email/enviaremail.service.js";
 
 export const requestPasswordResetService = async (identifier) => {
     try {

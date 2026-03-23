@@ -1,4 +1,4 @@
-import { getCalendarioVacacionesService } from "../../Services/Calendario/Calendario.services.js";
+import { getCalendarioVacacionesService } from "../../services/calendario/calendario.services.js";
 
 /**
  * @swagger

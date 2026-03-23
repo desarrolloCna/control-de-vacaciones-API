@@ -1,4 +1,4 @@
-import { obtenerFamiliaresService } from "../../Services/familiares/GetFamiliares.services.js";
+import { obtenerFamiliaresService } from "../../services/familiares/getfamiliares.services.js";
 
 
 export const obtenerFamiliaresController = async (req, res) => {

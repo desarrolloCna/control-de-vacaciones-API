@@ -1,4 +1,4 @@
-import { EnviarMailServices } from "./enviarEmail.service.js";
+import { EnviarMailServices } from "./enviaremail.service.js";
 
 export const EnviarCorreoElectronicoServices = async (data) => {
     try{

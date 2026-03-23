@@ -1,4 +1,4 @@
-import { GetSuspensionesServices, ingresarSuspensionService } from "../../Services/Suspensiones/Suspensiones.service.js";
+import { GetSuspensionesServices, ingresarSuspensionService } from "../../services/suspensiones/suspensiones.service.js";
 
 
 export const ingresarSuspensionController = async (req, res) => {

@@ -1,4 +1,4 @@
-import { IngresarInfoPersonalDao } from "../../Dao/informacionPersonal/infoPersonalEmple.dao.js";
+import { IngresarInfoPersonalDao } from "../../dao/informacionpersonal/infopersonalemple.dao.js";
 
 
 export const IngresarInfoPersonalService = async (data) => {

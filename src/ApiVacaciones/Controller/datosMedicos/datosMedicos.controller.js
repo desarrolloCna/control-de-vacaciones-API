@@ -1,4 +1,4 @@
-import { IngresarDatosMedicosServices } from "../../Services/datosMedicos/datosMedicos.service.js";
+import { IngresarDatosMedicosServices } from "../../services/datosmedicos/datosmedicos.service.js";
 
 
 export const IngresarDatosMedicosController = async (req, res) => {

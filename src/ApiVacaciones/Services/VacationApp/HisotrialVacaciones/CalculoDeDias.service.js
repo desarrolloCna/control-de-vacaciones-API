@@ -7,7 +7,7 @@ import {
   diasIngresoHastaDiaEnCurso,
   GenerarPeriodo,
   obtenerDiasPorAnio,
-} from "../../Utils/DateUtils.js";
+} from "../../utils/dateutils.js";
 
 /**
  * Calcula el número de días que un empleado estuvo suspendido durante un año específico.

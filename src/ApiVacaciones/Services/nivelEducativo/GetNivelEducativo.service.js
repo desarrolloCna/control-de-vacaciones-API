@@ -1,4 +1,4 @@
-import { obtenerNivelEducativoInfoDao } from "../../Dao/nivelEducativo/GetNivelEducativo.dao.js";
+import { obtenerNivelEducativoInfoDao } from "../../dao/niveleducativo/getniveleducativo.dao.js";
 
 
 export const obtenerNivelEducativoInfoSerices = async (idInfoPersonal) => {

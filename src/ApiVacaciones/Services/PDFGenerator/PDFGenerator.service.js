@@ -1,7 +1,7 @@
 import PDFDocument from "pdfkit";
 import path from "path";
 import { fileURLToPath } from "url";
-import { calcularAniosPasados, formatDateToDisplay } from "../Utils/DateUtils.js";
+import { calcularAniosPasados, formatDateToDisplay } from "../utils/dateutils.js";
 import dayjs from "dayjs";
 
 const __filename = fileURLToPath(import.meta.url);

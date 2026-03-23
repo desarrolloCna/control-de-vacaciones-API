@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { consultarCoordinadorController, consultarCoordinadoresListController, registrarCoordinadorController } from "../../Controller/Coordinadores/Coordinadores.Controller.js";
+import { consultarCoordinadorController, consultarCoordinadoresListController, registrarCoordinadorController } from "../../controller/coordinadores/coordinadores.controller.js";
 
 export const coordinadoresRoute = Router();
 

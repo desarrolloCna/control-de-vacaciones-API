@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { IngresarInfoPersonalController } from "../../Controller/informacionPersonal/infoPersonalEmple.controller.js";
-import { obtenerInfoPersonalController } from "../../Controller/informacionPersonal/GetInfoPersonal.controller.js";
-import { actualizarInfoPersonalController } from "../../Controller/empleados/ActualizarData.controller.js";
-import { getCumpleanerosDelMes } from "../../Controller/informacionPersonal/cumpleaneros.controller.js";
+import { IngresarInfoPersonalController } from "../../controller/informacionpersonal/infopersonalemple.controller.js";
+import { obtenerInfoPersonalController } from "../../controller/informacionpersonal/getinfopersonal.controller.js";
+import { actualizarInfoPersonalController } from "../../controller/empleados/actualizardata.controller.js";
+import { getCumpleanerosDelMes } from "../../controller/informacionpersonal/cumpleaneros.controller.js";
 
 export const infoEmpleRoute = Router();
 

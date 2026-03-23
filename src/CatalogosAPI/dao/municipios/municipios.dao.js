@@ -1,4 +1,4 @@
-import { Connection } from "../ConexionB/ConexionCatSqlite.js";
+import { Connection } from "../conexionb/conexioncatsqlite.js";
 
 export const getMunicipiosDao = async () => {
     try {

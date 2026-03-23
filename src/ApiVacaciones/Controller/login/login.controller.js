@@ -1,4 +1,4 @@
-import { loginServices } from "../../Services/login/login.services.js";
+import { loginServices } from "../../services/login/login.services.js";
 import jwt from "jsonwebtoken";
 
 /**

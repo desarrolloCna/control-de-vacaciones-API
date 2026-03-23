@@ -1,4 +1,4 @@
-import { getEstadoCivilServices } from "../../services/estadoCivil/estadoCivil.services.js";
+import { getEstadoCivilServices } from "../../services/estadocivil/estadocivil.services.js";
 
 
 export const getestadoCivilController = async (req, res) =>{

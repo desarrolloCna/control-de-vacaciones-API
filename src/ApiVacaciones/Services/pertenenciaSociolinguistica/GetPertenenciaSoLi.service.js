@@ -1,4 +1,4 @@
-import { obtenerPertenenciaSoliDao } from "../../Dao/pertenenciaSociolinguistica/GetPertenenciaSoli.Dao.js";
+import { obtenerPertenenciaSoliDao } from "../../dao/pertenenciasociolinguistica/getpertenenciasoli.dao.js";
 
 
 export const obtenerPertenenciaSoliServices = async (idInfoPersonal) => {

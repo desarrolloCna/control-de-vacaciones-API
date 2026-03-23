@@ -1,4 +1,4 @@
-import { getDiasFestivosServices, createDiaFestivoService, updateDiaFestivoService, deleteDiaFestivoService } from "../../Services/DiasFestivos/DiasFestivos.service.js";
+import { getDiasFestivosServices, createDiaFestivoService, updateDiaFestivoService, deleteDiaFestivoService } from "../../services/diasfestivos/diasfestivos.service.js";
 
 
 export const getDiasFestivosController = async (req, res) => {

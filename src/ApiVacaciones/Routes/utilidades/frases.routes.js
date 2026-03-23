@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getFraseAleatoria } from "../../Controller/utilidades/frases.controller.js";
+import { getFraseAleatoria } from "../../controller/utilidades/frases.controller.js";
 
 const router = Router();
 

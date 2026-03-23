@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getDiasFestivosController, createDiaFestivoController, updateDiaFestivoController, deleteDiaFestivoController } from "../../Controller/DiasFestivos/DiasFestivos.controller.js";
+import { getDiasFestivosController, createDiaFestivoController, updateDiaFestivoController, deleteDiaFestivoController } from "../../controller/diasfestivos/diasfestivos.controller.js";
 
 export const diasFestivos = Router();
 

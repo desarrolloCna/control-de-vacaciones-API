@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { IngresarEmpleadoController } from "../../Controller/empleados/empleados.controller.js";
-import { consultarEmpleadosSinVacacionesController, consultarEmpleadosUltimoAnioController, employeesListController, obtenerDatosLaboralesController } from "../../Controller/empleados/GetDataEmpleados.controller.js";
-import { actualizarDatosLaboralesController, actualizarInfoPersonalController, actualizarOtrosDatosController, actualizarInfoDpiController } from "../../Controller/empleados/ActualizarData.controller.js";
+import { IngresarEmpleadoController } from "../../controller/empleados/empleados.controller.js";
+import { consultarEmpleadosSinVacacionesController, consultarEmpleadosUltimoAnioController, employeesListController, obtenerDatosLaboralesController } from "../../controller/empleados/getdataempleados.controller.js";
+import { actualizarDatosLaboralesController, actualizarInfoPersonalController, actualizarOtrosDatosController, actualizarInfoDpiController } from "../../controller/empleados/actualizardata.controller.js";
 
 export const empleadosRoute = Router();
 

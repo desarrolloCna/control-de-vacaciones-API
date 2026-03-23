@@ -1,4 +1,4 @@
-import { IngresarPertenenciaSoLiServices } from "../../Services/pertenenciaSociolinguistica/pertenciaSoLi.service.js";
+import { IngresarPertenenciaSoLiServices } from "../../services/pertenenciasociolinguistica/pertenciasoli.service.js";
 
 
 export const IngresarPertenenciaSoLiController = async (req, res) => {

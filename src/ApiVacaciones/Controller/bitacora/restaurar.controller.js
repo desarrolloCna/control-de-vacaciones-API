@@ -1,4 +1,4 @@
-import { BitacoraRestaurarService } from "../../Services/bitacora/restaurar.service.js";
+import { BitacoraRestaurarService } from "../../services/bitacora/restaurar.service.js";
 
 export const BitacoraRestaurarController = {
     restaurarRegistro: async (req, res) => {

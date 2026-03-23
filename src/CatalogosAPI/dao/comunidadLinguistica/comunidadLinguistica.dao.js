@@ -1,5 +1,5 @@
 
-import { CerraBDCatalogos, ConectarBDCatalogos } from "../ConexionB/ConexionBDC.dao.js";
+import { CerraBDCatalogos, ConectarBDCatalogos } from "../conexionb/conexionbdc.dao.js";
 
 
 export const getComunidadLinguisticaDao = async () => {

@@ -1,6 +1,6 @@
-import { consultarEmpleadosSinVacacionesDao, consultarEmpleadosUltimoAnioDao } from "../../Dao/empleados/empleados.dao.js";
-import { acreditarDiasPorPeriodoService } from "../VacationApp/HisotrialVacaciones/ControlDeDias.service.js";
-import { employeesListDao, obtenerDatosLaboralesDao } from "../../Dao/empleados/GetDataEmpleados.dao.js";
+import { consultarEmpleadosSinVacacionesDao, consultarEmpleadosUltimoAnioDao } from "../../dao/empleados/empleados.dao.js";
+import { acreditarDiasPorPeriodoService } from "../vacationapp/hisotrialvacaciones/controldedias.service.js";
+import { employeesListDao, obtenerDatosLaboralesDao } from "../../dao/empleados/getdataempleados.dao.js";
 
 export const employeesListServices = async () => {
     try{

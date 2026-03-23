@@ -1,5 +1,5 @@
-import { Connection } from "../../Dao/Connection/ConexionSqlite.dao.js";
-import { registrarBitacoraDao } from "../../Dao/bitacora/bitacora.dao.js";
+import { Connection } from "../../dao/connection/conexionsqlite.dao.js";
+import { registrarBitacoraDao } from "../../dao/bitacora/bitacora.dao.js";
 
 export const consultarSolicitudesVacacionesAutorizadasDao = async () => {
     try{

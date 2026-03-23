@@ -1,4 +1,4 @@
-import { IngresarNivelEducativoDao } from "../../Dao/nivelEducativo/nivelEducativo.dao.js";
+import { IngresarNivelEducativoDao } from "../../dao/niveleducativo/niveleducativo.dao.js";
 
 
 export const IngresarNivelEducativoService = async (data) => {

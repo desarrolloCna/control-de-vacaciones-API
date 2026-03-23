@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { registrarBitacoraController, obtenerBitacoraController } from "../../Controller/bitacora/bitacora.controller.js";
-import { BitacoraRestaurarController } from "../../Controller/bitacora/restaurar.controller.js";
+import { registrarBitacoraController, obtenerBitacoraController } from "../../controller/bitacora/bitacora.controller.js";
+import { BitacoraRestaurarController } from "../../controller/bitacora/restaurar.controller.js";
 
 export const bitacoraRoute = Router();
 

@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
-import { consultarPeriodosYDiasPorEmpeladoDao } from "../../../Dao/VacationApp/HistorialVacaciones/ConsultasHistorial.dao.js";
-import { actualizarSaldoManualDao, acreditarDiasPorPeriodoLoteDao, ActualizarDiasAcumuladosPorPeriodoDao, debitarDiasPorPeriodoDao, getUltiaAcreditacionDiasDao, } from "../../../Dao/VacationApp/HistorialVacaciones/ControlDeDias.dao.js";
-import { destructurarFecha, destructurarFechaActual, formatearFecha, validarFechaUltimaActualizacion, } from "../../Utils/DateUtils.js";
-import { generarDiasAcumuladosPorPeriodo, obtenerPeriodosParaVacaciones } from "./CalculoDeDias.service.js";
-import { actualizarEstadoSolicitudDao } from "../../../Dao/VacationApp/ModificarSolicitud.Dao.js";
-import { getSuspensionesByEmpleadoDao } from "../../../Dao/Suspensiones/Suspensiones.Dao.js";
+import { consultarPeriodosYDiasPorEmpeladoDao } from "../../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
+import { actualizarSaldoManualDao, acreditarDiasPorPeriodoLoteDao, ActualizarDiasAcumuladosPorPeriodoDao, debitarDiasPorPeriodoDao, getUltiaAcreditacionDiasDao, } from "../../../dao/vacationapp/historialvacaciones/controldedias.dao.js";
+import { destructurarFecha, destructurarFechaActual, formatearFecha, validarFechaUltimaActualizacion, } from "../../utils/dateutils.js";
+import { generarDiasAcumuladosPorPeriodo, obtenerPeriodosParaVacaciones } from "./calculodedias.service.js";
+import { actualizarEstadoSolicitudDao } from "../../../dao/vacationapp/modificarsolicitud.dao.js";
+import { getSuspensionesByEmpleadoDao } from "../../../dao/suspensiones/suspensiones.dao.js";
 import { consultarGestionVacacionesEspecialesDao } from "../../../modules/vacacionesespeciales/vacacionesespeciales.dao.js";
 
 /**

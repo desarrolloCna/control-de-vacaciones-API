@@ -1,4 +1,4 @@
-import { getDiasFestivosDao, createDiaFestivoDao, updateDiaFestivoDao, deleteDiaFestivoDao } from "../../Dao/DiasFestivos/DiasFestivos.dao.js";
+import { getDiasFestivosDao, createDiaFestivoDao, updateDiaFestivoDao, deleteDiaFestivoDao } from "../../dao/diasfestivos/diasfestivos.dao.js";
 
 
 export const getDiasFestivosServices = async () => {

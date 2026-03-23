@@ -1,4 +1,4 @@
-import { GetSuspensionesDao, ingresarSuspensionDao, darDeBajaEmpleadoDao } from "../../Dao/Suspensiones/Suspensiones.Dao.js";
+import { GetSuspensionesDao, ingresarSuspensionDao, darDeBajaEmpleadoDao } from "../../dao/suspensiones/suspensiones.dao.js";
 
 
 export const GetSuspensionesServices = async () => {

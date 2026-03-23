@@ -1,4 +1,4 @@
-import { consultarSolicitudesPorEmpleadoServices, getSolicitudesByIdServices } from "../../Services/VacationApp/GetSolicitudesById.service.js";
+import { consultarSolicitudesPorEmpleadoServices, getSolicitudesByIdServices } from "../../services/vacationapp/getsolicitudesbyid.service.js";
 
 
 export const getSolicitudesByIdController = async (req, res) => {

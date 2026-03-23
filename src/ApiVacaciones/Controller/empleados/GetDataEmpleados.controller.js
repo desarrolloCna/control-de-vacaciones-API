@@ -1,4 +1,4 @@
-import { consultarEmpleadosSinVacacionesServices, consultarEmpleadosUltimoAnioServices, employeesListServices, obtenerDatosLaboralesServices } from "../../Services/empleados/GetDataEmpleados.service.js";
+import { consultarEmpleadosSinVacacionesServices, consultarEmpleadosUltimoAnioServices, employeesListServices, obtenerDatosLaboralesServices } from "../../services/empleados/getdataempleados.service.js";
 
 
 export const employeesListController = async (req, res) => {

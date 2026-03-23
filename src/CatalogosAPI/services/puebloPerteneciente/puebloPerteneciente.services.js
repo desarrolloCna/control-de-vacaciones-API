@@ -1,4 +1,4 @@
-import { getPuebloPertenecienteDao } from "../../dao/puebloPerteneciente/PueblosPerteneciente.js";
+import { getPuebloPertenecienteDao } from "../../dao/puebloperteneciente/pueblosperteneciente.js";
 
 export const getPuebloPertenecienteServices = async () =>{
     try{

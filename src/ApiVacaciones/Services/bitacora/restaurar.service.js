@@ -1,4 +1,4 @@
-import { BitacoraRestaurarDao } from "../../Dao/bitacora/restaurar.dao.js";
+import { BitacoraRestaurarDao } from "../../dao/bitacora/restaurar.dao.js";
 
 export const BitacoraRestaurarService = {
     restaurarRegistro: async (idBitacora) => {

@@ -1,4 +1,4 @@
-import { IngresarFamiliarService } from "../../Services/familiares/familiaresEmple.service.js";
+import { IngresarFamiliarService } from "../../services/familiares/familiaresemple.service.js";
 
 
 export const IngresarFamiliarController = async (req, res) => {

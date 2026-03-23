@@ -1,4 +1,4 @@
-import { Connection } from "../../../ApiVacaciones/Dao/Connection/ConexionSqlite.dao.js";
+import { Connection } from "../../../apivacaciones/dao/connection/conexionsqlite.dao.js";
 
 export const getParentescoDao = async () => {
     try {

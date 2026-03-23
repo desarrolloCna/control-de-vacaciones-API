@@ -1,4 +1,4 @@
-import { registrarBitacoraDao, obtenerBitacoraDao } from "../../Dao/bitacora/bitacora.dao.js";
+import { registrarBitacoraDao, obtenerBitacoraDao } from "../../dao/bitacora/bitacora.dao.js";
 
 export const registrarBitacoraService = async (data) => {
     try {

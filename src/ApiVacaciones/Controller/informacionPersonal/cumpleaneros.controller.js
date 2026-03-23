@@ -1,4 +1,4 @@
-import { Connection } from "../../Dao/Connection/ConexionSqlite.dao.js";
+import { Connection } from "../../dao/connection/conexionsqlite.dao.js";
 
 // Obtiene los empleados cuyo mes de nacimiento coincide con el mes actual
 export const getCumpleanerosDelMes = async (req, res) => {

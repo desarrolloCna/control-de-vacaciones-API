@@ -1,20 +1,20 @@
 import {
   getSolicitudesByIdDao,
   getSolicitudesByIdSolcitudDao,
-} from "../../Dao/VacationApp/GetSolicitudById.Dao.js";
-import { consultarPeriodosYDiasPorEmpeladoDao } from "../../Dao/VacationApp/HistorialVacaciones/ConsultasHistorial.dao.js";
+} from "../../dao/vacationapp/getsolicitudbyid.dao.js";
+import { consultarPeriodosYDiasPorEmpeladoDao } from "../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
 import {
   actualizarEstadoSolicitudDao,
   eliminarSolicitudDao,
   IngresarSolicitudDao,
-} from "../../Dao/VacationApp/ModificarSolicitud.dao.js";
-import { GenerarPlantillasCorreos } from "../../PlantillasCorreos/plantilas.js";
-import { consultarCoordinadorService } from "../Coordinadores/Coordinadores.Service.js";
-import { EnviarMailAutorizacionDeVacaciones } from "../email/EnvioEmailVacacionesAutorizadas.service.js";
-import { generateVacationRequestPDF } from "../PDFGenerator/PDFGenerator.service.js";
-import { crearNotificacionDao } from "../../Dao/Notificaciones/Notificaciones.dao.js";
-import { notificarSolicitudVacacionesIngresada } from "../ServiciosGenerales/EnvioDeCorreos/Notificaciones.service.js";
-import { obtenerPeriodosParaVacaciones } from "./HisotrialVacaciones/CalculoDeDias.service.js";
+} from "../../dao/vacationapp/modificarsolicitud.dao.js";
+import { GenerarPlantillasCorreos } from "../../plantillascorreos/plantilas.js";
+import { consultarCoordinadorService } from "../coordinadores/coordinadores.service.js";
+import { EnviarMailAutorizacionDeVacaciones } from "../email/envioemailvacacionesautorizadas.service.js";
+import { generateVacationRequestPDF } from "../pdfgenerator/pdfgenerator.service.js";
+import { crearNotificacionDao } from "../../dao/notificaciones/notificaciones.dao.js";
+import { notificarSolicitudVacacionesIngresada } from "../serviciosgenerales/enviodecorreos/notificaciones.service.js";
+import { obtenerPeriodosParaVacaciones } from "./hisotrialvacaciones/calculodedias.service.js";
 
 export const IngresarSolicitudService = async (data) => {
   try {

@@ -1,4 +1,4 @@
-import { actualizarEstadoSolicitudService, IngresarSolicitudService } from "../../Services/VacationApp/ModificarSolicitud.service.js";
+import { actualizarEstadoSolicitudService, IngresarSolicitudService } from "../../services/vacationapp/modificarsolicitud.service.js";
 
 
 export const IngresarSolicitudController = async (req, res) => {
