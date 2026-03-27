@@ -1,21 +1,12 @@
-import nodemailer from "nodemailer";
+import { resend, FROM_EMAIL } from "./transporter.js";
 
 export const EnviarMailServices = async (data) => {
-  // Configuración del transporter (puedes ajustar esto según tus necesidades)
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "gestionesrrhhiga@gmail.com",
-      pass: "puxxrvicwdybfgkd",
-    },
-  });
-
-  // Detalles del correo electrónico
-  const mailOptions = {
-    from: "gestionesrrhhiga@gmail.com",
-    to: data.correo,
-    subject: "Credenciales de Acceso - Consejo Nacional de Adopciones",
-    html: `
+  try {
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.correo,
+      subject: "Credenciales de Acceso - Consejo Nacional de Adopciones",
+      html: `
     <!DOCTYPE html>
     <html lang="es">
     <head>
@@ -66,15 +57,12 @@ export const EnviarMailServices = async (data) => {
     </body>
     </html>
     `,
-  };
+    });
 
-  // Enviar el correo electrónico
-  try{
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Correo electrónico enviado: " + info.response);
-    return info.response;
-  }catch(error){
-    console.error(error);
+    console.log("Correo electrónico enviado via Resend:", response);
+    return response;
+  } catch (error) {
+    console.error("Error enviando correo via Resend:", error);
     return error;
   }
-}
+};

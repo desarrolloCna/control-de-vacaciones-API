@@ -1,32 +1,31 @@
-import { transporter } from "./transporter.js";
+import { resend, FROM_EMAIL } from "./transporter.js";
 
 export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, bufferPDF) => {
-  const estadoTexto = data.estadoSolicitud?.toLowerCase() === "autorizadas" ? "Autorizadas" : "Rechazadas"
-  // Detalles del correo electrónico
-  const mailOptions = {
-    from: "gestionesrrhhiga@gmail.com",
-    to: data.correoPersonal,
-    subject: `Vacaciones ${estadoTexto}  no-replay`,
-    html: plantiila,
-    // Incluir adjunto solo si bufferPDF no es null
-    attachments: bufferPDF
-      ? [
-          {
-            filename: `slvc_${data.idSolicitud}_solicitud_vacaciones.pdf`,
-            content: bufferPDF,
-            contentType: "application/pdf",
-          },
-        ]
-      : [],
-  };
+  const estadoTexto = data.estadoSolicitud?.toLowerCase() === "autorizadas" ? "Autorizadas" : "Rechazadas";
 
-  // Enviar el correo electrónico
-  try{
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Correo electrónico enviado: " + info.response);
-    return info.response;
-  }catch(error){
-    console.error(error);
+  // Construir adjuntos solo si hay PDF
+  const attachments = bufferPDF
+    ? [
+        {
+          filename: `slvc_${data.idSolicitud}_solicitud_vacaciones.pdf`,
+          content: bufferPDF.toString("base64"),
+        },
+      ]
+    : [];
+
+  try {
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.correoPersonal,
+      subject: `Vacaciones ${estadoTexto} - no-reply`,
+      html: plantiila,
+      attachments,
+    });
+
+    console.log("Correo de autorización enviado via Resend:", response);
+    return response;
+  } catch (error) {
+    console.error("Error enviando correo de autorización via Resend:", error);
     return error;
   }
 };
@@ -36,28 +35,29 @@ export const EnviarMailSolicitudDeVacaciones = async (
   plantiila,
   bufferPDF
 ) => {
-  // Detalles del correo electrónico
-  const mailOptions = {
-    from: "gestionesrrhhiga@gmail.com",
-    to: data.correoCoordinador,
-    subject: "Solicitud de vacaciones no-replay",
-    html: plantiila,
-    attachments: [
-      {
-        filename: `slvc_${data.idSolicitud}_solicitud_vacaciones.pdf`,
-        content: bufferPDF,
-        contentType: "application/pdf",
-      },
-    ],
-  };
+  // Construir adjuntos
+  const attachments = bufferPDF
+    ? [
+        {
+          filename: `slvc_${data.idSolicitud}_solicitud_vacaciones.pdf`,
+          content: bufferPDF.toString("base64"),
+        },
+      ]
+    : [];
 
-  // Enviar el correo electrónico
-  try{
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Correo electrónico enviado: " + info.response);
-    return info.response;
-  }catch(error){
-    console.error(error);
+  try {
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.correoCoordinador,
+      subject: "Solicitud de vacaciones - no-reply",
+      html: plantiila,
+      attachments,
+    });
+
+    console.log("Correo de solicitud enviado via Resend:", response);
+    return response;
+  } catch (error) {
+    console.error("Error enviando correo de solicitud via Resend:", error);
     return error;
-  } 
+  }
 };
