@@ -14,7 +14,9 @@ export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, buffer
     : [];
 
   try {
-    const response = await resend.emails.send({
+    console.log(`[EMAIL] Enviando correo autorización a: ${data.correoPersonal}, desde: ${FROM_EMAIL}`);
+    
+    const { data: responseData, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: data.correoPersonal,
       subject: `Vacaciones ${estadoTexto} - no-reply`,
@@ -22,11 +24,16 @@ export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, buffer
       attachments,
     });
 
-    console.log("Correo de autorización enviado via Resend:", response);
-    return response;
+    if (error) {
+      console.error("[EMAIL] ❌ Error de Resend:", JSON.stringify(error));
+      return { error: error.message || "Error al enviar correo" };
+    }
+
+    console.log("[EMAIL] ✅ Correo enviado exitosamente. ID:", responseData?.id);
+    return responseData;
   } catch (error) {
-    console.error("Error enviando correo de autorización via Resend:", error);
-    return error;
+    console.error("[EMAIL] ❌ Excepción al enviar correo:", error);
+    return { error: error.message || "Error inesperado" };
   }
 };
 
@@ -46,7 +53,9 @@ export const EnviarMailSolicitudDeVacaciones = async (
     : [];
 
   try {
-    const response = await resend.emails.send({
+    console.log(`[EMAIL] Enviando correo solicitud a: ${data.correoCoordinador}, desde: ${FROM_EMAIL}`);
+    
+    const { data: responseData, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: data.correoCoordinador,
       subject: "Solicitud de vacaciones - no-reply",
@@ -54,10 +63,15 @@ export const EnviarMailSolicitudDeVacaciones = async (
       attachments,
     });
 
-    console.log("Correo de solicitud enviado via Resend:", response);
-    return response;
+    if (error) {
+      console.error("[EMAIL] ❌ Error de Resend:", JSON.stringify(error));
+      return { error: error.message || "Error al enviar correo" };
+    }
+
+    console.log("[EMAIL] ✅ Correo enviado exitosamente. ID:", responseData?.id);
+    return responseData;
   } catch (error) {
-    console.error("Error enviando correo de solicitud via Resend:", error);
-    return error;
+    console.error("[EMAIL] ❌ Excepción al enviar correo:", error);
+    return { error: error.message || "Error inesperado" };
   }
 };
