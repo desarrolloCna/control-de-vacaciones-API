@@ -6,6 +6,10 @@ import "dotenv/config";
 // ============================================================
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Diagnóstico: verificar que la API Key está cargada
+console.log("[RESEND] API Key configurada:", process.env.RESEND_API_KEY ? `${process.env.RESEND_API_KEY.substring(0, 8)}...` : "⚠️ NO CONFIGURADA");
+console.log("[RESEND] FROM_EMAIL:", process.env.FROM_EMAIL || "onboarding@resend.dev (default)");
+
 // Email remitente (usar onboarding@resend.dev en plan gratuito)
 export const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
 

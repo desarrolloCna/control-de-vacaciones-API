@@ -10,10 +10,7 @@ export const obtenerNivelEducativoInfoDao = async (idInfoPersonal) => {
     const result = await Connection.execute(query, [idInfoPersonal]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTE EMPLEADO CON EL ID INGRESADO",
-      };
+      return null; // No hay registro de nivel educativo, pero no es un error
     } else {
       return result.rows[0];
     }
