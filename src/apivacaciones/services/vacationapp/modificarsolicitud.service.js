@@ -38,7 +38,22 @@ export const IngresarSolicitudService = async (data) => {
         tipo: "nueva_solicitud", 
         enlace: "/empleados/programar-vacaciones"
       });
-    } catch (err) { }
+
+      // Notificar al coordinador via campanita In-App
+      const solicitudDB = await getSolicitudesByIdSolcitudDao(idSolicitud, data.idEmpleado);
+      if (solicitudDB && solicitudDB.idCoordinador) {
+        const coordinadorInfo = await consultarCoordinadorService(solicitudDB.idCoordinador);
+        if (coordinadorInfo && coordinadorInfo.idEMpleado) {
+          await crearNotificacionDao({
+            idEmpleado: coordinadorInfo.idEMpleado, 
+            titulo: "Nueva Solicitud Recibida 📬", 
+            mensaje: "Tienes una nueva solicitud de vacaciones pendiente de autorizar.", 
+            tipo: "nueva_solicitud", 
+            enlace: "/coordinador/solicitudes"
+          });
+        }
+      }
+    } catch (err) { console.log("Error creando notificacion al ingresar:", err.message); }
 
     // Notificar de la solicitud ingresada via Correo al coordinador de la unidad
     await notificarSolicitudVacacionesIngresada(data);
@@ -100,6 +115,19 @@ export const actualizarEstadoSolicitudService = async (data) => {
 
     // Integrar datos priorizando la información de la base de datos sobre el payload
     const solicitudCompleta = {...data, ...coordinador, ...solicitud};
+
+    try {
+      // Notificar al coordinador de su acción
+      if (coordinador && coordinador.idEMpleado) {
+        await crearNotificacionDao({
+          idEmpleado: coordinador.idEMpleado, 
+          titulo: data.estadoSolicitud === "autorizadas" ? "Solicitud Autorizada ✅" : "Solicitud Rechazada ❌", 
+          mensaje: `Has ${data.estadoSolicitud} la solicitud de vacaciones exitosamente.`, 
+          tipo: "cambio_estado", 
+          enlace: "/coordinador/solicitudes"
+        });
+      }
+    } catch (err) { console.log("Error creando notificacion in-app a coordinador:", err.message); }
 
     //Generar pdf de la autorizacion
     if(data.estadoSolicitud === "autorizadas"){
