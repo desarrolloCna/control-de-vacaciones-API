@@ -1,27 +1,22 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import "dotenv/config";
 
 // ============================================================
-// RESEND (Para producción en Vercel - usa HTTP, no SMTP)
+// NODEMAILER + Gmail (App Password)
+// Funciona tanto en local como en Vercel
 // ============================================================
-export const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Diagnóstico: verificar que la API Key está cargada
-console.log("[RESEND] API Key configurada:", process.env.RESEND_API_KEY ? `${process.env.RESEND_API_KEY.substring(0, 8)}...` : "⚠️ NO CONFIGURADA");
-console.log("[RESEND] FROM_EMAIL:", process.env.FROM_EMAIL || "onboarding@resend.dev (default)");
+export const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
-// Email remitente (usar onboarding@resend.dev en plan gratuito)
-export const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
+// Email remitente
+export const FROM_EMAIL = process.env.GMAIL_USER || "cnadesarrollo@gmail.com";
 
-// ============================================================
-// NODEMAILER (Para pruebas locales - usa SMTP, NO funciona en Vercel)
-// Descomentar las líneas de abajo si necesitas probar en localhost
-// ============================================================
-// import nodemailer from "nodemailer";
-// export const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//       user: "gestionesrrhhiga@gmail.com",
-//       pass: "puxxrvicwdybfgkd",
-//     },
-//   });
+// Diagnóstico
+console.log("[GMAIL] Usuario:", process.env.GMAIL_USER || "⚠️ NO CONFIGURADO");
+console.log("[GMAIL] App Password:", process.env.GMAIL_APP_PASSWORD ? "✅ Configurada" : "⚠️ NO CONFIGURADA");

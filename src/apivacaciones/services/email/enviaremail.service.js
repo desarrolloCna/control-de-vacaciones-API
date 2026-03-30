@@ -1,9 +1,9 @@
-import { resend, FROM_EMAIL } from "./transporter.js";
+import { transporter, FROM_EMAIL } from "./transporter.js";
 
 export const EnviarMailServices = async (data) => {
   try {
-    const response = await resend.emails.send({
-      from: FROM_EMAIL,
+    const info = await transporter.sendMail({
+      from: `"Consejo Nacional de Adopciones" <${FROM_EMAIL}>`,
       to: data.correo,
       subject: "Credenciales de Acceso - Consejo Nacional de Adopciones",
       html: `
@@ -59,10 +59,10 @@ export const EnviarMailServices = async (data) => {
     `,
     });
 
-    console.log("Correo electrónico enviado via Resend:", response);
-    return response;
+    console.log("[EMAIL] ✅ Correo de credenciales enviado. ID:", info.messageId);
+    return info;
   } catch (error) {
-    console.error("Error enviando correo via Resend:", error);
+    console.error("[EMAIL] ❌ Error enviando correo de credenciales:", error);
     return error;
   }
 };

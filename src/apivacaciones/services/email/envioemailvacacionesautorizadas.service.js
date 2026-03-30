@@ -1,4 +1,4 @@
-import { resend, FROM_EMAIL } from "./transporter.js";
+import { transporter, FROM_EMAIL } from "./transporter.js";
 
 export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, bufferPDF) => {
   const estadoTexto = data.estadoSolicitud?.toLowerCase() === "autorizadas" ? "Autorizadas" : "Rechazadas";
@@ -8,31 +8,26 @@ export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, buffer
     ? [
         {
           filename: `slvc_${data.idSolicitud}_solicitud_vacaciones.pdf`,
-          content: bufferPDF.toString("base64"),
+          content: bufferPDF,
         },
       ]
     : [];
 
   try {
     console.log(`[EMAIL] Enviando correo autorización a: ${data.correoPersonal}, desde: ${FROM_EMAIL}`);
-    
-    const { data: responseData, error } = await resend.emails.send({
-      from: FROM_EMAIL,
+
+    const info = await transporter.sendMail({
+      from: `"Consejo Nacional de Adopciones" <${FROM_EMAIL}>`,
       to: data.correoPersonal,
       subject: `Vacaciones ${estadoTexto} - no-reply`,
       html: plantiila,
       attachments,
     });
 
-    if (error) {
-      console.error("[EMAIL] ❌ Error de Resend:", JSON.stringify(error));
-      return { error: error.message || "Error al enviar correo" };
-    }
-
-    console.log("[EMAIL] ✅ Correo enviado exitosamente. ID:", responseData?.id);
-    return responseData;
+    console.log("[EMAIL] ✅ Correo enviado exitosamente. ID:", info.messageId);
+    return info;
   } catch (error) {
-    console.error("[EMAIL] ❌ Excepción al enviar correo:", error);
+    console.error("[EMAIL] ❌ Error al enviar correo:", error);
     return { error: error.message || "Error inesperado" };
   }
 };
@@ -47,31 +42,26 @@ export const EnviarMailSolicitudDeVacaciones = async (
     ? [
         {
           filename: `slvc_${data.idSolicitud}_solicitud_vacaciones.pdf`,
-          content: bufferPDF.toString("base64"),
+          content: bufferPDF,
         },
       ]
     : [];
 
   try {
     console.log(`[EMAIL] Enviando correo solicitud a: ${data.correoCoordinador}, desde: ${FROM_EMAIL}`);
-    
-    const { data: responseData, error } = await resend.emails.send({
-      from: FROM_EMAIL,
+
+    const info = await transporter.sendMail({
+      from: `"Consejo Nacional de Adopciones" <${FROM_EMAIL}>`,
       to: data.correoCoordinador,
       subject: "Solicitud de vacaciones - no-reply",
       html: plantiila,
       attachments,
     });
 
-    if (error) {
-      console.error("[EMAIL] ❌ Error de Resend:", JSON.stringify(error));
-      return { error: error.message || "Error al enviar correo" };
-    }
-
-    console.log("[EMAIL] ✅ Correo enviado exitosamente. ID:", responseData?.id);
-    return responseData;
+    console.log("[EMAIL] ✅ Correo enviado exitosamente. ID:", info.messageId);
+    return info;
   } catch (error) {
-    console.error("[EMAIL] ❌ Excepción al enviar correo:", error);
+    console.error("[EMAIL] ❌ Error al enviar correo:", error);
     return { error: error.message || "Error inesperado" };
   }
 };
