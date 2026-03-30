@@ -47,7 +47,7 @@ export const IngresarSolicitudService = async (data) => {
           await crearNotificacionDao({
             idEmpleado: coordinadorInfo.idEMpleado, 
             titulo: "Nueva Solicitud Recibida 📬", 
-            mensaje: "Tienes una nueva solicitud de vacaciones pendiente de autorizar.", 
+            mensaje: "Tienes una solicitud de vacaciones de " + solicitudDB.nombreCompleto + " pendiente de autorizar.", 
             tipo: "nueva_solicitud", 
             enlace: "/coordinador/solicitudes"
           });

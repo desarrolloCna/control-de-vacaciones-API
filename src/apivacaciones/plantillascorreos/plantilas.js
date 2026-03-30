@@ -138,3 +138,55 @@ export const GenerarPlantillasCorreos = (plantilla, data) => {
       return "Opción inválida";
   }
 };
+
+export const PlantillaNotificacionReprogramacionRRHH = (nombreCompleto, fechaInicioVacaciones, fechaFinVacaciones, motivoReprogramacion) => {
+  const html = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .header { background-color: #EF4444; color: white; padding: 30px 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
+        .content { padding: 40px 30px; }
+        .content h2 { margin-top: 0; color: #111827; font-size: 20px; text-align: center; }
+        .greeting { font-size: 16px; margin-bottom: 20px; }
+        .info-card { background-color: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 6px; padding: 20px; margin-bottom: 30px; }
+        .info-item { margin-bottom: 15px; }
+        .info-item:last-child { margin-bottom: 0; }
+        .info-label { font-size: 14px; font-weight: 600; color: #EF4444; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-value { font-size: 16px; font-weight: 500; color: #111827; }
+        .footer { background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>AVISO URGENTE ⚠️</h1>
+        </div>
+        <div class="content">
+          <h2>Reprogramación de Vacaciones</h2>
+          <p class="greeting">Estimado(a) <strong>${nombreCompleto}</strong>,</p>
+          <p>La unidad de Recursos Humanos ha requerido que tus vacaciones aprobadas del periodo <strong>${fechaInicioVacaciones} al ${fechaFinVacaciones}</strong> sean devueltas al estatus de Reprogramación de Vacaciones.</p>
+          
+          <div class="info-card">
+            <div class="info-item">
+              <div class="info-label">Motivo de Reprogramación:</div>
+              <div class="info-value" style="font-style: italic;">"${motivoReprogramacion}"</div>
+            </div>
+          </div>
+          <p>Tus días debitados regresarán a tu saldo. Por favor, comunícate con tu jefatura inmediata o directamente con la Unidad de Recursos Humanos para mayor información.</p>
+        </div>
+        <div class="footer">
+          <p>Generado automáticamente por el Sistema de Control de Vacaciones del Consejo Nacional de Adopciones.</p>
+          <p>UTICS - Extensión 105</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+  return html;
+};

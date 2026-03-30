@@ -19,8 +19,8 @@ export const consultarSolicitudesVacacionesAutorizadasController = async (req, r
 
 export const cancelarSolicitudAutorizadaController = async (req, res) => {
     try {
-        const { idSolicitud, fechaResolucion, idUsuarioSession, usuarioSession } = req.body;
-        const result = await cancelarSolicitudAutorizadaService(idSolicitud, fechaResolucion, idUsuarioSession, usuarioSession);
+        const { idSolicitud, fechaResolucion, motivoReprogramacion, idUsuarioSession, usuarioSession } = req.body;
+        const result = await cancelarSolicitudAutorizadaService(idSolicitud, fechaResolucion, motivoReprogramacion, idUsuarioSession, usuarioSession);
         const responseData = {
             status: 200,
             message: "Solicitud cancelada correctamente",

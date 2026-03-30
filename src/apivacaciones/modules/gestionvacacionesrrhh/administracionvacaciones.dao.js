@@ -22,13 +22,19 @@ export const consultarSolicitudesVacacionesAutorizadasDao = async () => {
     }
 }
 
-export const cancelarSolicitudAutorizadaDaDao = async (idSolicitud, fechaResolucion, idUsuarioSession, usuarioSession) => {
+export const cancelarSolicitudAutorizadaDaDao = async (idSolicitud, fechaResolucion, motivoReprogramacion, idUsuarioSession, usuarioSession) => {
     try{
-        const query = `update solicitudes_vacaciones set estadoSolicitud = 'cancelada', 
-                        descripcionRechazo = 'Solicitud cancelada por RRHH',                 
+        // 1. Delete debited days in historial_vacaciones so the user gets their days refunded
+        const queryDeleteHistorial = `DELETE FROM historial_vacaciones WHERE idSolicitud = ? AND diasDebitados > 0`;
+        await Connection.execute(queryDeleteHistorial, [idSolicitud]);
+
+        // 2. Update status to 'reprogramacion' and store the reason
+        const query = `update solicitudes_vacaciones set estadoSolicitud = 'reprogramacion', 
+                        descripcionRechazo = ?,                 
                         fechaResolucion = ?
                         where idSolicitud = ?`;
         const result = await Connection.execute(query, [
+            motivoReprogramacion,
             fechaResolucion, 
             idSolicitud]);
 
@@ -40,8 +46,8 @@ export const cancelarSolicitudAutorizadaDaDao = async (idSolicitud, fechaResoluc
             tabla: 'solicitudes_vacaciones',
             idRegistroAfectado: idSolicitud,
             detallesAnteriores: { estadoSolicitud: 'autorizadas' },
-            detallesNuevos: { estadoSolicitud: 'cancelada', descripcionRechazo: 'Solicitud cancelada por RRHH', fechaResolucion },
-            descripcion: `Se canceló y reprogramó la solicitud de vacaciones autorizada ID: ${idSolicitud}`
+            detallesNuevos: { estadoSolicitud: 'reprogramacion', descripcionRechazo: motivoReprogramacion, fechaResolucion },
+            descripcion: `Se canceló y reprogramó la solicitud de vacaciones autorizada ID: ${idSolicitud} por motivo: ${motivoReprogramacion}`
         });
 
         return result.rows[0];
