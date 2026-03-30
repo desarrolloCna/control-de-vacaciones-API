@@ -31,7 +31,7 @@ export const getSolicitudesByIdDao = async (idEmpleado, idInfoPersonal) => {
 export const getSolicitudesByIdSolcitudDao = async (idSolicitud, idEmpleado) => {
   try {
     const query = `SELECT sl.idSolicitud, (inf.primerNombre || ' ' || inf.segundoNombre || 
-                  ' ' || inf.primerApellido || ' ' || inf.segundoApellido) AS nombreCompleto, inf.correoPersonal,
+                  ' ' || inf.primerApellido || ' ' || inf.segundoApellido) AS nombreCompleto, emp.correoInstitucional,
                   emp.puesto, emp.fechaIngreso, emp.renglon, sl.unidadSolicitud, sl.cantidadDiasSolicitados, sl.fechaInicioVacaciones, 
                   sl.fechaFinVacaciones, sl.fechaRetornoLabores, sl.idCoordinador, sl.correlativo, sl.fechaSolicitud, sl.estadoSolicitud
                   FROM solicitudes_vacaciones sl, infoPersonalEmpleados inf, empleados emp

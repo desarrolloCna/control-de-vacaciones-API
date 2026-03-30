@@ -113,7 +113,7 @@ const PlantillaNotificacionSolicitudACoordinador = (data) => {
 
           <p>Para gestionar esta solicitud, por favor ingrese al portal administrativo:</p>
           <div class="btn-container">
-            <a href="https://administracioncna.vercel.app/" class="btn" style="background-color: #4F46E5;">Ir al Panel de Gestión</a>
+            <a href="https://control-de-vacaciones-front.vercel.app/" class="btn" style="background-color: #4F46E5;">Ir al Panel de Gestión</a>
           </div>
         </div>
         <div class="footer">

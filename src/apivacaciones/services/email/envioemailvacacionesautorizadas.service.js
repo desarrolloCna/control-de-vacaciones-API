@@ -14,11 +14,11 @@ export const EnviarMailAutorizacionDeVacaciones = async (data, plantiila, buffer
     : [];
 
   try {
-    console.log(`[EMAIL] Enviando correo autorización a: ${data.correoPersonal}, desde: ${FROM_EMAIL}`);
+    console.log(`[EMAIL] Enviando correo autorización a: ${data.correoInstitucional}, desde: ${FROM_EMAIL}`);
 
     const info = await transporter.sendMail({
       from: `"Consejo Nacional de Adopciones" <${FROM_EMAIL}>`,
-      to: data.correoPersonal,
+      to: data.correoInstitucional,
       subject: `Vacaciones ${estadoTexto} - no-reply`,
       html: plantiila,
       attachments,
