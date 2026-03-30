@@ -184,3 +184,85 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
     doc.end();
   });
 };
+
+export const generateFiniquitoPDF = async (employeeData, periodo) => {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({ margin: 50, size: 'LETTER' });
+    const chunks = [];
+    doc.on("data", chunk => chunks.push(chunk));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", err => reject(err));
+
+    const primaryColor = "#4F46E5";
+    const secondaryColor = "#444444";
+    const lightGray = "#f8f9fa";
+
+    // Logo
+    const logoPath = path.join(__dirname, "..", "..", "..", "assets", "image.png");
+    try { doc.image(logoPath, 50, 45, { width: 50 }); } catch (err) { }
+
+    // Header
+    doc.font("Helvetica-Bold").fontSize(14).fillColor(primaryColor)
+      .text("CONSEJO NACIONAL DE ADOPCIONES", 0, 50, { align: "center", width: doc.page.width });
+    doc.fontSize(11).fillColor(secondaryColor)
+      .text("UNIDAD DE RECURSOS HUMANOS", 0, 68, { align: "center", width: doc.page.width });
+    doc.fontSize(12).fillColor(primaryColor)
+      .text(`CONSTANCIA DE FINIQUITO VACACIONAL - PERÍODO ${periodo}`, 0, 95, { align: "center", width: doc.page.width });
+
+    doc.moveTo(50, 115).lineTo(562, 115).lineWidth(1.5).strokeColor(primaryColor).stroke();
+
+    // Date
+    doc.fillColor("#000000").font("Helvetica").fontSize(10)
+      .text(`Guatemala, ${dayjs().format('DD/MM/YYYY')}`, 50, 125, { align: "right", width: 512 });
+
+    let currentY = 150;
+    doc.rect(50, currentY, 512, 18).fill(primaryColor);
+    doc.fillColor("#ffffff").font("Helvetica-Bold").fontSize(10).text("DATOS DEL COLABORADOR", 60, currentY + 4);
+    
+    currentY += 25;
+    doc.rect(50, currentY, 512, 60).fillColor(lightGray).fill();
+    doc.rect(50, currentY, 512, 60).strokeColor("#dddddd").lineWidth(0.5).stroke();
+    
+    doc.fillColor("#000000").fontSize(10);
+    const drawRow = (label, value, x, y, width) => {
+        doc.font("Helvetica-Bold").text(label, x, y, { continued: true });
+        doc.font("Helvetica").text(value || "—", { width: width });
+    };
+
+    drawRow("Nombre Completo: ", employeeData.Nombre || employeeData.primerNombre + " " + (employeeData.primerApellido || ""), 70, currentY + 10, 400);
+    drawRow("Puesto Actual: ", employeeData.puesto, 70, currentY + 25, 400);
+    drawRow("Ubicación Funcional: ", employeeData.unidad || employeeData.nombreUnidad, 70, currentY + 40, 450);
+
+    currentY += 85;
+
+    doc.font("Helvetica").fontSize(11).fillColor("#333333")
+      .text("La Unidad de Recursos Humanos hace constar, para los efectos legales y de auditoría correspondientes, que el colaborador mencionado ha agotado de manera total su derecho a días de asueto correspondientes a las vacaciones del período ", 50, currentY, { width: 512, align: 'justify', continued: true })
+      .font("Helvetica-Bold").fillColor(primaryColor)
+      .text(`${periodo}`, { continued: true })
+      .font("Helvetica").fillColor("#333333")
+      .text(". Por consiguiente, el saldo contable e histórico para dicho período se oficializa en 0 días efectivos a partir de esta fecha.");
+
+    currentY += 60;
+    doc.font("Helvetica").fontSize(11).text("Este documento sirve como descargo de responsabilidad y constancia de cierre de período anual.", 50, currentY, { width: 512, align: 'justify' });
+
+    currentY += 120;
+    const colWidth = 220;
+    const col2X = 330;
+    doc.moveTo(col2X, currentY).lineTo(col2X + colWidth, currentY).strokeColor("#000").lineWidth(1).stroke();
+    
+    currentY += 8;
+    doc.font("Helvetica-Bold").fontSize(9).fillColor("#000");
+    doc.text("UNIDAD DE RECURSOS HUMANOS", col2X, currentY, { width: colWidth, align: "center" });
+
+    currentY += 12;
+    doc.font("Helvetica").fontSize(8).fillColor("#666");
+    doc.text("Consejo Nacional de Adopciones", col2X, currentY, { width: colWidth, align: "center" });
+
+    const footerY = 720;
+    doc.moveTo(50, footerY).lineTo(562, footerY).lineWidth(0.5).strokeColor("#eeeeee").stroke();
+    doc.fillColor("#999").fontSize(8).font("Helvetica-Oblique")
+      .text("Documento generado automáticamente por CNA Sistema", 0, footerY + 10, { align: "center", width: doc.page.width });
+    
+    doc.end();
+  });
+};

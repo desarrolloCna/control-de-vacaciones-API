@@ -5,6 +5,7 @@ import { consultarDiasSolicitadosPorAnioController, getSolicitudesController } f
 import { actualizarSaldoManualController, acreditarDiasPorPeriodoController, debitarDiasPorPeriodoController } from "../../controller/vacationapp/hisotoriavacaciones/controldedias.controller.js";
 import {  consultarDiasDebitadosPorAnioController, consultarDiasDisponiblesController, obtenerHistorialPorEmpleadoController } from "../../controller/vacationapp/hisotoriavacaciones/consultashistorial.controller.js";
 import { descargarPDFController } from "../../controller/vacationapp/descargarpdf.controller.js";
+import { descargarFiniquitoController } from "../../controller/vacationapp/finiquitos.controller.js";
 
 export const VacationAppRoute = Router();
 
@@ -22,3 +23,4 @@ VacationAppRoute.get('/consultarDiasDebitadosPorAnio', consultarDiasDebitadosPor
 VacationAppRoute.get('/consultarDiasDisponibles', consultarDiasDisponiblesController);
 VacationAppRoute.get('/consultarSolicitudesPorEmpleado', consultarSolicitudesPorEmpleadoController);
 VacationAppRoute.get('/descargarInformePDF/:idSolicitud/:idEmpleado', descargarPDFController);
+VacationAppRoute.get('/descargarFiniquito/:idEmpleado/:periodo', descargarFiniquitoController);
