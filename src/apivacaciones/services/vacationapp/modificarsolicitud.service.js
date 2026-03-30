@@ -31,7 +31,13 @@ export const IngresarSolicitudService = async (data) => {
     data.idSolicitud = idSolicitud;
 
     try {
-      await crearNotificacionDao(data.idEmpleado, "Solicitud Enviada 📤", "Tu solicitud fue enviada correctamente a tu Coordinador.", "nueva_solicitud", "/empleados/programar-vacaciones");
+      await crearNotificacionDao({
+        idEmpleado: data.idEmpleado, 
+        titulo: "Solicitud Enviada 📤", 
+        mensaje: "Tu solicitud fue enviada correctamente a tu Coordinador.", 
+        tipo: "nueva_solicitud", 
+        enlace: "/empleados/programar-vacaciones"
+      });
     } catch (err) { }
 
     // Notificar de la solicitud ingresada via Correo al coordinador de la unidad
@@ -75,7 +81,13 @@ export const actualizarEstadoSolicitudService = async (data) => {
     }
     // No bloqueamos el flujo si la notificación falla
     try {
-      await crearNotificacionDao(data.idEmpleado, tituloNotif, mensajeNotif, "cambio_estado", "/empleados/programar-vacaciones");
+      await crearNotificacionDao({
+        idEmpleado: data.idEmpleado, 
+        titulo: tituloNotif, 
+        mensaje: mensajeNotif, 
+        tipo: "cambio_estado", 
+        enlace: "/empleados/programar-vacaciones"
+      });
     } catch (err) {
       console.log("Error creando notificacion in-app:", err.message);
     }
@@ -86,7 +98,8 @@ export const actualizarEstadoSolicitudService = async (data) => {
     //Consultar Datos coordinador
     const coordinador = await consultarCoordinadorService(solicitud.idCoordinador);
 
-    const solicitudCompleta = {...solicitud, ...coordinador, ...data}
+    // Integrar datos priorizando la información de la base de datos sobre el payload
+    const solicitudCompleta = {...data, ...coordinador, ...solicitud};
 
     //Generar pdf de la autorizacion
     if(data.estadoSolicitud === "autorizadas"){
