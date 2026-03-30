@@ -236,32 +236,55 @@ export const generateFiniquitoPDF = async (employeeData, periodo) => {
     currentY += 85;
 
     doc.font("Helvetica").fontSize(11).fillColor("#333333")
-      .text("La Unidad de Recursos Humanos hace constar, para los efectos legales y de auditoría correspondientes, que el colaborador mencionado ha agotado de manera total su derecho a días de asueto correspondientes a las vacaciones del período ", 50, currentY, { width: 512, align: 'justify', continued: true })
+      .text("La Unidad de Recursos Humanos hace constar, para los efectos legales y de auditoría correspondientes, que el colaborador mencionado ha agotado de manera total sus días disponibles correspondientes a las vacaciones del período ", 50, currentY, { width: 512, align: 'justify', continued: true })
       .font("Helvetica-Bold").fillColor(primaryColor)
       .text(`${periodo}`, { continued: true })
       .font("Helvetica").fillColor("#333333")
       .text(". Por consiguiente, el saldo contable e histórico para dicho período se oficializa en 0 días efectivos a partir de esta fecha.");
 
-    currentY += 60;
-    doc.font("Helvetica").fontSize(11).text("Este documento sirve como descargo de responsabilidad y constancia de cierre de período anual.", 50, currentY, { width: 512, align: 'justify' });
+    currentY = doc.y + 20;
+    doc.font("Helvetica").fontSize(11).fillColor("#333333")
+      .text("El presente documento sirve como constancia de cierre del período vacacional mencionado, para los registros institucionales y de auditoría correspondientes.", 50, currentY, { width: 512, align: 'justify' });
 
-    currentY += 120;
+    currentY = doc.y + 35;
+
+    /* =====================================================
+       FIRMA DEL COLABORADOR (izquierda)
+    ===================================================== */
     const colWidth = 220;
+    const col1X = 60;
     const col2X = 330;
-    doc.moveTo(col2X, currentY).lineTo(col2X + colWidth, currentY).strokeColor("#000").lineWidth(1).stroke();
-    
+
+    // Línea de firma del colaborador
+    doc.moveTo(col1X, currentY).lineTo(col1X + colWidth, currentY).strokeColor("#000").lineWidth(1).stroke();
+    // Línea de firma de RRHH
+    doc.moveTo(col2X, currentY).lineTo(col2X + colWidth, currentY).stroke();
+
     currentY += 8;
     doc.font("Helvetica-Bold").fontSize(9).fillColor("#000");
+    doc.text(employeeData.Nombre || "COLABORADOR", col1X, currentY, { width: colWidth, align: "center" });
     doc.text("UNIDAD DE RECURSOS HUMANOS", col2X, currentY, { width: colWidth, align: "center" });
 
     currentY += 12;
     doc.font("Helvetica").fontSize(8).fillColor("#666");
+    doc.text(employeeData.puesto || "Puesto", col1X, currentY, { width: colWidth, align: "center" });
     doc.text("Consejo Nacional de Adopciones", col2X, currentY, { width: colWidth, align: "center" });
 
+    currentY += 14;
+    doc.font("Helvetica-Oblique").fontSize(8).fillColor("#444");
+    doc.text("Manifiesto estar de acuerdo con la", col1X, currentY, { width: colWidth, align: "center" });
+    currentY += 10;
+    doc.text("información contenida en el presente", col1X, currentY, { width: colWidth, align: "center" });
+    currentY += 10;
+    doc.text("finiquito vacacional.", col1X, currentY, { width: colWidth, align: "center" });
+
+    /* =====================================================
+       FOOTER INSTITUCIONAL
+    ===================================================== */
     const footerY = 720;
     doc.moveTo(50, footerY).lineTo(562, footerY).lineWidth(0.5).strokeColor("#eeeeee").stroke();
-    doc.fillColor("#999").fontSize(8).font("Helvetica-Oblique")
-      .text("Documento generado automáticamente por CNA Sistema", 0, footerY + 10, { align: "center", width: doc.page.width });
+    doc.fillColor("#555").fontSize(8).font("Helvetica-Oblique")
+      .text("Presentar dicho finiquito a la Unidad de Recursos Humanos para su validación y sello correspondiente.", 0, footerY + 10, { align: "center", width: doc.page.width });
     
     doc.end();
   });
