@@ -1,11 +1,9 @@
-import { transporter } from "../../../config/nodemailer.config.js";
+import { transporter, FROM_EMAIL } from "../../../services/email/transporter.js";
 import { Connection } from "../../../dao/connection/conexionsqlite.dao.js";
 import { PlantillaNotificacionReprogramacionRRHH } from "../../../plantillascorreos/plantilas.js";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const FROM_EMAIL = process.env.GMAIL_USER || "gestionesrrhhiga@gmail.com";
 
 export const EnviarMailReprogramacionRRHH = async (idSolicitud, motivoReprogramacion) => {
   try {
