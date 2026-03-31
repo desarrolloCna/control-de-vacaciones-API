@@ -1,4 +1,5 @@
 import { Connection } from "../../dao/connection/conexionsqlite.dao.js";
+import bcrypt from "bcryptjs";
 
 // DAO interno auxiliar
 export const actualizarCelularDao = async (idEmpleado, nuevoCelular) => {
@@ -10,9 +11,11 @@ export const actualizarCelularDao = async (idEmpleado, nuevoCelular) => {
 };
 
 export const cambiarPasswordDao = async (idEmpleado, newPassword) => {
+  // Hashear la nueva contraseña antes de guardar
+  const hashedPass = await bcrypt.hash(newPassword, 10);
   const result = await Connection.execute(
     `UPDATE usuarios SET pass = ?, requiereCambioPass = 0 WHERE idEmpleado = ?`,
-    [newPassword, idEmpleado]
+    [hashedPass, idEmpleado]
   );
   return result.rowsAffected;
 };

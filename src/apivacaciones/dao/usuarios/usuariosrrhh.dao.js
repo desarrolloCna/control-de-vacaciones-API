@@ -1,4 +1,5 @@
 import { Connection } from '../connection/conexionsqlite.dao.js';
+import bcrypt from 'bcryptjs';
 
 export const UsuariosRRHHDao = {
     // Listar empleados con su información de usuario (filtrando por rol RRHH o sin usuario)
@@ -27,6 +28,8 @@ export const UsuariosRRHHDao = {
 
     // Crear un nuevo usuario RRHH
     crearUsuarioRRHH: async (idEmpleado, idRol, usuario, pass, permisos) => {
+        // Hashear la contraseña antes de guardar
+        const hashedPass = await bcrypt.hash(pass, 10);
         const query = `
             INSERT INTO usuarios (idEmpleado, idRol, usuario, pass, estadoUsuario, estado, requiereCambioPass, permisosModulos)
             VALUES (?, ?, ?, ?, 'A', 'A', 0, ?)
@@ -36,7 +39,7 @@ export const UsuariosRRHHDao = {
                 pass = excluded.pass,
                 permisosModulos = excluded.permisosModulos
         `;
-        const result = await Connection.execute(query, [idEmpleado, idRol, usuario, pass, permisos]);
+        const result = await Connection.execute(query, [idEmpleado, idRol, usuario, hashedPass, permisos]);
         return result;
     },
 

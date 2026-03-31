@@ -1,14 +1,18 @@
 import { Connection } from "../connection/conexionsqlite.dao.js";
+import bcrypt from "bcryptjs";
 
 export const CrearUsuarioDao = async (data) => {
     try {
         const query = "INSERT INTO usuarios (idEmpleado, idRol, usuario, pass) VALUES (?, ?, ?, ?);";
 
+        // Hashear la contraseña antes de guardar
+        const hashedPass = await bcrypt.hash(data.pass, 10);
+
         const result = await Connection.execute(query, [
             data.idEmpleado,
             data.idRol,
             data.user,
-            data.pass
+            hashedPass
         ]);
 
         return Number(result.lastInsertRowid);

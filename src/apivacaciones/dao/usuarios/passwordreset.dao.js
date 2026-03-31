@@ -1,4 +1,5 @@
 import { Connection } from "../connection/conexionsqlite.dao.js";
+import bcrypt from "bcryptjs";
 
 export const findUserByDpiOrUsernameDao = async (identifier) => {
     try {
@@ -21,12 +22,14 @@ export const findUserByDpiOrUsernameDao = async (identifier) => {
 
 export const updateTemporaryPasswordDao = async (idUsuario, tempPass) => {
     try {
+        // Hashear la contraseña temporal antes de guardar
+        const hashedPass = await bcrypt.hash(tempPass, 10);
         const query = `
             UPDATE usuarios 
             SET pass = ?, requiereCambioPass = 1 
             WHERE idUsuario = ?;
         `;
-        await Connection.execute(query, [tempPass, idUsuario]);
+        await Connection.execute(query, [hashedPass, idUsuario]);
         return true;
     } catch (error) {
         console.log("Error en updateTemporaryPasswordDao:", error);
