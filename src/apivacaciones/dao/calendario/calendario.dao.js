@@ -12,7 +12,7 @@ export const getVacacionesAutorizadasGlobalDao = async (unidad = null, idRol = n
         sl.estadoSolicitud,
         emp.puesto,
         emp.renglon,
-        (inf.primerNombre || ' ' || COALESCE(inf.segundoNombre, '') || ' ' || inf.primerApellido || ' ' || COALESCE(inf.segundoApellido, '')) AS nombreCompleto
+        (COALESCE(inf.primerNombre, '') || ' ' || COALESCE(inf.segundoNombre, '') || ' ' || COALESCE(inf.primerApellido, '') || ' ' || COALESCE(inf.segundoApellido, '')) AS nombreCompleto
       FROM solicitudes_vacaciones sl
       INNER JOIN infoPersonalEmpleados inf ON sl.idInfoPersonal = inf.idInfoPersonal
       INNER JOIN empleados emp ON sl.idEmpleado = emp.idEmpleado
