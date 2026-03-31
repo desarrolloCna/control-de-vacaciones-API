@@ -2,8 +2,12 @@ import { Router } from "express";
 import { registrarBitacoraController, obtenerBitacoraController } from "../controller/bitacora/bitacora.controller.js";
 import { BitacoraRestaurarController } from "../controller/bitacora/restaurar.controller.js";
 import { UsuariosRRHHController } from "../controller/usuarios/usuariosrrhh.controller.js";
+import { authorizeRole } from "../../middlewares/rolemiddleware.js";
 
 export const adminRoute = Router();
+
+// Middleware de rol: Solo Super Admin (rol 1)
+adminRoute.use(authorizeRole(1));
 
 // Bitacora
 adminRoute.get("/obtenerBitacora", obtenerBitacoraController);
