@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { calcularAniosPasados, formatDateToDisplay } from "../utils/dateutils.js";
 import dayjs from "dayjs";
+import { PDF_COLORS, PDF_INSTITUTION, PDF_FONTS, PDF_SIZES } from "./pdfBranding.config.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,10 +23,10 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", err => reject(err));
 
-    // Configuración de colores y estilo
-    const primaryColor = "#4F46E5"; 
-    const secondaryColor = "#444444";
-    const lightGray = "#f8f9fa";
+    // Configuración de colores y estilo (desde branding centralizado)
+    const primaryColor = PDF_COLORS.primary; 
+    const secondaryColor = PDF_COLORS.secondary;
+    const lightGray = PDF_COLORS.lightGray;
     const numeroBoleta = employeeData.correlativo || `CNA-URRHH-${employeeData.idSolicitud}`;
 
     /* =====================================================
@@ -193,9 +194,9 @@ export const generateFiniquitoPDF = async (employeeData, periodo) => {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", err => reject(err));
 
-    const primaryColor = "#4F46E5";
-    const secondaryColor = "#444444";
-    const lightGray = "#f8f9fa";
+    const primaryColor = PDF_COLORS.primary;
+    const secondaryColor = PDF_COLORS.secondary;
+    const lightGray = PDF_COLORS.lightGray;
 
     // Logo
     const logoPath = path.join(__dirname, "..", "..", "..", "assets", "image.png");
