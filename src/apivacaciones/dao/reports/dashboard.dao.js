@@ -2,7 +2,7 @@ import { Connection } from "../connection/conexionsqlite.dao.js";
 
 export const obtenerDatosDashboardDao = async () => {
     try {
-        // Obtenemos los estados
+        // 1. Distribución de estados
         const estadosRes = await Connection.execute(`
             SELECT estadoSolicitud, COUNT(*) as cantidad
             FROM solicitudes_vacaciones
@@ -10,26 +10,14 @@ export const obtenerDatosDashboardDao = async () => {
         `);
         const estadosData = estadosRes.rows;
 
-        let distribucionEstados = {
-            enviada: 0,
-            autorizadas: 0,
-            rechazada: 0,
-            finalizadas: 0,
-            reprogramacion: 0
-        };
-
+        let distribucionEstados = {};
         let totalSolicitudes = 0;
         let totalAutorizadas = 0;
 
         estadosData.forEach(row => {
             const estado = (row.estadoSolicitud || 'desconocido').toLowerCase();
-            if (distribucionEstados[estado] !== undefined) {
-                distribucionEstados[estado] += row.cantidad;
-            } else {
-                distribucionEstados[estado] = row.cantidad;
-            }
+            distribucionEstados[estado] = (distribucionEstados[estado] || 0) + row.cantidad;
             totalSolicitudes += row.cantidad;
-
             if (estado === 'autorizadas' || estado === 'finalizadas') {
                 totalAutorizadas += row.cantidad;
             }
@@ -39,22 +27,48 @@ export const obtenerDatosDashboardDao = async () => {
             ? Math.round((totalAutorizadas / totalSolicitudes) * 100) 
             : 0;
 
-        // Promedio de días solicitados
+        // 2. Promedio de días solicitados
         const promedioRes = await Connection.execute(`
             SELECT COALESCE(AVG(cantidadDiasSolicitados), 0) as promedio
             FROM solicitudes_vacaciones
         `);
-        const promedioData = promedioRes.rows;
+        const promedioDias = Math.round(Number(promedioRes.rows[0].promedio) * 10) / 10;
 
-        const promedioDias = Math.round(Number(promedioData[0].promedio) * 10) / 10;
+        // 3. Total empleados activos
+        const empRes = await Connection.execute(`
+            SELECT COUNT(*) as total FROM empleados WHERE estado = 'A'
+        `);
+        const totalEmpleados = empRes.rows[0]?.total || 0;
+
+        // 4. Solicitudes recientes (últimas 8)
+        const recientesRes = await Connection.execute(`
+            SELECT sv.idSolicitud, sv.correlativo, sv.estadoSolicitud, sv.cantidadDiasSolicitados,
+                   sv.fechaSolicitud, sv.fechaInicioVacaciones, sv.fechaFinVacaciones,
+                   (inf.primerNombre || ' ' || IFNULL(inf.segundoNombre, '') || ' ' || inf.primerApellido) AS nombreEmpleado
+            FROM solicitudes_vacaciones sv
+            JOIN empleados emp ON sv.idEmpleado = emp.idEmpleado
+            JOIN infoPersonalEmpleados inf ON emp.idInfoPersonal = inf.idInfoPersonal
+            ORDER BY sv.idSolicitud DESC
+            LIMIT 8
+        `);
+
+        // 5. Solicitudes este mes
+        const mesActualRes = await Connection.execute(`
+            SELECT COUNT(*) as total FROM solicitudes_vacaciones
+            WHERE strftime('%Y-%m', fechaSolicitud) = strftime('%Y-%m', 'now')
+        `);
+        const solicitudesMesActual = mesActualRes.rows[0]?.total || 0;
 
         return {
             distribucionEstados,
             kpis: {
-                totalMes: totalSolicitudes, // Nota: esto muestra globalmente, si se añade filtro por fecha en el futuro se hace acá
+                totalGlobal: totalSolicitudes,
+                totalMes: solicitudesMesActual,
                 tasaAprobacion,
-                promedioDias
-            }
+                promedioDias,
+                totalEmpleados
+            },
+            solicitudesRecientes: recientesRes.rows
         };
 
     } catch (error) {
