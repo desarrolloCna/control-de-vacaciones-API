@@ -54,7 +54,7 @@ export const getVacacionesAutorizadasGlobalDao = async (unidad = null, idRol = n
     
     query += ` ORDER BY sl.fechaInicioVacaciones DESC;`;
 
-    const result = await Connection.execute({ sql: query, args: args });
+    const result = await Connection.execute(query, args);
     return result.rows || [];
   } catch (error) {
     console.log("Error en getVacacionesAutorizadasGlobalDao:", error);
