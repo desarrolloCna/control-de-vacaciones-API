@@ -15,7 +15,7 @@ export const getVacacionesAutorizadasGlobalDao = async (unidad = null, idRol = n
         (inf.primerNombre || ' ' || COALESCE(inf.segundoNombre, '') || ' ' || inf.primerApellido || ' ' || COALESCE(inf.segundoApellido, '')) AS nombreCompleto
       FROM solicitudes_vacaciones sl
       INNER JOIN infoPersonalEmpleados inf ON sl.idInfoPersonal = inf.idInfoPersonal
-      INNER JOIN empleados emp ON inf.idInfoPersonal = emp.idInfoPersonal
+      INNER JOIN empleados emp ON sl.idEmpleado = emp.idEmpleado
       WHERE 1=1
     `;
     
