@@ -23,7 +23,7 @@ export const getVacacionesAutorizadasGlobalDao = async (unidad = null, idRol = n
 
     // Solo Director General y Subdirector General tienen acceso completo
     const isDirectorGeneral = 
-      puestoUsuario && (puestoUsuario.includes('Director General') || puestoUsuario.includes('Subdirector General'));
+      puestoUsuario && (puestoUsuario.toUpperCase().includes('DIRECTOR GENERAL') || puestoUsuario.toUpperCase().includes('SUBDIRECTOR GENERAL'));
 
     if (isDirectorGeneral) {
       // Director/Subdirector: Ven TODAS las solicitudes autorizadas de todos los empleados
