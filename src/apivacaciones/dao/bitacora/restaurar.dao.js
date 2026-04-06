@@ -22,7 +22,14 @@ export const BitacoraRestaurarDao = {
             'solicitudes_vacaciones': 'idSolicitud',
             'suspensiones': 'idSuspension',
             'dias_festivos': 'idDiasFestivos',
-            'usuarios': 'idUsuario'
+            'usuarios': 'idUsuario',
+            'historial_vacaciones': 'idHistorial',
+            'coordinadores': 'idCoordinador',
+            'datosMedicos': 'idDatoMedico',
+            'familiaresDeEmpleados': 'idFamiliar',
+            'nivelEducativo': 'idNivelEducativo',
+            'pertenenciaSociolinguistica': 'idPertenenciaSoLi',
+            'rolesUsuarios': 'idRol'
         };
 
         const pkName = pkMap[tabla];

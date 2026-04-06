@@ -28,10 +28,12 @@ import { setupSwagger } from "./docs/swagger.js";
 import frasesRoutes from "./apivacaciones/routes/utilidades/frases.routes.js";
 
 const app = express();
-app.use(helmet()); // Protecciones básicas HTTP
 
-// Protección CORS primero para evitar bloqueos falsos
+// Protección CORS primero para evitar bloqueos falsos ANTES que helmet
 app.use(cors());
+
+// Protecciones básicas HTTP (con crossOriginResourcePolicy apagado para evitar 403 falsos en llamadas de Vercel a la API)
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
 // Setup de Swagger (Documentación Interactiva)
 setupSwagger(app);
