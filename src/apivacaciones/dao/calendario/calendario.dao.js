@@ -16,35 +16,24 @@ export const getVacacionesAutorizadasGlobalDao = async (unidad = null, idRol = n
       FROM solicitudes_vacaciones sl
       INNER JOIN infoPersonalEmpleados inf ON sl.idInfoPersonal = inf.idInfoPersonal
       INNER JOIN empleados emp ON sl.idEmpleado = emp.idEmpleado
-      WHERE 1=1
+      WHERE sl.fechaFinVacaciones >= date('now', '-3 months')
     `;
     
     let args = [];
-    const rol = parseInt(idRol);
 
-    // Condicion combinada: Es director si es Rol 1/2 o si es Rol 5 con Puesto Gerencial.
-    const isDirectorOrAdmin = 
-      rol === 1 || 
-      rol === 2 || 
-      (rol === 5 && puestoUsuario && (puestoUsuario.includes('Director General') || puestoUsuario.includes('Subdirector General')));
+    // Solo Director General y Subdirector General tienen acceso completo
+    const isDirectorGeneral = 
+      puestoUsuario && (puestoUsuario.includes('Director General') || puestoUsuario.includes('Subdirector General'));
 
-    if (isDirectorOrAdmin) {
-      // Alta Gerencia / RRHH: Ven TODAS las autorizadas, opcionalmente filtradas
+    if (isDirectorGeneral) {
+      // Director/Subdirector: Ven TODAS las solicitudes autorizadas de todos los empleados
       query += ` AND sl.estadoSolicitud = 'autorizadas'`;
       if (unidad && unidad !== 'Todas') {
         query += ` AND sl.unidadSolicitud = ?`;
         args.push(unidad);
       }
-    } else if (rol === 5) {
-      // Coordinador (Rol 5): Ve autorizadas y pendientes de su unidad, OMITIENDO Director y Subdirector
-      query += ` AND sl.estadoSolicitud IN ('autorizadas', 'enviada')`;
-      query += ` AND emp.puesto NOT LIKE '%Director General%' AND emp.puesto NOT LIKE '%Subdirector General%'`;
-      if (unidad && unidad !== 'Todas') {
-        query += ` AND sl.unidadSolicitud = ?`;
-        args.push(unidad);
-      }
     } else {
-      // Bloque general (Jefes 3 / Empleados 4 no deberían acceder según menú, pero por seguridad restringimos código)
+      // Cualquier otro usuario que logre acceder: solo ve autorizadas de su unidad
       query += ` AND sl.estadoSolicitud = 'autorizadas'`;
       if (unidad && unidad !== 'Todas') {
         query += ` AND sl.unidadSolicitud = ?`;
