@@ -47,10 +47,7 @@ export const vacacionesReportDao = async (unidad) => {
     const result = await Connection.execute(query, params);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO REGISTROS PARA LOS DATOS INGRESADOS",
-      };
+      return [];
     } else {
       return result.rows;
     }

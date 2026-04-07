@@ -7,10 +7,7 @@ export const getDatosContactoEmpleadoDao = async (idInfoPersonal) => {
     const result = await Connection.execute(query, [idInfoPersonal]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NUMERO DOCUMENTO INGRESADO YA EXISTE",
-      };
+      return null;
     } else {
       return result.rows[0];
     }
@@ -56,10 +53,7 @@ export const employeesListDao = async () => {
     const result = await Connection.execute(query);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTEN EMPLEADOS",
-      };
+      return null;
     } else {
       return result.rows;
     }
@@ -82,10 +76,7 @@ export const obtenerDatosLaboralesDao = async (idInfoPersonal) => {
     const result = await Connection.execute(query, [idInfoPersonal]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTE EMPLEADO CON EL ID INGRESADO",
-      };
+      return null;
     } else {
       return result.rows[0];
     }

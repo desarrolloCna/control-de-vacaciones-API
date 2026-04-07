@@ -10,10 +10,7 @@ export const IngresarInfoPersonalDao = async (data) => {
         );
         
         if (existResult.rows.length === 1) {
-            throw {
-                codRes: 409,
-                message: "idDpi asociado a otro registro" 
-            };
+            return null;
         }
 
         // Insertar nueva información personal

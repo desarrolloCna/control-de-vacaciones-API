@@ -18,10 +18,7 @@ export const getSolicitudesDao = async (idCoordinador) => {
     const result = await Connection.execute(query, [idCoordinador]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTE SOLICITUDES",
-      };
+      return [];
     } else {
       return result.rows;
     }

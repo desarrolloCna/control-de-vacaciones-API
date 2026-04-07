@@ -11,10 +11,7 @@ export const obtenerInfoDPIDao = async (idDpi) => {
     const result = await Connection.execute(query, [idDpi]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTE EMPLEADO CON EL ID INGRESADO",
-      };
+      return null;
     } else {
       return result.rows[0];
     }

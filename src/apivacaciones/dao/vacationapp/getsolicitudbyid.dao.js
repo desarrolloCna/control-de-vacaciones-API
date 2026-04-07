@@ -15,10 +15,7 @@ export const getSolicitudesByIdDao = async (idEmpleado, idInfoPersonal) => {
     const result = await Connection.execute(query, [idEmpleado, idInfoPersonal]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTE SOLICITUDES",
-      };
+      return null;
     } else {
       return result.rows[0];
     }
@@ -43,10 +40,7 @@ export const getSolicitudesByIdSolcitudDao = async (idSolicitud, idEmpleado) => 
     const result = await Connection.execute(query, [idSolicitud, idEmpleado]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 409,
-        message: "NO EXISTE SOLICITUD",
-      };
+      return null;
     } else {
       return result.rows[0];
     }

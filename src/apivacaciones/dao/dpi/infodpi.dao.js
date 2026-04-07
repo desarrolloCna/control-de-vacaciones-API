@@ -9,10 +9,7 @@ export const IngresarInformacionDpiDao = async (data) => {
         );
         
         if (existingResult.rows.length === 1) {
-            throw {
-                codRes: 409,
-                message: "NUMERO DOCUMENTO INGRESADO YA EXISTE" 
-            };
+            return null;
         } else {
             // Insertar nuevo documento
             const result = await Connection.execute(

@@ -37,10 +37,7 @@ export const consultarCoordinadorDao = async (idCoordinador) => {
         const result = await Connection.execute(query, [idCoordinador]);
         
         if (result.rows.length === 0) {
-            throw {
-                codRes: 409,
-                message: "NO EXISTEN REGISTROS PARA EL COORDINADOR INGRESADO",
-            };
+            return [];
         } else {
             return result.rows[0];
         }
@@ -61,10 +58,7 @@ export const consultarCoordinadoresListDao = async () => {
         const result = await Connection.execute(query);
         
         if (result.rows.length === 0) {
-            throw {
-                codRes: 409,
-                message: "NO EXISTEN REGISTROS PARA EL COORDINADOR INGRESADO",
-            };
+            return [];
         } else {
             return result.rows;
         }
