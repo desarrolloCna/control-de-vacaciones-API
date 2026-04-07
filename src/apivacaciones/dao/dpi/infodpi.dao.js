@@ -33,10 +33,7 @@ export const ConsultarDpiDao = async (numeroDocumento) => {
         );
        
         if (result.rows.length === 0) {
-            throw {
-                codeError: 101,
-                message: "No se encontro el DPI consultado"
-            };
+            return null;
         }
         return result.rows; 
     } catch (error) {

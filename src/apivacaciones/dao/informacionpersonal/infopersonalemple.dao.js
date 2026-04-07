@@ -53,10 +53,7 @@ export const ObtenerNombresDao = async (idEmpleado) => {
         const result = await Connection.execute(sql, [idEmpleado]);
         
         if (result.rows.length === 0) {
-            throw {
-                codRes: 404,
-                message: "No se encontraron datos para el empleado"
-            };
+            return null;
         }
         
         return result.rows[0]; 

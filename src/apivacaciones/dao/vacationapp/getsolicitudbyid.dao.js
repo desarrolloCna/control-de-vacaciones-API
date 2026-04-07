@@ -64,10 +64,7 @@ export const consultarSolicitudesPorEmpleadoDao = async (idEmpleado) => {
     const result = await Connection.execute(query, [idEmpleado]);
     
     if (result.rows.length === 0) {
-      throw {
-        codRes: 204,
-        message: "NO EXISTE SOLICITUDES",
-      };
+      return [];
     } else {
       return result.rows;
     }
