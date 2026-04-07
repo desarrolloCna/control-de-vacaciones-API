@@ -38,10 +38,7 @@ export const GetSuspensionesDao = async () => {
         const result = await Connection.execute(query);
         
         if (result.rows.length === 0) {
-            throw {
-                codRes: 409,
-                message: "NO EXISTEN REGISTROS",
-            };
+            return [];
         } else {
             return result.rows;
         }
