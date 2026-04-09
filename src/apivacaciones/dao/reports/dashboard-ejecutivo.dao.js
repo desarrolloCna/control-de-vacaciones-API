@@ -51,14 +51,30 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
                 ) as empleadosDeVacacionesDescansando
             FROM empleados WHERE estado = 'A'
         `;
-        const resStatusHoy = await Connection.execute(qStatusHoy);
+        // 5. Detalle de Empleados por Unidad (para el Explorador de Acordeones)
+        const qDetalle = `
+            SELECT 
+                e.idEmpleado,
+                (i.primerNombre || ' ' || i.primerApellido) as nombreCompleto,
+                e.puesto,
+                e.unidad,
+                strftime('%d/%m/%Y', e.fechaIngreso) as fechaIngreso,
+                COALESCE((SELECT SUM(diasDisponibles) FROM historial_vacaciones WHERE idEmpleado = e.idEmpleado AND tipoRegistro = 1), 0) as diasDisponibles
+            FROM empleados e
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE e.estado = 'A'
+            ORDER BY e.unidad ASC, nombreCompleto ASC
+        `;
+        const resDetalle = await Connection.execute(qDetalle);
 
         return {
             resumen: resResumen.rows[0],
             kpiUnidades: resUnidades.rows || [],
             proyeccionRetornos: resRetornos.rows || [],
-            statusHoy: resStatusHoy.rows[0]
+            statusHoy: resStatusHoy.rows[0],
+            detalleUnidades: resDetalle.rows || []
         };
+
 
     } catch (error) {
         console.error("Error en obtenerDatosDashboardEjecutivoDao:", error);
