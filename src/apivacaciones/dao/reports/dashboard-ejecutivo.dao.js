@@ -61,7 +61,13 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
                 e.puesto,
                 e.unidad,
                 strftime('%d/%m/%Y', e.fechaIngreso) as fechaIngreso,
-                COALESCE((SELECT SUM(diasDisponibles) FROM historial_vacaciones WHERE idEmpleado = e.idEmpleado AND tipoRegistro = 1), 0) as diasDisponibles
+                COALESCE((
+                    SELECT 
+                        SUM(CASE WHEN tipoRegistro = 1 THEN diasDisponibles ELSE 0 END) - 
+                        SUM(CASE WHEN tipoRegistro = 2 THEN diasDebitados ELSE 0 END)
+                    FROM historial_vacaciones 
+                    WHERE idEmpleado = e.idEmpleado
+                ), 0) as diasDisponibles
             FROM empleados e
             INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
             WHERE e.estado = 'A'
