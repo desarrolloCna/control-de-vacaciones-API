@@ -65,6 +65,7 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
             FROM empleados e
             INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
             WHERE e.estado = 'A'
+              AND e.idEmpleado NOT IN (SELECT idEmpleado FROM usuarios WHERE idRol IN (1, 3) AND idEmpleado IS NOT NULL)
             ORDER BY e.unidad ASC, nombreCompleto ASC
         `;
         const resDetalle = await Connection.execute(qDetalle);
