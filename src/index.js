@@ -26,14 +26,30 @@ import { autoservicioRouter } from "./apivacaciones/routes/autoservicio/autoserv
 import { adminRoute } from "./apivacaciones/routes/admin.routes.js";
 import { setupSwagger } from "./docs/swagger.js";
 import frasesRoutes from "./apivacaciones/routes/utilidades/frases.routes.js";
+import { cronRoute } from "./apivacaciones/routes/cron/cron.routes.js";
+import { kioscoRoute } from "./apivacaciones/routes/kiosco/kiosco.routes.js";
 
 const app = express();
 
-// Protección CORS primero para evitar bloqueos falsos ANTES que helmet
-app.use(cors());
+// ===== CORS: Resolver errores 401/403 en preflight OPTIONS =====
+const corsOptions = {
+    origin: true, // Permite todos los orígenes (Vercel genera subdominios dinámicos)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    credentials: true,
+    optionsSuccessStatus: 200 // Algunos navegadores legacy (IE11) fallan con 204
+};
+app.use(cors(corsOptions));
 
-// Protecciones básicas HTTP (con crossOriginResourcePolicy apagado para evitar 403 falsos en llamadas de Vercel a la API)
-app.use(helmet({ crossOriginResourcePolicy: false }));
+// Responder explícitamente a OPTIONS para evitar que caiga al auth middleware
+app.options('*', cors(corsOptions));
+
+// Protecciones HTTP (desactivar políticas cross-origin que causan 403 en Vercel)
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false // Vercel maneja esto a nivel de plataforma
+}));
 
 // Setup de Swagger (Documentación Interactiva)
 setupSwagger(app);
@@ -52,6 +68,8 @@ import { verifyToken } from "./middlewares/authmiddleware.js";
 
 // --- PUBLIC ROUTES ---
 app.use('/api/', loginRout);
+app.use('/api/', cronRoute);
+app.use('/api/', kioscoRoute);
 
 // --- PROTECTED ROUTES MIDDLEWARE ---
 app.use('/api/', verifyToken);

@@ -59,6 +59,15 @@ export const obtenerDatosDashboardDao = async () => {
         `);
         const solicitudesMesActual = mesActualRes.rows[0]?.total || 0;
 
+        // 6. Cumplimiento Institucional (Empleados con al menos 1 vacación autorizada en el año actual)
+        const cumplimientoRes = await Connection.execute(`
+            SELECT COUNT(DISTINCT sv.idEmpleado) as empleadosConVacaciones
+            FROM solicitudes_vacaciones sv
+            WHERE strftime('%Y', sv.fechaInicioVacaciones) = strftime('%Y', 'now') 
+              AND sv.estadoSolicitud IN ('finalizadas', 'autorizadas')
+        `);
+        const empleadosConVacaciones = cumplimientoRes.rows[0]?.empleadosConVacaciones || 0;
+
         return {
             distribucionEstados,
             kpis: {
@@ -66,7 +75,8 @@ export const obtenerDatosDashboardDao = async () => {
                 totalMes: solicitudesMesActual,
                 tasaAprobacion,
                 promedioDias,
-                totalEmpleados
+                totalEmpleados,
+                empleadosConVacaciones
             },
             solicitudesRecientes: recientesRes.rows
         };

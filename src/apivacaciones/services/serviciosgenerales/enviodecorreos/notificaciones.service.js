@@ -1,5 +1,5 @@
 import { GenerarPlantillasCorreos } from "../../../plantillascorreos/plantilas.js";
-import { EnviarMailSolicitudDeVacaciones } from "../../email/envioemailvacacionesautorizadas.service.js";
+import { EnviarMailSolicitudDeVacaciones, EnviarMailConfirmacionEmpleado } from "../../email/envioemailvacacionesautorizadas.service.js";
 import { generateVacationRequestPDF } from "../../pdfgenerator/pdfgenerator.service.js";
 import { consultarCoordinadorService } from "../../coordinadores/coordinadores.service.js";
 import { getSolicitudesByIdSolcitudDao } from "../../../dao/vacationapp/getsolicitudbyid.dao.js";
@@ -25,12 +25,19 @@ export const notificarSolicitudVacacionesIngresada = async (data) => {
     const diasPorPeriodo = obtenerPeriodosParaVacaciones(periodos, dataSolicitud.cantidadDiasSolicitados);
     const bufferPDF = await generateVacationRequestPDF(dataSolicitud,diasPorPeriodo);
 
-    //Envio de correo solicitud autorizada
+    //Envio de correo solicitud a coordinador
     await EnviarMailSolicitudDeVacaciones(
       dataSolicitud,
       plantillaHtml,
       bufferPDF
     );
+
+    //Generar plantilla y Enviar confirmacion al Empleado
+    if (infoEmpleado && infoEmpleado.correoInstitucional) {
+      const plantillaHtmlEmpleado = GenerarPlantillasCorreos("confirmacion-empleado", dataSolicitud);
+      await EnviarMailConfirmacionEmpleado(dataSolicitud, plantillaHtmlEmpleado);
+    }
+
   } catch (error) {
     throw error;
   }

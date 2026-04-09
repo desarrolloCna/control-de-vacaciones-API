@@ -65,3 +65,20 @@ export const EnviarMailSolicitudDeVacaciones = async (
     return { error: error.message || "Error inesperado" };
   }
 };
+
+export const EnviarMailConfirmacionEmpleado = async (data, plantiila) => {
+  try {
+    console.log(`[EMAIL] Enviando correo de confirmación a: ${data.correoInstitucional}`);
+    const info = await transporter.sendMail({
+      from: `"Consejo Nacional de Adopciones" <${FROM_EMAIL}>`,
+      to: data.correoInstitucional,
+      subject: "Confirmación de Solicitud Recibida - no-reply",
+      html: plantiila,
+    });
+    console.log("[EMAIL] ✅ Correo de confirmación enviado exitosamente.");
+    return info;
+  } catch (error) {
+    console.error("[EMAIL] ❌ Error al enviar correo de confirmación:", error);
+    return { error: error.message };
+  }
+};
