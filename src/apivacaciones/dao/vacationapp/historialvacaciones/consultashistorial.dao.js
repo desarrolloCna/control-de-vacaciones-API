@@ -84,10 +84,14 @@ export const consultarDiasDebitadosPorAnioDao = async (idEmpleado, anio) => {
 
 export const consultarDiasDisponiblesDao = async (idEmpleado, excluirAnioActual = null) => {
   try {
-    let query = `SELECT COALESCE(SUM(diasDisponibles), 0) as diasDisponibles 
+    let query = `SELECT 
+                    COALESCE(
+                        SUM(CASE WHEN tipoRegistro = 1 THEN diasDisponibles ELSE 0 END) - 
+                        SUM(CASE WHEN tipoRegistro = 2 THEN diasSolicitados ELSE 0 END), 
+                        0
+                    ) as diasDisponibles
                     FROM historial_vacaciones 
-                    WHERE idEmpleado = ? 
-                    AND tipoRegistro = 1`;
+                    WHERE idEmpleado = ?`;
                     
     const params = [idEmpleado];
 

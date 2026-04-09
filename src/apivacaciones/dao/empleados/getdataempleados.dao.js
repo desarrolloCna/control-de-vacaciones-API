@@ -69,8 +69,16 @@ export const obtenerDatosLaboralesDao = async (idInfoPersonal) => {
                     correoInstitucional, extensionTelefonica, 
                     unidad, renglon, observaciones, coordinacion, tipoContrato,
                     numeroCuentaCHN, numeroContrato, numeroActa,
-                    numeroAcuerdo
-                    FROM empleados
+                    numeroAcuerdo,
+                    COALESCE((
+                        SELECT 
+                            SUM(CASE WHEN tipoRegistro = 1 THEN diasDisponibles ELSE 0 END) - 
+                            SUM(CASE WHEN tipoRegistro = 2 THEN diasSolicitados ELSE 0 END)
+                        FROM historial_vacaciones 
+                        WHERE idEmpleado = em.idEmpleado
+                    ), 0) as diasDisponibles,
+                    0 as diasProporcionales
+                    FROM empleados em
                     WHERE idInfoPersonal = ?;`;
 
     const result = await Connection.execute(query, [idInfoPersonal]);

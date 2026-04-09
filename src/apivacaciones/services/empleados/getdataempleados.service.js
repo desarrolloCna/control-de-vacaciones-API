@@ -13,14 +13,33 @@ export const employeesListServices = async () => {
   }
 
 export const obtenerDatosLaboralesServices = async (idInfoPersonal) => {
-      try{
-            const datosLaborales = await obtenerDatosLaboralesDao(idInfoPersonal);
-            return datosLaborales;
-      }catch(error){
-         throw error;
-   
-      }
+    try {
+        // Fetch base data
+        const datosLaborales = await obtenerDatosLaboralesDao(idInfoPersonal);
+        
+        if (datosLaborales && datosLaborales.idEmpleado) {
+            // Run JIT Accreditation check so the balance returned is mathematically leveled
+            try {
+                const payloadData = {
+                    idEmpleado: datosLaborales.idEmpleado,
+                    idInfoPersonal: idInfoPersonal,
+                    fechaIngreso: datosLaborales.fechaIngreso
+                };
+                await acreditarDiasPorPeriodoService(payloadData);
+            } catch (jitError) {
+                console.error('Error in JIT Accreditation for Home:', jitError);
+            }
+            
+            // Re-fetch after JIT just in case numbers changed
+            const updatedData = await obtenerDatosLaboralesDao(idInfoPersonal);
+            return updatedData;
+        }
+
+        return datosLaborales;
+    } catch (error) {
+        throw error;
     }
+}
 
 export const consultarEmpleadosUltimoAnioServices = async (idEmpleado) => {
     try{
