@@ -51,6 +51,8 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
                 ) as empleadosDeVacacionesDescansando
             FROM empleados WHERE estado = 'A'
         `;
+        const resStatusHoy = await Connection.execute(qStatusHoy);
+
         // 5. Detalle de Empleados por Unidad (para el Explorador de Acordeones)
         const qDetalle = `
             SELECT 
