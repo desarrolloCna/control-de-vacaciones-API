@@ -54,10 +54,14 @@ app.use(helmet({
 // Setup de Swagger (Documentación Interactiva)
 setupSwagger(app);
 
+// Configuración de trust proxy para Vercel
+app.set('trust proxy', 1);
+
 // Límite de peticiones temporalmente alto para desarrollo y pruebas
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
     max: 10000, 
+    validate: { xForwardedForHeader: false, trustProxy: false },
     message: { message: 'Demasiadas peticiones, intenta de nuevo más tarde.' }
 });
 app.use('/api/', limiter);
