@@ -77,6 +77,9 @@ app.use('/api/', verifyToken);
 // --- RUTAS DE ADMINISTRACIÓN (MÁXIMA PRIORIDAD) ---
 app.use('/api/admin', adminRoute);
 
+import { bitacoraRoute } from "./apivacaciones/routes/bitacora/bitacora.route.js";
+app.use('/api/', bitacoraRoute);
+
 //catalogos.
 app.use('/api/', catalogosRoute);
 app.use('/api/', diasFestivos);

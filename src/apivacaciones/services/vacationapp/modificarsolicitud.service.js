@@ -22,7 +22,7 @@ export const IngresarSolicitudService = async (data) => {
     const solicitud = await getSolicitudesByIdDao(data.idEmpleado, data.idInfoPersonal);
 
     //Si existe una solicitud activa se elimina (Solo puede haber una solicitud activa)
-    if (solicitud.idSolicitud) {
+    if (solicitud && solicitud.idSolicitud) {
       await eliminarSolicitudDao(solicitud.idSolicitud);
     }
 
