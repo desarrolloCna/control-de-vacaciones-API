@@ -49,7 +49,7 @@ export const IngresarSolicitudService = async (data) => {
             titulo: "Nueva Solicitud Recibida 📬", 
             mensaje: "Tienes una solicitud de vacaciones de " + solicitudDB.nombreCompleto + " pendiente de autorizar.", 
             tipo: "nueva_solicitud", 
-            enlace: "/coordinador/solicitudes"
+            enlace: "/activar-vacaciones"
           });
         }
       }
@@ -62,9 +62,25 @@ export const IngresarSolicitudService = async (data) => {
   } catch (error) {
 
     if (error.codRes === 409) {
-      const idSolicitud = await IngresarSolicitudDao(data)
-
+      const idSolicitud = await IngresarSolicitudDao(data);
       data.idSolicitud = idSolicitud;
+
+      // Reintentar notificacion In-App al coordinador
+      try {
+        const solicitudDB = await getSolicitudesByIdSolcitudDao(idSolicitud, data.idEmpleado);
+        if (solicitudDB && solicitudDB.idCoordinador) {
+          const coordinadorInfo = await consultarCoordinadorService(solicitudDB.idCoordinador);
+          if (coordinadorInfo && coordinadorInfo.idEMpleado) {
+            await crearNotificacionDao({
+              idEmpleado: coordinadorInfo.idEMpleado,
+              titulo: "Nueva Solicitud Recibida 📬",
+              mensaje: "Tienes una solicitud de vacaciones de " + solicitudDB.nombreCompleto + " pendiente de autorizar.",
+              tipo: "nueva_solicitud",
+              enlace: "/activar-vacaciones"
+            });
+          }
+        }
+      } catch (notifErr) { console.log("Error notificacion coordinador (409):", notifErr.message); }
 
       // Notificar de la solicitud ingresada via Correo al coordinador de la unidad
       await notificarSolicitudVacacionesIngresada(data);
@@ -124,7 +140,7 @@ export const actualizarEstadoSolicitudService = async (data) => {
           titulo: data.estadoSolicitud === "autorizadas" ? "Solicitud Autorizada ✅" : "Solicitud Rechazada ❌", 
           mensaje: `Has ${data.estadoSolicitud} la solicitud de vacaciones exitosamente.`, 
           tipo: "cambio_estado", 
-          enlace: "/coordinador/solicitudes"
+          enlace: "/activar-vacaciones"
         });
       }
     } catch (err) { console.log("Error creando notificacion in-app a coordinador:", err.message); }
