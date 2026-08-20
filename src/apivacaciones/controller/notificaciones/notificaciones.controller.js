@@ -4,15 +4,7 @@ import {
   crearNotificacionService
 } from "../../services/notificaciones/notificaciones.services.js";
 
-/**
- * @swagger
- * /api/notificaciones:
- *   get:
- *     summary: Obtiene las notificaciones del empleado autenticado
- *     tags: [Notificaciones]
- *     security:
- *       - bearerAuth: []
- */
+
 export const getNotificacionesController = async (req, res) => {
   try {
     const { idEmpleado } = req.user; // Obtenido del authMiddleware
@@ -31,21 +23,7 @@ export const getNotificacionesController = async (req, res) => {
   }
 };
 
-/**
- * @swagger
- * /api/notificaciones/{id}/leer:
- *   put:
- *     summary: Marca una notificación como leída
- *     tags: [Notificaciones]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- */
+
 export const marcarNotificacionLeidaController = async (req, res) => {
   try {
     const { idEmpleado } = req.user;

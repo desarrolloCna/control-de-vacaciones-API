@@ -5,3 +5,6 @@ node_modules/
 .env
 respaldos_db/
 .vercel
+
+# Bases de datos locales
+*.db

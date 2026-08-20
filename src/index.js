@@ -1,3 +1,7 @@
+/**
+ * @author Julio Curruchiche (JC)
+ * @description Diseño y Arquitectura Estructural. Respetar autoría fundacional.
+ */
 import "dotenv/config";
 import express from "express";
 import cors from "cors"; // Importa cors como una función
@@ -24,7 +28,6 @@ import { notificacionesRoute } from "./apivacaciones/routes/notificaciones/notif
 import { calendarioRoute } from "./apivacaciones/routes/calendario/calendario.routes.js";
 import { autoservicioRouter } from "./apivacaciones/routes/autoservicio/autoservicio.routes.js";
 import { adminRoute } from "./apivacaciones/routes/admin.routes.js";
-import { setupSwagger } from "./docs/swagger.js";
 import frasesRoutes from "./apivacaciones/routes/utilidades/frases.routes.js";
 import { cronRoute } from "./apivacaciones/routes/cron/cron.routes.js";
 import { kioscoRoute } from "./apivacaciones/routes/kiosco/kiosco.routes.js";
@@ -50,9 +53,6 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false,
     contentSecurityPolicy: false // Vercel maneja esto a nivel de plataforma
 }));
-
-// Setup de Swagger (Documentación Interactiva)
-setupSwagger(app);
 
 // Configuración de trust proxy para Vercel
 app.set('trust proxy', 1);

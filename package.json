@@ -9,12 +9,13 @@
     "start": "node src/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Julio Curruchiche (JC)",
   "license": "ISC",
   "dependencies": {
     "@libsql/client": "^0.15.15",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.1",
     "dayjs": "^1.11.13",
     "dotenv": "^17.3.1",
     "exceljs": "^4.4.0",
@@ -25,9 +26,7 @@
     "mysql2": "^3.6.0",
     "nodemailer": "^7.0.10",
     "pdfkit": "^0.15.1",
-    "resend": "^6.9.4",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "resend": "^6.9.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

@@ -1,48 +1,7 @@
 import { loginServices } from "../../services/login/login.services.js";
 import jwt from "jsonwebtoken";
 
-/**
- * @swagger
- * /api/login:
- *   post:
- *     summary: Autentica a un usuario y devuelve un token JWT
- *     tags: [Autenticación]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               usuario:
- *                 type: string
- *                 description: Nombre de usuario o correo
- *                 example: jsmith
- *               password:
- *                 type: string
- *                 description: Contraseña del usuario
- *                 example: password123
- *     responses:
- *       200:
- *         description: Login exitoso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 userLogin:
- *                   type: object
- *                   properties:
- *                     status:
- *                       type: integer
- *                       example: 200
- *                     message:
- *                       type: string
- *                     token:
- *                       type: string
- *       401:
- *         description: Credenciales inválidas
- */
+
 export const loginController = async (req, res) => {
     try{
         const userData = await loginServices(req.body);

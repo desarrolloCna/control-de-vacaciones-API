@@ -1,9 +1,9 @@
 import { consultarDiasSolicitadosPorAnioServices, getSolicitudesServices } from "../../services/vacationapp/getsolicitudes.service.js";
 
 export const getSolicitudesController = async (req, res) => {
-    const { idCoordinador } = req.query; 
+    const { idCoordinador, idRol } = req.query; 
     try {
-        const solicitudes = await getSolicitudesServices(idCoordinador);
+        const solicitudes = await getSolicitudesServices(idCoordinador, idRol);
         const responseData = {
             status: 200,
             message: "Data encontra correctamente",

@@ -10,9 +10,18 @@ export const CrearUsuarioService = async (data) => {
     try{
 
         const datosContactoEmpleado = await getDatosContactoEmpleadoDao(data.idInfoPersonal);
+        
+        const correoInstitucional = data.correoInstitucional || datosContactoEmpleado?.correoInstitucional;
+        
+        let user;
+        if (correoInstitucional && correoInstitucional.includes('@')) {
+            user = correoInstitucional.split('@')[0]; // Toma todo antes del @
+        } else {
+            // Fallback en caso de que no tenga correo institucional registrado
+            const nombres = await ObtenerNombresDao(data.idEmpleado);
+            user = await GenerarUsuarioService(nombres);
+        }
 
-        const nombres = await ObtenerNombresDao(data.idEmpleado); //se obtiene nombre del empleado para generar usuario.
-        const user = await GenerarUsuarioService(nombres);
         const pass = GenerarPassword();
         const idRol = data.isCoordinador == 1 ? 5 : 4;
 
@@ -21,11 +30,11 @@ export const CrearUsuarioService = async (data) => {
             idRol,
             user,
             pass,
-            correo: data.correoInstitucional || datosContactoEmpleado?.correoPersonal
+            correo: correoInstitucional || datosContactoEmpleado?.correoPersonal
         }
 
         const idUsuario = await CrearUsuarioDao(dataUser);
-        await EnviarMailServices(dataUser);
+        // await EnviarMailServices(dataUser);
 
         return idUsuario;;
     }catch(error){

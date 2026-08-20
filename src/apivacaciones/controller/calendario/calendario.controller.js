@@ -1,14 +1,6 @@
 import { getCalendarioVacacionesService } from "../../services/calendario/calendario.services.js";
 
-/**
- * @swagger
- * /api/calendario/vacaciones:
- *   get:
- *     summary: Obtiene la lista global de vacaciones autorizadas para el calendario
- *     tags: [Calendario]
- *     security:
- *       - bearerAuth: []
- */
+
 export const getCalendarioController = async (req, res) => {
   try {
     const { unidad, idRol, puesto } = req.query; // extraemos la unidad, Nivel de Autoridad y puesto

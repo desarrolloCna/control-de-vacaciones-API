@@ -4,9 +4,9 @@ import { consultarGestionVacacionesEspecialesDao } from "../../modules/vacacione
 import { consultarPeriodosYDiasPorEmpeladoDao } from "../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
 import { obtenerPeriodosParaVacaciones } from "./hisotrialvacaciones/calculodedias.service.js";
 
-export const getSolicitudesServices = async (idCoordinador) => {
+export const getSolicitudesServices = async (idCoordinador, idRol) => {
     try {
-        const solicitudes = await getSolicitudesDao(idCoordinador);
+        const solicitudes = await getSolicitudesDao(idCoordinador, idRol);
         
         const anioActual = dayjs().year();
         const fechaActual = dayjs().format("YYYY-MM-DD");

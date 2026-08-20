@@ -1,6 +1,6 @@
 import { Connection } from "../connection/conexionsqlite.dao.js";
 
-export const getSolicitudesDao = async (idCoordinador) => {
+export const getSolicitudesDao = async (idCoordinador, idRol) => {
   try {
     const query = `SELECT 
                         sl.idSolicitud, sl.idEmpleado,  sl.idInfoPersonal, 
