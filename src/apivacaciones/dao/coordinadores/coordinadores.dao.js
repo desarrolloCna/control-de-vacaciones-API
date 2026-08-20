@@ -50,9 +50,11 @@ export const consultarCoordinadorDao = async (idCoordinador) => {
 export const consultarCoordinadoresListDao = async () => {
     try {
         const query = `
-            SELECT idCoordinador, idEmpleado, nombreCoordinador, 
-            coordinadorUnidad, correoCoordinador FROM coordinadores
-            WHERE estado = 'A';
+            SELECT c.idCoordinador, c.idEmpleado, c.nombreCoordinador, 
+            c.coordinadorUnidad, c.correoCoordinador, e.puesto as puestoCoordinador
+            FROM coordinadores c
+            LEFT JOIN empleados e ON c.idEmpleado = e.idEmpleado
+            WHERE c.estado = 'A';
         `;
 
         const result = await Connection.execute(query);
