@@ -31,6 +31,7 @@ import { adminRoute } from "./apivacaciones/routes/admin.routes.js";
 import frasesRoutes from "./apivacaciones/routes/utilidades/frases.routes.js";
 import { cronRoute } from "./apivacaciones/routes/cron/cron.routes.js";
 import { kioscoRoute } from "./apivacaciones/routes/kiosco/kiosco.routes.js";
+import { unidadesRoute } from "./apivacaciones/routes/unidades/unidades.routes.js";
 
 const app = express();
 
@@ -106,6 +107,7 @@ app.use('/api/', notificacionesRoute);
 app.use('/api/', calendarioRoute);
 app.use('/api/', autoservicioRouter);
 app.use('/api/', frasesRoutes);
+app.use('/api/', unidadesRoute);
 
 
 
