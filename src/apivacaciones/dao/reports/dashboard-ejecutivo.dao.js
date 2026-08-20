@@ -57,7 +57,13 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
         const qDetalle = `
             SELECT 
                 e.idEmpleado,
-                (i.primerNombre || ' ' || i.primerApellido) as nombreCompleto,
+                TRIM(
+                    i.primerNombre || ' ' || 
+                    COALESCE(i.segundoNombre || ' ', '') || 
+                    COALESCE(i.tercerNombre || ' ', '') || 
+                    i.primerApellido || ' ' || 
+                    COALESCE(i.segundoApellido, '')
+                ) as nombreCompleto,
                 e.puesto,
                 e.unidad,
                 strftime('%d/%m/%Y', e.fechaIngreso) as fechaIngreso,
@@ -67,12 +73,13 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
                         SUM(CASE WHEN tipoRegistro = 2 THEN diasDebitados ELSE 0 END)
                     FROM historial_vacaciones 
                     WHERE idEmpleado = e.idEmpleado
-                ), 0) as diasDisponibles
+                ), 0) as diasDisponibles,
+                CASE WHEN c.idCoordinador IS NOT NULL THEN 1 ELSE 0 END as esAprobador
             FROM empleados e
             INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            LEFT JOIN coordinadores c ON e.idEmpleado = c.idEmpleado
             WHERE e.estado = 'A'
-              AND e.idEmpleado NOT IN (SELECT idEmpleado FROM usuarios WHERE idRol IN (1, 3) AND idEmpleado IS NOT NULL)
-            ORDER BY e.unidad ASC, nombreCompleto ASC
+            ORDER BY e.unidad ASC, esAprobador DESC, e.puesto ASC, nombreCompleto ASC
         `;
         const resDetalle = await Connection.execute(qDetalle);
 
