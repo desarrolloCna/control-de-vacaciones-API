@@ -15,7 +15,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 // Email remitente
-export const FROM_EMAIL = process.env.GMAIL_USER || "gestionesrrhhiga@gmail.com";
+export const FROM_EMAIL = process.env.GMAIL_USER || "cnadesarrollo@gmail.com";
 
 // Diagnóstico
 console.log("[GMAIL] Usuario:", process.env.GMAIL_USER || "⚠️ NO CONFIGURADO");
