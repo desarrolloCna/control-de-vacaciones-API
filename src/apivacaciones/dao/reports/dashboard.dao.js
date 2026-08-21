@@ -4,9 +4,12 @@ export const obtenerDatosDashboardDao = async () => {
     try {
         // 1. Distribución de estados
         const estadosRes = await Connection.execute(`
-            SELECT estadoSolicitud, COUNT(*) as cantidad
-            FROM solicitudes_vacaciones
-            GROUP BY estadoSolicitud
+            SELECT sv.estadoSolicitud, COUNT(sv.idSolicitud) as cantidad
+            FROM solicitudes_vacaciones sv
+            INNER JOIN empleados e ON sv.idEmpleado = e.idEmpleado
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE i.primerNombre NOT LIKE '%ADMINISTRADOR%'
+            GROUP BY sv.estadoSolicitud
         `);
         const estadosData = estadosRes.rows;
 
@@ -29,14 +32,20 @@ export const obtenerDatosDashboardDao = async () => {
 
         // 2. Promedio de días solicitados
         const promedioRes = await Connection.execute(`
-            SELECT COALESCE(AVG(cantidadDiasSolicitados), 0) as promedio
-            FROM solicitudes_vacaciones
+            SELECT COALESCE(AVG(sv.cantidadDiasSolicitados), 0) as promedio
+            FROM solicitudes_vacaciones sv
+            INNER JOIN empleados e ON sv.idEmpleado = e.idEmpleado
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE i.primerNombre NOT LIKE '%ADMINISTRADOR%'
         `);
         const promedioDias = Math.round(Number(promedioRes.rows[0].promedio) * 10) / 10;
 
         // 3. Total empleados activos
         const empRes = await Connection.execute(`
-            SELECT COUNT(*) as total FROM empleados WHERE estado = 'A'
+            SELECT COUNT(e.idEmpleado) as total 
+            FROM empleados e
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE e.estado = 'A' AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
         `);
         const totalEmpleados = empRes.rows[0]?.total || 0;
 
@@ -48,14 +57,19 @@ export const obtenerDatosDashboardDao = async () => {
             FROM solicitudes_vacaciones sv
             JOIN empleados emp ON sv.idEmpleado = emp.idEmpleado
             JOIN infoPersonalEmpleados inf ON emp.idInfoPersonal = inf.idInfoPersonal
+            WHERE inf.primerNombre NOT LIKE '%ADMINISTRADOR%'
             ORDER BY sv.idSolicitud DESC
             LIMIT 8
         `);
 
         // 5. Solicitudes este mes
         const mesActualRes = await Connection.execute(`
-            SELECT COUNT(*) as total FROM solicitudes_vacaciones
-            WHERE strftime('%Y-%m', fechaSolicitud) = strftime('%Y-%m', 'now')
+            SELECT COUNT(sv.idSolicitud) as total 
+            FROM solicitudes_vacaciones sv
+            INNER JOIN empleados e ON sv.idEmpleado = e.idEmpleado
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE strftime('%Y-%m', sv.fechaSolicitud) = strftime('%Y-%m', 'now')
+              AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
         `);
         const solicitudesMesActual = mesActualRes.rows[0]?.total || 0;
 
@@ -63,8 +77,11 @@ export const obtenerDatosDashboardDao = async () => {
         const cumplimientoRes = await Connection.execute(`
             SELECT COUNT(DISTINCT sv.idEmpleado) as empleadosConVacaciones
             FROM solicitudes_vacaciones sv
+            INNER JOIN empleados e ON sv.idEmpleado = e.idEmpleado
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
             WHERE strftime('%Y', sv.fechaInicioVacaciones) = strftime('%Y', 'now') 
               AND sv.estadoSolicitud IN ('finalizadas', 'autorizadas')
+              AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
         `);
         const empleadosConVacaciones = cumplimientoRes.rows[0]?.empleadosConVacaciones || 0;
 

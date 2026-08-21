@@ -20,6 +20,14 @@ export const UsuariosRRHHDao = {
             JOIN infoPersonalEmpleados ip ON e.idInfoPersonal = ip.idInfoPersonal
             LEFT JOIN usuarios u ON e.idEmpleado = u.idEmpleado AND u.idRol IN (1, 2, 3)
             LEFT JOIN rolesUsuarios r ON u.idRol = r.idRol
+            WHERE e.estado = 'A'
+            AND ip.primerNombre NOT LIKE '%ADMINISTRADOR%'
+            AND e.idEmpleado NOT IN (
+                SELECT idEmpleado FROM usuarios WHERE idEmpleado IS NOT NULL
+            )
+            AND e.idEmpleado NOT IN (
+                SELECT idEmpleado FROM suspensiones WHERE tipoSuspension = 'baja' AND estado = 'A'
+            )
             ORDER BY u.idUsuario DESC, ip.primerNombre ASC
         `;
         const result = await Connection.execute(query);

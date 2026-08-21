@@ -1,4 +1,4 @@
-import { consultarCoordinadorDao, consultarCoordinadoresListDao, registrarCoordinadorDao } from "../../dao/coordinadores/coordinadores.dao.js";
+import { consultarCoordinadorDao, consultarCoordinadoresListDao, registrarCoordinadorDao, RelevarCoordinadorDao } from "../../dao/coordinadores/coordinadores.dao.js";
 
 
 
@@ -32,3 +32,13 @@ export const consultarCoordinadorService = async (idCoordinador) => {
    
       }
     }
+
+export const relevarCoordinadorServices = async (idEmpleadoSaliente, idEmpleadoEntrante) => {
+    try {
+        const result = await RelevarCoordinadorDao(idEmpleadoSaliente, idEmpleadoEntrante);
+        return result;
+    } catch (error) {
+        console.error("Error en relevarCoordinadorServices:", error);
+        throw error;
+    }
+}

@@ -62,7 +62,7 @@ export const consultarEmpleadosUltimoAnioDao = async (idEmpleado) => {
                         INNER JOIN empleados e ON u.idEmpleado = e.idEmpleado
                         INNER JOIN infoPersonalEmpleados ipe ON e.idInfoPersonal = ipe.idInfoPersonal
                         CROSS JOIN params p
-                        WHERE e.estado = 'A' AND (p.idEmpleadoFiltro = '' OR u.idEmpleado = p.idEmpleadoFiltro) AND e.idEmpleado NOT IN (SELECT idEmpleado FROM suspensiones WHERE tipoSuspension = 'baja' AND estado = 'A')
+                        WHERE e.estado = 'A' AND (p.idEmpleadoFiltro = '' OR u.idEmpleado = p.idEmpleadoFiltro) AND e.idEmpleado NOT IN (SELECT idEmpleado FROM suspensiones WHERE tipoSuspension = 'baja' AND estado = 'A') AND ipe.primerNombre NOT LIKE '%ADMINISTRADOR%'
                     )
                     SELECT 
                         ef.idEmpleado,
@@ -125,6 +125,7 @@ export const consultarEmpleadosSinVacacionesDao = async () => {
             JOIN dias_actuales da ON da.idEmpleado = e.idEmpleado
             WHERE e.estado = 'A' 
               AND e.idEmpleado NOT IN (SELECT idEmpleado FROM suspensiones WHERE tipoSuspension = 'baja' AND estado = 'A')
+              AND ip.primerNombre NOT LIKE '%ADMINISTRADOR%'
               AND (e.fechaIngreso > DATE('now', '-1 year') OR COALESCE(dp.saldoViejo, 0) <= 0)
               AND COALESCE(da.saldoActual, 0) > 0;`;
 

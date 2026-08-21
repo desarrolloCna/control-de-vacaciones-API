@@ -119,3 +119,61 @@ export const DesactivarCoordinadorDao = async (idEmpleado) => {
         throw error;
     }
 };
+
+export const RelevarCoordinadorDao = async (idEmpleadoSaliente, idEmpleadoEntrante) => {
+    try {
+        // 1. Obtener datos del saliente en la tabla coordinadores
+        const qSaliente = "SELECT * FROM coordinadores WHERE idEmpleado = ? AND estado = 'A';";
+        const resSaliente = await Connection.execute(qSaliente, [idEmpleadoSaliente]);
+        
+        if (resSaliente.rows.length === 0) {
+            throw new Error("El empleado saliente no es un coordinador activo.");
+        }
+        
+        const coordinadorSaliente = resSaliente.rows[0];
+        
+        // 2. Obtener información del entrante (para nombre y correo)
+        const qInfoEntrante = `
+            SELECT 
+                e.idEmpleado,
+                TRIM(i.primerNombre || ' ' || i.primerApellido || ' ' || COALESCE(i.segundoApellido, '')) as nombreCompleto,
+                i.correoPersonal,
+                e.unidad
+            FROM empleados e
+            JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE e.idEmpleado = ?;
+        `;
+        const resInfoEntrante = await Connection.execute(qInfoEntrante, [idEmpleadoEntrante]);
+        if (resInfoEntrante.rows.length === 0) {
+            throw new Error("Empleado entrante no encontrado.");
+        }
+        
+        const infoEntrante = resInfoEntrante.rows[0];
+        
+        // 3. Desactivar Saliente
+        await DesactivarCoordinadorDao(idEmpleadoSaliente);
+        await Connection.execute("UPDATE empleados SET isCoordinador = 0 WHERE idEmpleado = ?", [idEmpleadoSaliente]);
+        
+        // 4. Activar Entrante (Upsert)
+        const idCoordinadorNuevo = await UpsertCoordinadorDao({
+            idEmpleado: idEmpleadoEntrante,
+            nombreCoordinador: infoEntrante.nombreCompleto,
+            coordinadorUnidad: coordinadorSaliente.coordinadorUnidad, // Hereda la unidad del saliente
+            correoCoordinador: infoEntrante.correoPersonal
+        });
+        
+        // 5. Establecer isCoordinador en empleados
+        await Connection.execute("UPDATE empleados SET isCoordinador = 1 WHERE idEmpleado = ?", [idEmpleadoEntrante]);
+        
+        // 6. Migrar solicitudes enviadas al nuevo jefe
+        await Connection.execute(
+            "UPDATE solicitudes_vacaciones SET idCoordinador = ? WHERE idCoordinador = ? AND estadoSolicitud = 'enviadas'",
+            [idCoordinadorNuevo, coordinadorSaliente.idCoordinador]
+        );
+        
+        return { success: true, message: "Sucesión completada exitosamente." };
+    } catch (error) {
+        console.log("Error en RelevarCoordinadorDao:", error);
+        throw error;
+    }
+};

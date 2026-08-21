@@ -1,4 +1,4 @@
-import { consultarCoordinadoresListService, consultarCoordinadorService, registrarCoordinadorServices } from "../../services/coordinadores/coordinadores.service.js";
+import { consultarCoordinadoresListService, consultarCoordinadorService, registrarCoordinadorServices, relevarCoordinadorServices } from "../../services/coordinadores/coordinadores.service.js";
 
 
 
@@ -56,5 +56,21 @@ export const consultarCoordinadoresListController = async (req, res) => {
         const responseData = error?.message || error;
         responseData.status;
         res.status(codRes).json({ responseData });
+    }
+}
+
+export const relevarCoordinadorController = async (req, res) => {
+    try {
+        const { idEmpleadoSaliente, idEmpleadoEntrante } = req.body;
+        
+        if (!idEmpleadoSaliente || !idEmpleadoEntrante) {
+            return res.status(400).json({ success: false, message: "idEmpleadoSaliente e idEmpleadoEntrante son requeridos" });
+        }
+        
+        const result = await relevarCoordinadorServices(idEmpleadoSaliente, idEmpleadoEntrante);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Error en relevarCoordinadorController:", error);
+        return res.status(500).json({ success: false, message: error.message || "Error al relevar coordinador" });
     }
 }

@@ -5,10 +5,13 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
         // 1. Resumen Global
         const qResumen = `
             SELECT 
-                COUNT(*) as totalSolicitudes,
-                SUM(CASE WHEN estadoSolicitud IN ('autorizadas', 'finalizadas') THEN 1 ELSE 0 END) as totalAprobadas,
-                SUM(cantidadDiasSolicitados) as totalDiasHistoricos
-            FROM solicitudes_vacaciones
+                COUNT(sv.idSolicitud) as totalSolicitudes,
+                SUM(CASE WHEN sv.estadoSolicitud IN ('autorizadas', 'finalizadas') THEN 1 ELSE 0 END) as totalAprobadas,
+                SUM(sv.cantidadDiasSolicitados) as totalDiasHistoricos
+            FROM solicitudes_vacaciones sv
+            INNER JOIN empleados e ON sv.idEmpleado = e.idEmpleado
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE i.primerNombre NOT LIKE '%ADMINISTRADOR%'
         `;
         const resResumen = await Connection.execute(qResumen);
 
@@ -20,8 +23,9 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
                 SUM(CASE WHEN sv.estadoSolicitud IN ('autorizadas', 'finalizadas') THEN 1 ELSE 0 END) as aprobadas,
                 SUM(sv.cantidadDiasSolicitados) as totalDias
             FROM empleados e
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
             LEFT JOIN solicitudes_vacaciones sv ON e.idEmpleado = sv.idEmpleado
-            WHERE e.estado = 'A' AND e.unidad IS NOT NULL
+            WHERE e.estado = 'A' AND e.unidad IS NOT NULL AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
             GROUP BY e.unidad
             ORDER BY totalSolicitudes DESC
         `;
@@ -31,10 +35,13 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
         const qRetornos = `
             SELECT 
                 sv.fechaRetornoLabores,
-                COUNT(*) as cantidad
+                COUNT(sv.idSolicitud) as cantidad
             FROM solicitudes_vacaciones sv
+            INNER JOIN empleados e ON sv.idEmpleado = e.idEmpleado
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
             WHERE sv.estadoSolicitud = 'finalizadas'
               AND sv.fechaRetornoLabores BETWEEN date('now') AND date('now', '+14 days')
+              AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
             GROUP BY sv.fechaRetornoLabores
             ORDER BY sv.fechaRetornoLabores ASC
         `;
@@ -44,12 +51,16 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
         const qStatusHoy = `
             SELECT 
                 COUNT(*) as totalEmpleadosActivos,
-                (SELECT COUNT(DISTINCT idEmpleado) 
-                 FROM solicitudes_vacaciones 
-                 WHERE estadoSolicitud = 'finalizadas' 
-                   AND date('now') BETWEEN fechaInicioVacaciones AND fechaFinVacaciones
+                (SELECT COUNT(DISTINCT sv2.idEmpleado) 
+                 FROM solicitudes_vacaciones sv2
+                 INNER JOIN infoPersonalEmpleados i2 ON sv2.idInfoPersonal = i2.idInfoPersonal
+                 WHERE sv2.estadoSolicitud = 'finalizadas' 
+                   AND date('now') BETWEEN sv2.fechaInicioVacaciones AND sv2.fechaFinVacaciones
+                   AND i2.primerNombre NOT LIKE '%ADMINISTRADOR%'
                 ) as empleadosDeVacacionesDescansando
-            FROM empleados WHERE estado = 'A'
+            FROM empleados e 
+            INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
+            WHERE e.estado = 'A' AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
         `;
         const resStatusHoy = await Connection.execute(qStatusHoy);
 
@@ -78,7 +89,7 @@ export const obtenerDatosDashboardEjecutivoDao = async () => {
             FROM empleados e
             INNER JOIN infoPersonalEmpleados i ON e.idInfoPersonal = i.idInfoPersonal
             LEFT JOIN coordinadores c ON e.idEmpleado = c.idEmpleado
-            WHERE e.estado = 'A'
+            WHERE e.estado = 'A' AND i.primerNombre NOT LIKE '%ADMINISTRADOR%'
             ORDER BY e.unidad ASC, esAprobador DESC, e.puesto ASC, nombreCompleto ASC
         `;
         const resDetalle = await Connection.execute(qDetalle);
