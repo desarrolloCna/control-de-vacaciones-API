@@ -85,8 +85,7 @@ export const consultarDiasDisponiblesDao = async (idEmpleado, excluirAnioActual 
   try {
     let query = `SELECT 
                     COALESCE(
-                        SUM(CASE WHEN tipoRegistro = 1 THEN totalDiasAcreditados ELSE 0 END) - 
-                        SUM(CASE WHEN tipoRegistro = 1 THEN totalDiasDebitados ELSE 0 END), 
+                        SUM(CASE WHEN tipoRegistro = 1 THEN totalDiasAcreditados ELSE 0 END), 
                         0
                     ) as diasDisponibles
                     FROM HistorialVacaciones 
