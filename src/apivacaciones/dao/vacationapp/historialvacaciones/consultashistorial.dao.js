@@ -63,16 +63,15 @@ export const consultarPeriodosYDiasPorEmpeladoDao = async (idEmpleado, excluirAn
 
 export const consultarDiasDebitadosPorAnioDao = async (idEmpleado, anio) => {
   try {
-    const query = `SELECT COALESCE(SUM(diasDebitados), 0) as diasDebitados 
-                    FROM historial_vacaciones 
+    const query = `SELECT COALESCE(SUM(totalDiasDebitados), 0) as diasDebitados 
+                    FROM HistorialVacaciones 
                     WHERE idEmpleado = ?
-                    AND strftime('%Y', fechaActualizacion) = ?
-                    AND tipoRegistro = 2;`;
+                    AND tipoRegistro = 1;`;
 
-    const result = await Connection.execute(query, [idEmpleado, anio]);
+    const result = await Connection.execute(query, [idEmpleado]);
 
     if (result.rows.length === 0) {
-      return { diasDisponiblesT: 0 };
+      return { diasDebitados: 0 };
     }
 
     return result.rows[0];
@@ -86,11 +85,11 @@ export const consultarDiasDisponiblesDao = async (idEmpleado, excluirAnioActual 
   try {
     let query = `SELECT 
                     COALESCE(
-                        SUM(CASE WHEN tipoRegistro = 1 THEN diasDisponibles ELSE 0 END) - 
-                        SUM(CASE WHEN tipoRegistro = 2 THEN diasSolicitados ELSE 0 END), 
+                        SUM(CASE WHEN tipoRegistro = 1 THEN totalDiasAcreditados ELSE 0 END) - 
+                        SUM(CASE WHEN tipoRegistro = 1 THEN totalDiasDebitados ELSE 0 END), 
                         0
                     ) as diasDisponibles
-                    FROM historial_vacaciones 
+                    FROM HistorialVacaciones 
                     WHERE idEmpleado = ?`;
                     
     const params = [idEmpleado];
