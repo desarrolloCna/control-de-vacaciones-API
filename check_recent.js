@@ -9,7 +9,10 @@ const client = createClient({
 
 async function run() {
   const query = `
-    SELECT name FROM sqlite_master WHERE type='table';
+    SELECT idEmpleado, periodo, tipoRegistro, fechaAcreditacion, fechaActualizacion 
+    FROM historial_vacaciones 
+    ORDER BY idHistorial DESC
+    LIMIT 5;
   `;
   const result = await client.execute(query);
   console.log(result.rows);

@@ -9,7 +9,10 @@ const client = createClient({
 
 async function run() {
   const query = `
-    SELECT name FROM sqlite_master WHERE type='table';
+    SELECT e.idEmpleado, e.Nombres, e.Apellidos, e.idUnidad, u.nombreUnidad, e.estado
+    FROM empleados e
+    LEFT JOIN unidades u ON e.idUnidad = u.idUnidad
+    WHERE u.nombreUnidad LIKE '%Recursos Humanos%' OR e.idUnidad = 3;
   `;
   const result = await client.execute(query);
   console.log(result.rows);

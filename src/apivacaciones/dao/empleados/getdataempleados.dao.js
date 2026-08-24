@@ -43,7 +43,6 @@ export const employeesListDao = async () => {
           empleados em ON inf.idInfoPersonal = em.idInfoPersonal
       WHERE em.estado = 'A' 
       AND inf.primerNombre NOT LIKE '%ADMINISTRADOR%'
-      AND em.idEmpleado NOT IN (SELECT idEmpleado FROM usuarios WHERE idRol IN (1, 3) AND idEmpleado IS NOT NULL)
       AND em.idEmpleado NOT IN (
           SELECT idEmpleado FROM suspensiones WHERE tipoSuspension = 'baja' AND estado = 'A'
       )

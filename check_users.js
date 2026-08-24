@@ -9,7 +9,7 @@ const client = createClient({
 
 async function run() {
   const query = `
-    SELECT name FROM sqlite_master WHERE type='table';
+    SELECT idEmpleado, idRol FROM usuarios;
   `;
   const result = await client.execute(query);
   console.log(result.rows);
