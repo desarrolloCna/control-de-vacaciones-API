@@ -1,5 +1,17 @@
-import { consultarEmpleadosSinVacacionesServices, consultarEmpleadosUltimoAnioServices, employeesListServices, obtenerDatosLaboralesServices } from "../../services/empleados/getdataempleados.service.js";
+import { consultarEmpleadosSinVacacionesServices, consultarEmpleadosUltimoAnioServices, employeesListServices, obtenerDatosLaboralesServices, getResumenAnualVacacionesService } from "../../services/empleados/getdataempleados.service.js";
 
+export const resumenAnualVacacionesController = async (req, res) => {
+    try {
+        const resumen = await getResumenAnualVacacionesService();
+        res.status(200).json({
+            codRes: 200,
+            message: "Resumen anual de vacaciones (011 y 022)",
+            resumen
+        });
+    } catch (error) {
+        res.status(500).json({ codRes: 500, message: error.message || error });
+    }
+};
 
 export const employeesListController = async (req, res) => {
     try{
