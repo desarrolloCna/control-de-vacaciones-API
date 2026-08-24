@@ -112,6 +112,7 @@ export const consultarEmpleadosSinVacacionesDao = async () => {
             SELECT 
                 e.idEmpleado, 
                 e.fechaIngreso,
+                e.unidad,
                 ip.idInfoPersonal,
                 ip.primerNombre || ' ' || 
                 COALESCE(ip.segundoNombre || ' ', '') ||
