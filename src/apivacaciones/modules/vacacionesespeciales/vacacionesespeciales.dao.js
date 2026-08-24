@@ -76,6 +76,7 @@ export const registrarExcepcionLimiteDao = async (data) => {
                 estado VARCHAR(1) DEFAULT 'A',
                 flagAutorizacion INTEGER DEFAULT 0,
                 descripcion TEXT,
+                diasAutorizados INTEGER DEFAULT NULL,
                 fechaInicioValidez DATE,
                 fechaFinValidez DATE,
                 fechaIngresoGestion DATETIME
@@ -84,8 +85,8 @@ export const registrarExcepcionLimiteDao = async (data) => {
 
         const queryInsert = `
             INSERT INTO excepciones_limite_vacaciones (idEmpleado, idInfoPersonal, 
-            idUsuario, flagAutorizacion, descripcion, fechaInicioValidez, fechaFinValidez, fechaIngresoGestion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            idUsuario, flagAutorizacion, descripcion, diasAutorizados, fechaInicioValidez, fechaFinValidez, fechaIngresoGestion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
         `;
 
         const result = await Connection.execute(queryInsert, [
@@ -94,6 +95,7 @@ export const registrarExcepcionLimiteDao = async (data) => {
             data.idUsuario,
             data.flagAutorizacion,
             data.descripcion,
+            data.diasAutorizados,
             data.fechaInicioValidez,
             data.fechaFinValidez,
             data.fechaIngresoGestion,
@@ -110,6 +112,7 @@ export const registrarExcepcionLimiteDao = async (data) => {
             detallesNuevos: {
                idEmpleado: data.idEmpleado,
                descripcion: data.descripcion,
+               diasAutorizados: data.diasAutorizados,
                fechaInicio: data.fechaInicioValidez,
                fechaFin: data.fechaFinValidez
             },
@@ -125,13 +128,15 @@ export const registrarExcepcionLimiteDao = async (data) => {
 
 export const consultarExcepcionLimiteDao = async (idEmpleado, fechaEnCurso) => {    
     try{
-        const query = `SELECT count(*) as isExist
+        const query = `SELECT count(*) as isExist, diasAutorizados
                         FROM excepciones_limite_vacaciones
                         WHERE idEmpleado = ?
                         AND estado = 'A'
                         AND date(?) BETWEEN fechaInicioValidez AND fechaFinValidez
-                        AND flagAutorizacion = 1;`
-
+                        AND flagAutorizacion = 1
+                        ORDER BY idExcepcion DESC
+                        LIMIT 1;`;
+        
         const result = await Connection.execute(query, [idEmpleado, fechaEnCurso]);
         return result.rows[0];
 

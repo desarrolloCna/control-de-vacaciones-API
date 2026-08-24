@@ -73,3 +73,18 @@ export const consultarSolicitudesPorEmpleadoDao = async (idEmpleado) => {
     throw error;  
   }
 };
+
+export const consultarDiasEnTransitoDao = async (idEmpleado, idSolicitudExcluir) => {
+  try {
+    const query = `SELECT COALESCE(SUM(cantidadDiasSolicitados), 0) AS diasEnTransito
+                   FROM solicitudes_vacaciones 
+                   WHERE idEmpleado = ? 
+                   AND estadoSolicitud IN ('enviada', 'aceptada', 'aceptadas', 'reprogramada', 'reprogramadas', 'autorizadas', 'procesando_debito')
+                   AND idSolicitud < ?`;
+    const result = await Connection.execute(query, [idEmpleado, idSolicitudExcluir]);
+    return result.rows.length > 0 ? result.rows[0].diasEnTransito : 0;
+  } catch (error) {
+    console.log("Error en consultarDiasEnTransitoDao:", error);
+    throw error;
+  }
+};

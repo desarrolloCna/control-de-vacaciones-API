@@ -1,8 +1,8 @@
-import { getSolicitudesByIdSolcitudDao } from "../../dao/vacationapp/getsolicitudbyid.dao.js";
-import { consultarPeriodosYDiasPorEmpeladoDao } from "../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
+import { getSolicitudesByIdSolcitudDao, consultarDiasEnTransitoDao } from "../../dao/vacationapp/getsolicitudbyid.dao.js";
+import { consultarPeriodosYDiasPorEmpeladoDao, consultarDebitosPorSolicitudDao } from "../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
 import { consultarCoordinadorService } from "../../services/coordinadores/coordinadores.service.js";
 import { generateVacationRequestPDF } from "../../services/pdfgenerator/pdfgenerator.service.js";
-import { obtenerPeriodosParaVacaciones } from "../../services/vacationapp/hisotrialvacaciones/calculodedias.service.js";
+import { obtenerPeriodosParaVacaciones, restarDiasEnTransito } from "../../services/vacationapp/hisotrialvacaciones/calculodedias.service.js";
 import { Connection } from "../../dao/connection/conexionsqlite.dao.js";
 
 export const descargarPDFController = async (req, res) => {
@@ -29,8 +29,23 @@ export const descargarPDFController = async (req, res) => {
 
         // 5. Obtener los periodos para el cálculo impreso en el PDF
         console.log("DESC PDF - Paso 5: Periodos");
-        const periodos = await consultarPeriodosYDiasPorEmpeladoDao(idEmpleado);
-        const diasPorPeriodo = obtenerPeriodosParaVacaciones(periodos, solicitud.cantidadDiasSolicitados);
+        let diasPorPeriodo = await consultarDebitosPorSolicitudDao(idSolicitud);
+        
+        if (!diasPorPeriodo) {
+            console.log("DESC PDF - No hay historial de débitos aún, calculando al vuelo...");
+            let periodos = await consultarPeriodosYDiasPorEmpeladoDao(idEmpleado);
+            
+            // Restar días en tránsito de solicitudes más antiguas
+            const diasEnTransito = await consultarDiasEnTransitoDao(idEmpleado, idSolicitud);
+            if (diasEnTransito > 0) {
+                console.log("Quemando dias en transito: ", diasEnTransito);
+                periodos = restarDiasEnTransito(periodos, diasEnTransito);
+            }
+            
+            diasPorPeriodo = obtenerPeriodosParaVacaciones(periodos, solicitud.cantidadDiasSolicitados);
+        } else {
+            console.log("DESC PDF - Usando historial de débitos exacto.");
+        }
 
         // 6. Construir el Binario del PDF en memoria
         console.log("DESC PDF - Paso 6: Construccion binaria de PDF");

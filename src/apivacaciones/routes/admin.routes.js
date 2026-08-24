@@ -18,4 +18,5 @@ adminRoute.post("/restaurarBitacora", BitacoraRestaurarController.restaurarRegis
 adminRoute.get("/obtenerRRHH", UsuariosRRHHController.obtenerUsuariosRRHH);
 adminRoute.post("/crearRRHH", UsuariosRRHHController.crearUsuarioRRHH);
 adminRoute.put("/actualizarRRHH/:id", UsuariosRRHHController.actualizarUsuarioRRHH);
+adminRoute.put("/usuarios/:id/reset-password", UsuariosRRHHController.resetPassword);
 adminRoute.delete("/eliminarRRHH/:id", UsuariosRRHHController.eliminarUsuarioRRHH);

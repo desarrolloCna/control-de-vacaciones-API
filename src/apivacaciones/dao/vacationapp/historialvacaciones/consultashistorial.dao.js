@@ -63,10 +63,9 @@ export const consultarPeriodosYDiasPorEmpeladoDao = async (idEmpleado, excluirAn
 
 export const consultarDiasDebitadosPorAnioDao = async (idEmpleado, anio) => {
   try {
-    const query = `SELECT COALESCE(SUM(totalDiasDebitados), 0) as diasDebitados 
-                    FROM HistorialVacaciones 
-                    WHERE idEmpleado = ?
-                    AND tipoRegistro = 1;`;
+    const query = `SELECT COALESCE(SUM(diasDebitados), 0) as diasDebitados 
+                    FROM historial_vacaciones 
+                    WHERE idEmpleado = ?;`;
 
     const result = await Connection.execute(query, [idEmpleado]);
 
@@ -107,6 +106,20 @@ export const consultarDiasDisponiblesDao = async (idEmpleado, excluirAnioActual 
     return result.rows[0];
   } catch (error) {
     console.log("Error en consultarDiasDisponiblesDao:", error);
+    throw error;
+  }
+};
+
+export const consultarDebitosPorSolicitudDao = async (idSolicitud) => {
+  try {
+    const query = `SELECT periodo, diasDebitados AS diasTomados, diasDisponibles 
+                   FROM historial_vacaciones 
+                   WHERE idSolicitud = ? AND tipoRegistro = 2
+                   ORDER BY idHistorial ASC;`;
+    const result = await Connection.execute(query, [idSolicitud]);
+    return result.rows.length > 0 ? result.rows : null;
+  } catch (error) {
+    console.log("Error en consultarDebitosPorSolicitudDao:", error);
     throw error;
   }
 };

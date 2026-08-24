@@ -1,6 +1,7 @@
 import {
   getSolicitudesByIdDao,
   getSolicitudesByIdSolcitudDao,
+  consultarDiasEnTransitoDao,
 } from "../../dao/vacationapp/getsolicitudbyid.dao.js";
 import { consultarPeriodosYDiasPorEmpeladoDao } from "../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
 import {
@@ -11,10 +12,13 @@ import {
 import { GenerarPlantillasCorreos } from "../../plantillascorreos/plantilas.js";
 import { consultarCoordinadorService } from "../coordinadores/coordinadores.service.js";
 import { EnviarMailAutorizacionDeVacaciones } from "../email/envioemailvacacionesautorizadas.service.js";
+import {
+  obtenerPeriodosParaVacaciones,
+  restarDiasEnTransito,
+} from "./hisotrialvacaciones/calculodedias.service.js";
 import { generateVacationRequestPDF } from "../pdfgenerator/pdfgenerator.service.js";
 import { crearNotificacionDao } from "../../dao/notificaciones/notificaciones.dao.js";
 import { notificarSolicitudVacacionesIngresada } from "../serviciosgenerales/enviodecorreos/notificaciones.service.js";
-import { obtenerPeriodosParaVacaciones } from "./hisotrialvacaciones/calculodedias.service.js";
 
 export const IngresarSolicitudService = async (data) => {
   try {
@@ -109,6 +113,9 @@ export const actualizarEstadoSolicitudService = async (data) => {
     } else if (data.estadoSolicitud === "rechazada") {
       tituloNotif = "Vacaciones Rechazadas ❌";
       mensajeNotif = "Tu solicitud de vacaciones no pudo ser autorizada en este momento.";
+    } else if (data.estadoSolicitud === "aceptadas" || data.estadoSolicitud === "aceptada") {
+      tituloNotif = "Solicitud Aceptada ✅";
+      mensajeNotif = "Tu Jefe/Coordinador ha aceptado tu solicitud. Ahora está pendiente de autorización por RRHH.";
     }
     // No bloqueamos el flujo si la notificación falla
     try {
@@ -147,7 +154,14 @@ export const actualizarEstadoSolicitudService = async (data) => {
 
     //Generar pdf de la autorizacion
     if(data.estadoSolicitud === "autorizadas"){
-      const periodos = await consultarPeriodosYDiasPorEmpeladoDao(data.idEmpleado);
+      let periodos = await consultarPeriodosYDiasPorEmpeladoDao(data.idEmpleado);
+      
+      // Restar días en tránsito de solicitudes más antiguas que aún no se han debitado
+      const diasEnTransito = await consultarDiasEnTransitoDao(data.idEmpleado, data.idSolicitud);
+      if (diasEnTransito > 0) {
+          periodos = restarDiasEnTransito(periodos, diasEnTransito);
+      }
+      
       const diasPorPeriodo = obtenerPeriodosParaVacaciones(periodos, solicitud.cantidadDiasSolicitados);
       bufferPDF = await generateVacationRequestPDF(solicitudCompleta,diasPorPeriodo);
     }

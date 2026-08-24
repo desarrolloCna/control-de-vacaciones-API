@@ -126,3 +126,16 @@ export const actualizarEstadoSolicitudDao = async (data) => {
         throw error;
     }
 };
+
+export const bloquearSolicitudParaDebitoDao = async (idSolicitud, idEmpleado) => {
+    try {
+        const query = `UPDATE solicitudes_vacaciones 
+                       SET estadoSolicitud = 'procesando_debito' 
+                       WHERE idSolicitud = ? AND idEmpleado = ? AND estadoSolicitud = 'autorizadas'`;
+        const result = await Connection.execute(query, [idSolicitud, idEmpleado]);
+        return result.rowsAffected;
+    } catch (error) {
+        console.log("Error en bloquearSolicitudParaDebitoDao:", error);
+        throw error;
+    }
+};

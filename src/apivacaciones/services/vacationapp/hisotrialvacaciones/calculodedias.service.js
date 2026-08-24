@@ -572,3 +572,36 @@ export const obtenerPeriodosParaVacaciones = (historial, diasSolicitados) => {
   }
   return resultado;
 };
+
+/**
+ * Resta días en tránsito del historial de periodos para simular el balance
+ * que quedaría después de que se debiten las solicitudes pendientes previas.
+ * @param {Array} periodos - Historial de periodos disponibles
+ * @param {number} dias - Cantidad de días a descontar
+ * @returns {Array} - Nuevo historial de periodos actualizado
+ */
+export const restarDiasEnTransito = (periodos, dias) => {
+  if (!dias || dias <= 0) return periodos;
+  
+  // Clonar profundamente para no mutar el original por error
+  const nuevosPeriodos = JSON.parse(JSON.stringify(periodos));
+  let diasRestantes = dias;
+
+  // Ordenar cronológicamente (los más antiguos primero)
+  nuevosPeriodos.sort((a, b) => parseInt(a.periodo) - parseInt(b.periodo));
+
+  for (let p of nuevosPeriodos) {
+    if (diasRestantes <= 0) break;
+    if (p.diasDisponibles > 0) {
+      if (p.diasDisponibles >= diasRestantes) {
+        p.diasDisponibles -= diasRestantes;
+        diasRestantes = 0;
+      } else {
+        diasRestantes -= p.diasDisponibles;
+        p.diasDisponibles = 0;
+      }
+    }
+  }
+  return nuevosPeriodos;
+};
+

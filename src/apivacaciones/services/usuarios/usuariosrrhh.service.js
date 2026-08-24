@@ -18,5 +18,12 @@ export const UsuariosRRHHService = {
     actualizarUsuarioRRHH: async (idUsuario, idRol, permisos) => {
         if (!idUsuario || !idRol) throw new Error("Datos incompletos para actualizar usuario");
         return await UsuariosRRHHDao.actualizarUsuarioRRHH(idUsuario, idRol, permisos);
+    },
+
+    resetPassword: async (idUsuario) => {
+        if (!idUsuario) throw new Error("ID de usuario no proporcionado");
+        const bcrypt = await import('bcryptjs');
+        const hashedPass = await bcrypt.default.hash("CNA.2024*", 10);
+        return await UsuariosRRHHDao.resetPassword(idUsuario, hashedPass);
     }
 };

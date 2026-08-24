@@ -22,8 +22,10 @@ export const UsuariosRRHHDao = {
             LEFT JOIN rolesUsuarios r ON u.idRol = r.idRol
             WHERE e.estado = 'A'
             AND ip.primerNombre NOT LIKE '%ADMINISTRADOR%'
-            AND e.idEmpleado NOT IN (
-                SELECT idEmpleado FROM usuarios WHERE idEmpleado IS NOT NULL
+            AND (
+                u.idUsuario IS NOT NULL 
+                OR 
+                e.idEmpleado NOT IN (SELECT idEmpleado FROM usuarios WHERE idEmpleado IS NOT NULL)
             )
             AND e.idEmpleado NOT IN (
                 SELECT idEmpleado FROM suspensiones WHERE tipoSuspension = 'baja' AND estado = 'A'
@@ -62,6 +64,13 @@ export const UsuariosRRHHDao = {
     actualizarUsuarioRRHH: async (idUsuario, idRol, permisos) => {
         const query = `UPDATE usuarios SET idRol = ?, permisosModulos = ? WHERE idUsuario = ?`;
         const result = await Connection.execute(query, [idRol, permisos, idUsuario]);
+        return result;
+    },
+
+    // Resetear contraseña
+    resetPassword: async (idUsuario, hashedPass) => {
+        const query = `UPDATE usuarios SET pass = ?, requiereCambioPass = 1 WHERE idUsuario = ?`;
+        const result = await Connection.execute(query, [hashedPass, idUsuario]);
         return result;
     }
 };

@@ -3,7 +3,7 @@ import { Connection } from "../connection/conexionsqlite.dao.js";
 export const getNotificacionesByEmpleadoDao = async (idEmpleado) => {
   try {
     const query = `
-      SELECT idNotificacion, titulo, mensaje, tipo, leida, fechaCreacion, enlace
+      SELECT idNotificacion, titulo, mensaje, tipo, leida, REPLACE(fechaCreacion, ' ', 'T') || 'Z' as fechaCreacion, enlace
       FROM notificaciones 
       WHERE idEmpleado = ?
       ORDER BY fechaCreacion DESC

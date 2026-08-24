@@ -39,5 +39,14 @@ export const UsuariosRRHHController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+
+    resetPassword: async (req, res) => {
+        try {
+            await UsuariosRRHHService.resetPassword(req.params.id);
+            res.json({ message: "Contraseña reseteada exitosamente" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
 };

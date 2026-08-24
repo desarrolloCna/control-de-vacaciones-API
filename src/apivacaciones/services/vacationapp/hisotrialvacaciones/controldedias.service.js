@@ -3,7 +3,7 @@ import { consultarPeriodosYDiasPorEmpeladoDao } from "../../../dao/vacationapp/h
 import { actualizarSaldoManualDao, acreditarDiasPorPeriodoLoteDao, ActualizarDiasAcumuladosPorPeriodoDao, debitarDiasPorPeriodoDao, getUltiaAcreditacionDiasDao, } from "../../../dao/vacationapp/historialvacaciones/controldedias.dao.js";
 import { destructurarFecha, destructurarFechaActual, formatearFecha, validarFechaUltimaActualizacion, } from "../../utils/dateutils.js";
 import { generarDiasAcumuladosPorPeriodo, obtenerPeriodosParaVacaciones } from "./calculodedias.service.js";
-import { actualizarEstadoSolicitudDao } from "../../../dao/vacationapp/modificarsolicitud.dao.js";
+import { actualizarEstadoSolicitudDao, bloquearSolicitudParaDebitoDao } from "../../../dao/vacationapp/modificarsolicitud.dao.js";
 import { getSuspensionesByEmpleadoDao } from "../../../dao/suspensiones/suspensiones.dao.js";
 import { consultarGestionVacacionesEspecialesDao } from "../../../modules/vacacionesespeciales/vacacionesespeciales.dao.js";
 
@@ -82,6 +82,16 @@ export const acreditarDiasPorPeriodoService = async (data) => {
 
 export const debitarDiasPorPeriodoService = async (datosSolicitud) => {
   try {
+    // 1. INTENTAR BLOQUEAR LA SOLICITUD DE FORMA ATÓMICA
+    const lockRows = await bloquearSolicitudParaDebitoDao(datosSolicitud.idSolicitud, datosSolicitud.idEmpleado);
+    
+    // Si no se afectó ninguna fila, significa que ya no está "autorizadas" 
+    // (o no existe, o ya fue reclamada por otra petición simultánea)
+    if (lockRows === 0) {
+        console.log(`Solicitud ${datosSolicitud.idSolicitud} ya fue procesada o está siendo procesada por otro hilo.`);
+        return 0; 
+    }
+
     const anioActual = dayjs().year();
     const fechaActual = dayjs().format("YYYY-MM-DD");
     let excluirAnioActual = anioActual;
