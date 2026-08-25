@@ -6,7 +6,7 @@ export const getSolicitudesDao = async (idCoordinador, idRol) => {
                         sl.idSolicitud, sl.idEmpleado,  sl.idInfoPersonal, 
                         (inf.primerNombre || ' ' || inf.segundoNombre || ' ' || inf.primerApellido || ' ' || inf.segundoApellido) AS nombreCompleto, 
                         sl.unidadSolicitud, sl.fechaInicioVacaciones, sl.fechaFinVacaciones, sl.fechaRetornoLabores, sl.cantidadDiasSolicitados, 
-                        sl.estadoSolicitud, sl.fechaSolicitud, sl.descripcionRechazo
+                        sl.estadoSolicitud, sl.fechaSolicitud, sl.descripcionRechazo, sl.observaciones_rrhh
                     FROM 
                         solicitudes_vacaciones sl
                     JOIN 

@@ -1,4 +1,5 @@
 import { getDiasFestivosServices, createDiaFestivoService, updateDiaFestivoService, deleteDiaFestivoService } from "../../services/diasfestivos/diasfestivos.service.js";
+import { recalcularSolicitudesPorNuevoFestivo } from "../../services/diasfestivos/recalculo.service.js";
 
 
 export const getDiasFestivosController = async (req, res) => {
@@ -23,6 +24,10 @@ export const createDiaFestivoController = async (req, res) => {
     try {
         const result = await createDiaFestivoService(req.body);
         const serializedResult = result ? { ...result, lastInsertRowid: result.lastInsertRowid ? result.lastInsertRowid.toString() : null } : null;
+        
+        // Recálculo automático en background
+        recalcularSolicitudesPorNuevoFestivo(req.body).catch(err => console.error("Error en recálculo asíncrono:", err));
+
         res.status(201).json({ message: "Día festivo creado exitosamente", data: serializedResult });
     } catch (error) {
         console.error("DIAS FESTIVOS POST ERROR:", error);

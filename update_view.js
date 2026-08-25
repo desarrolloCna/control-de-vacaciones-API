@@ -18,6 +18,7 @@ async function run() {
       WITH HistorialConAcumulado AS (
           SELECT 
               historial_vacaciones.idHistorial AS idHistorial,
+              historial_vacaciones.idSolicitud AS idSolicitudOriginal,
               COALESCE(historial_vacaciones.idSolicitud, ROW_NUMBER() OVER (PARTITION BY historial_vacaciones.idEmpleado ORDER BY historial_vacaciones.idHistorial)) AS idSolicitudCorrelativo,
               historial_vacaciones.idEmpleado AS idEmpleado,
               historial_vacaciones.periodo AS periodo,
@@ -37,6 +38,7 @@ async function run() {
       HistorialFinal AS (
           SELECT 
               HistorialConAcumulado.idHistorial AS idHistorial,
+              HistorialConAcumulado.idSolicitudOriginal AS idSolicitudOriginal,
               HistorialConAcumulado.idSolicitudCorrelativo AS idSolicitudCorrelativo,
               HistorialConAcumulado.idEmpleado AS idEmpleado,
               HistorialConAcumulado.periodo AS periodo,
@@ -54,6 +56,7 @@ async function run() {
       )
       SELECT 
           HistorialFinal.idHistorial AS idHistorial,
+          HistorialFinal.idSolicitudOriginal AS idSolicitudOriginal,
           HistorialFinal.idSolicitudCorrelativo AS idSolicitudCorrelativo,
           HistorialFinal.idEmpleado AS idEmpleado,
           HistorialFinal.periodo AS periodo,

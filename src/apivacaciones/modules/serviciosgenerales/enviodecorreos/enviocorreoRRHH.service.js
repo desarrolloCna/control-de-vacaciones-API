@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const EnviarMailReprogramacionRRHH = async (idSolicitud, motivoReprogramacion) => {
+export const EnviarMailReprogramacionRRHH = async (idSolicitud, motivoReprogramacion, nuevosDias = 0) => {
   try {
     // Buscar la información del solicitante
     const query = `
@@ -35,7 +35,7 @@ export const EnviarMailReprogramacionRRHH = async (idSolicitud, motivoReprograma
     }
 
     // Preparar el HTML
-    const plantiila = PlantillaNotificacionReprogramacionRRHH(nombreCompleto, fechaInicioVacaciones, fechaFinVacaciones, motivoReprogramacion);
+    const plantiila = PlantillaNotificacionReprogramacionRRHH(nombreCompleto, fechaInicioVacaciones, fechaFinVacaciones, motivoReprogramacion, nuevosDias);
 
     console.log(`[EMAIL] Enviando correo reprogramación a: ${correoInstitucional}, desde: ${FROM_EMAIL}`);
 

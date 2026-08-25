@@ -5,7 +5,7 @@ export const getSolicitudesByIdDao = async (idEmpleado, idInfoPersonal) => {
     const query = `SELECT idSolicitud, idEmpleado, idInfoPersonal, unidadSolicitud,
                     fechaInicioVacaciones, fechaFinVacaciones, fechaRetornoLabores, 
                     cantidadDiasSolicitados, estadoSolicitud, fechaSolicitud,
-                    coordinadorResolucion, fechaResolucion, descripcionRechazo, correlativo 
+                    coordinadorResolucion, fechaResolucion, descripcionRechazo, correlativo, observaciones_rrhh 
                     FROM solicitudes_vacaciones
                     WHERE idEmpleado = ?
                     and idInfoPersonal = ?  
@@ -30,7 +30,7 @@ export const getSolicitudesByIdSolcitudDao = async (idSolicitud, idEmpleado) => 
     const query = `SELECT sl.idSolicitud, (inf.primerNombre || ' ' || inf.segundoNombre || 
                   ' ' || inf.primerApellido || ' ' || inf.segundoApellido) AS nombreCompleto, emp.correoInstitucional,
                   emp.puesto, emp.fechaIngreso, emp.renglon, sl.unidadSolicitud, sl.cantidadDiasSolicitados, sl.fechaInicioVacaciones, 
-                  sl.fechaFinVacaciones, sl.fechaRetornoLabores, sl.idCoordinador, sl.correlativo, sl.fechaSolicitud, sl.estadoSolicitud
+                  sl.fechaFinVacaciones, sl.fechaRetornoLabores, sl.idCoordinador, sl.correlativo, sl.fechaSolicitud, sl.estadoSolicitud, sl.observaciones_rrhh
                   FROM solicitudes_vacaciones sl, infoPersonalEmpleados inf, empleados emp
                   WHERE sl.idInfoPersonal = inf.idInfoPersonal
                   AND sl.idEmpleado = emp.idEmpleado
@@ -56,7 +56,7 @@ export const consultarSolicitudesPorEmpleadoDao = async (idEmpleado) => {
                     fechaInicioVacaciones, fechaFinVacaciones, fechaRetornoLabores, 
                     cantidadDiasSolicitados, estadoSolicitud, fechaSolicitud,
                     coordinadorResolucion, fechaResolucion, descripcionRechazo, 
-  					        estado, correlativo
+  					        estado, correlativo, observaciones_rrhh
                     FROM solicitudes_vacaciones
                     WHERE idEmpleado = ?
                     ORDER BY idSolicitud DESC;`;

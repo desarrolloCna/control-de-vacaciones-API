@@ -14,7 +14,7 @@ export const vacacionesReportDao = async (unidad) => {
         sv.fechaRetornoLabores, sv.cantidadDiasSolicitados, sv.estadoSolicitud,
         sv.fechaSolicitud, sv.coordinadorResolucion AS coordinadorAprobo,
         sv.fechaResolucion AS fechaAutorizacion, sv.descripcionRechazo, 
-        sv.fechaSolicitud,
+        sv.fechaSolicitud, sv.observaciones_rrhh,
         emp.puesto, emp.renglon
         FROM solicitudes_vacaciones sv,
         infoPersonalEmpleados inf, empleados emp
@@ -32,7 +32,7 @@ export const vacacionesReportDao = async (unidad) => {
         sv.fechaRetornoLabores, sv.cantidadDiasSolicitados, sv.estadoSolicitud,
         sv.fechaSolicitud, sv.coordinadorResolucion AS coordinadorAprobo,
         sv.fechaResolucion AS fechaAutorizacion, sv.descripcionRechazo, 
-        sv.fechaSolicitud,
+        sv.fechaSolicitud, sv.observaciones_rrhh,
         emp.puesto, emp.renglon
         FROM solicitudes_vacaciones sv,
         infoPersonalEmpleados inf, empleados emp
