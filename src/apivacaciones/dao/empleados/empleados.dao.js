@@ -154,7 +154,8 @@ export const consultarEmpleadosIncompletosDao = async () => {
                 ip.fechaIngreso
             FROM infoPersonalEmpleados ip
             JOIN dpiEmpleados d ON ip.idDpi = d.idDpi
-            WHERE ip.idInfoPersonal NOT IN (SELECT idInfoPersonal FROM empleados)
+            LEFT JOIN empleados e ON ip.idInfoPersonal = e.idInfoPersonal
+            WHERE e.idInfoPersonal IS NULL
             AND ip.estado = 'A' AND d.estado = 'A';
         `;
         const result = await Connection.execute(query);
