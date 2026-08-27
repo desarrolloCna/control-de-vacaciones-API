@@ -2,7 +2,7 @@ import { Connection } from "../connection/conexionsqlite.dao.js";
 
 export const IngresarEmpleadoDao = async (data) => {
     try {
-        const query = "INSERT INTO empleados (idInfoPersonal, puesto, salario, fechaIngreso, correoInstitucional, extensionTelefonica, unidad, renglon, observaciones, coordinacion, tipoContrato, numeroCuentaCHN, numeroContrato, numeroActa, numeroAcuerdo, isCoordinador, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A');";
+        const query = "INSERT INTO empleados (idInfoPersonal, puesto, salario, fechaIngreso, correoInstitucional, extensionTelefonica, unidad, renglon, observaciones, coordinacion, tipoContrato, numeroCuentaCHN, numeroContrato, numeroActa, numeroAcuerdo, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A');";
 
         const result = await Connection.execute(query, [
             data.idInfoPersonal,
@@ -19,8 +19,7 @@ export const IngresarEmpleadoDao = async (data) => {
             data.numeroCuentaCHN,
             data.numeroContrato,
             data.numeroActa,
-            data.numeroAcuerdo,
-            data.isCoordinador
+            data.numeroAcuerdo
         ]);
 
         return Number(result.lastInsertRowid);
