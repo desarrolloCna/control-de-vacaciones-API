@@ -1,4 +1,4 @@
-import { Connection } from "../../../apivacaciones/dao/connection/conexionsqlite.dao.js";
+import { Connection } from "../conexionb/conexioncatsqlite.js";
 
 export const getParentescoDao = async () => {
     try {

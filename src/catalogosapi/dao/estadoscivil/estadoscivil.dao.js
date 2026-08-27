@@ -1,3 +1,5 @@
+import { Connection } from "../conexionb/conexioncatsqlite.js";
+
 export const getEstadoCivilDao = async () => {
     try {
         const result = await Connection.execute("SELECT idEstadoCivil, estadoCivil, estado FROM estadosCivil;");

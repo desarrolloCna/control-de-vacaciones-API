@@ -1,17 +1,11 @@
-
-import { CerraBDCatalogos, ConectarBDCatalogos } from "../conexionb/conexionbdc.dao.js";
-
+import { Connection } from "../conexionb/conexioncatsqlite.js";
 
 export const getComunidadLinguisticaDao = async () => {
-    let catalogosBD;
-    
-    try{
-        catalogosBD = await ConectarBDCatalogos();
-        const [comunidadesLinguisticas] = await catalogosBD.query("select idComunidadLinguistica, tipoComunidad, estado from comunidadesLinguisticas;");
-        return [comunidadesLinguisticas]; 
-    }catch(error){
-        return error;
-    }finally{
-        CerraBDCatalogos(catalogosBD);
+    try {
+        const result = await Connection.execute("SELECT idComunidadLinguistica, tipoComunidad, estado FROM comunidadesLinguisticas;");
+        return [result.rows]; 
+    } catch (error) {
+        console.log("Error en getComunidadLinguisticaDao:", error);
+        throw error;
     }
 }

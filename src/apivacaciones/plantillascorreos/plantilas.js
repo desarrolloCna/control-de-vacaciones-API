@@ -190,9 +190,7 @@ export const GenerarPlantillasCorreos = (plantilla, data) => {
   }
 };
 
-export const PlantillaNotificacionReprogramacionRRHH = (nombreCompleto, fechaInicioVacaciones, fechaFinVacaciones, motivoReprogramacion, nuevosDias = 0) => {
-  const mostrarFirma = nuevosDias > 0;
-  
+export const PlantillaNotificacionReprogramacionRRHH = (nombreCompleto, fechaInicioVacaciones, fechaFinVacaciones, motivoReprogramacion) => {
   const html = `
     <!DOCTYPE html>
     <html lang="es">
@@ -231,17 +229,7 @@ export const PlantillaNotificacionReprogramacionRRHH = (nombreCompleto, fechaIni
               <div class="info-value" style="font-style: italic;">"${motivoReprogramacion}"</div>
             </div>
           </div>
-
-          ${mostrarFirma ? `
-          <div style="background-color: #FEF2F2; border: 1px solid #EF4444; border-radius: 6px; padding: 15px; margin-bottom: 30px; text-align: center;">
-            <p style="margin: 0; color: #EF4444; font-weight: bold; font-size: 16px;">⚠️ ¡IMPORTANTE! ⚠️</p>
-            <p style="margin: 10px 0 0 0; color: #111827; font-size: 14px;">
-              Debes ingresar al sistema, imprimir y volver a firmar el formulario con las fechas que realmente se gozaron, y presentarlo a la unidad correspondiente.
-            </p>
-          </div>
-          ` : ''}
-
-          <p>Los días devueltos regresarán a tu saldo. Por favor, comunícate con tu jefatura inmediata o directamente con la Unidad de Recursos Humanos para mayor información.</p>
+          <p>Tus días debitados regresarán a tu saldo. Por favor, comunícate con tu jefatura inmediata o directamente con la Unidad de Recursos Humanos para mayor información.</p>
         </div>
         <div class="footer">
           <p>Generado automáticamente por el Sistema de Control de Vacaciones del Consejo Nacional de Adopciones.</p>
