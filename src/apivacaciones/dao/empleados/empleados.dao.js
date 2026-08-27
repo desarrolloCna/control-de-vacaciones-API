@@ -151,7 +151,7 @@ export const consultarEmpleadosIncompletosDao = async () => {
                 ip.segundoNombre,
                 ip.primerApellido,
                 ip.segundoApellido,
-                ip.fechaIngreso
+                ip.fechaCreacion AS fechaIngreso
             FROM infoPersonalEmpleados ip
             JOIN dpiEmpleados d ON ip.idDpi = d.idDpi
             LEFT JOIN empleados e ON ip.idInfoPersonal = e.idInfoPersonal
