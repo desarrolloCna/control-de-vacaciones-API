@@ -1,4 +1,4 @@
-import { consultarEmpleadosSinVacacionesServices, consultarEmpleadosUltimoAnioServices, employeesListServices, obtenerDatosLaboralesServices, getResumenAnualVacacionesService } from "../../services/empleados/getdataempleados.service.js";
+import { consultarEmpleadosSinVacacionesServices, consultarEmpleadosUltimoAnioServices, employeesListServices, obtenerDatosLaboralesServices, getResumenAnualVacacionesService, consultarEmpleadosIncompletosServices } from "../../services/empleados/getdataempleados.service.js";
 
 export const resumenAnualVacacionesController = async (req, res) => {
     try {
@@ -85,6 +85,22 @@ export const consultarEmpleadosSinVacacionesController = async (req, res) => {
         const codRes = error?.codRes || 500;
         const responseData = error?.message || error;
         responseData.status;
+        res.status(codRes).json({ responseData });
+    }
+}
+
+export const consultarEmpleadosIncompletosController = async (req, res) => {
+    try {
+        const incompletos = await consultarEmpleadosIncompletosServices();
+        const responseData = {
+            status: 200,
+            message: "Registros incompletos encontrados",
+            incompletos
+        };
+        res.status(200).json(responseData);
+    } catch (error) {
+        const codRes = error?.codRes || 500;
+        const responseData = error?.message || error;
         res.status(codRes).json({ responseData });
     }
 }

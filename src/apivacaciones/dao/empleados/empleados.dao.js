@@ -139,3 +139,28 @@ export const consultarEmpleadosSinVacacionesDao = async () => {
         throw error;
     }
 }
+
+export const consultarEmpleadosIncompletosDao = async () => {
+    try {
+        const query = `
+            SELECT 
+                ip.idInfoPersonal,
+                d.idDpi,
+                d.numeroDocumento,
+                ip.primerNombre,
+                ip.segundoNombre,
+                ip.primerApellido,
+                ip.segundoApellido,
+                ip.fechaIngreso
+            FROM infoPersonalEmpleados ip
+            JOIN dpiEmpleados d ON ip.idDpi = d.idDpi
+            WHERE ip.idInfoPersonal NOT IN (SELECT idInfoPersonal FROM empleados)
+            AND ip.estado = 'A' AND d.estado = 'A';
+        `;
+        const result = await Connection.execute(query);
+        return result.rows;
+    } catch (error) {
+        console.log("Error en consultarEmpleadosIncompletosDao:", error);
+        throw error;
+    }
+}

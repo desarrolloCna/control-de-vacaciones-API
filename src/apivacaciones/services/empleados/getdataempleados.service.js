@@ -1,4 +1,4 @@
-import { consultarEmpleadosSinVacacionesDao, consultarEmpleadosUltimoAnioDao } from "../../dao/empleados/empleados.dao.js";
+import { consultarEmpleadosSinVacacionesDao, consultarEmpleadosUltimoAnioDao, consultarEmpleadosIncompletosDao } from "../../dao/empleados/empleados.dao.js";
 import { acreditarDiasPorPeriodoService } from "../vacationapp/hisotrialvacaciones/controldedias.service.js";
 import { employeesListDao, obtenerDatosLaboralesDao } from "../../dao/empleados/getdataempleados.dao.js";
 import { getResumenVacacionesDao } from "../../dao/empleados/reportes.dao.js";
@@ -91,4 +91,13 @@ export const consultarEmpleadosSinVacacionesServices = async () => {
       }catch(error){
             throw error;
       }
+}
+
+export const consultarEmpleadosIncompletosServices = async () => {
+    try {
+        const result = await consultarEmpleadosIncompletosDao();
+        return result;
+    } catch (error) {
+        throw error;
+    }
 }

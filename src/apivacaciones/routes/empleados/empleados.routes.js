@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { IngresarEmpleadoController } from "../../controller/empleados/empleados.controller.js";
-import { consultarEmpleadosSinVacacionesController, consultarEmpleadosUltimoAnioController, employeesListController, obtenerDatosLaboralesController, resumenAnualVacacionesController } from "../../controller/empleados/getdataempleados.controller.js";
+import { consultarEmpleadosSinVacacionesController, consultarEmpleadosUltimoAnioController, employeesListController, obtenerDatosLaboralesController, resumenAnualVacacionesController, consultarEmpleadosIncompletosController } from "../../controller/empleados/getdataempleados.controller.js";
 import { actualizarDatosLaboralesController, actualizarInfoPersonalController, actualizarOtrosDatosController, actualizarInfoDpiController } from "../../controller/empleados/actualizardata.controller.js";
 
 export const empleadosRoute = Router();
@@ -15,3 +15,4 @@ empleadosRoute.put('/actualizarDatosLaborales/:idEmpleado', actualizarDatosLabor
 empleadosRoute.put('/actualizarInfoPersonal/:idInfoPersonal', actualizarInfoPersonalController);
 empleadosRoute.put('/actualizarOtrosDatos/:idInfoPersonal', actualizarOtrosDatosController);
 empleadosRoute.put('/actualizarDpi/:idInfoPersonal', actualizarInfoDpiController);
+empleadosRoute.get('/empleados-incompletos', consultarEmpleadosIncompletosController);

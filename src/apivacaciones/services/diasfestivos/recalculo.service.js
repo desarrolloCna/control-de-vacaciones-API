@@ -5,6 +5,7 @@ import { getDiasFestivosServices } from "./diasfestivos.service.js";
 import { getSolicitudesByIdSolcitudDao } from "../../dao/vacationapp/getsolicitudbyid.dao.js";
 import { transporter, FROM_EMAIL } from "../email/transporter.js";
 import { calcularRetornoYFestivosBackend } from "../../utils/dateutils.js";
+import { registrarBitacoraDao } from "../../dao/bitacora/bitacora.dao.js";
 
 dayjs.extend(isSameOrAfter);
 
@@ -56,6 +57,22 @@ export const recalcularSolicitudesPorNuevoFestivo = async (nuevoFestivoData) => 
                     SET fechaFinVacaciones = ?, fechaRetornoLabores = ?, observaciones_rrhh = ?
                     WHERE idSolicitud = ?
                 `, [fechaFin, proximaFechaLaboral, nuevasObs, sol.idSolicitud]);
+
+                // Registrar en la bitácora para que aparezca en el tracking
+                try {
+                    await registrarBitacoraDao({
+                        idUsuario: 1, // ID genérico para acciones del sistema
+                        usuario: "Sistema",
+                        accion: "UPDATE",
+                        tabla: "solicitudes_vacaciones",
+                        idRegistro: sol.idSolicitud,
+                        datosAnteriores: { fechaRetornoLabores: sol.fechaRetornoLabores },
+                        datosNuevos: { fechaRetornoLabores: proximaFechaLaboral },
+                        descripcion: `La fecha de reincorporación se ajustó automáticamente del ${dayjs(sol.fechaRetornoLabores).format('DD/MM/YYYY')} al ${dayjs(proximaFechaLaboral).format('DD/MM/YYYY')} debido al nuevo día festivo: ${nuevoFestivoData.nombreDiaFestivo}.`
+                    });
+                } catch (bitacoraErr) {
+                    console.error("Error registrando bitacora en recalculo:", bitacoraErr);
+                }
 
                 // Nota: Los días debitados siguen siendo "cantidadDiasSolicitados", 
                 // ya que un día de vacación fue reemplazado por un día festivo. 
