@@ -14,6 +14,7 @@ export const IngresarEmpleadoController = async (req, res) => {
         .json({responseData});
 
     }catch(error){
+        console.error("ERROR IN CONTROLLER:", error);
         const status = error?.codRes || 500;
         const responseData = error?.message || error;
         responseData.status;
