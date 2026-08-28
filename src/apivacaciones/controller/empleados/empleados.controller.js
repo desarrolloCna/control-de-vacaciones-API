@@ -15,9 +15,9 @@ export const IngresarEmpleadoController = async (req, res) => {
 
     }catch(error){
         console.error("ERROR IN CONTROLLER:", error);
-        const status = error?.codRes || 500;
-        const responseData = error?.message || error;
-        responseData.status;
+        let status = error?.codRes || 500;
+        let responseData = error?.message || error; if (typeof responseData === "string" && responseData.includes("UNIQUE constraint failed")) { status = 400; if (responseData.includes("empleado")) { responseData = "El empleado ya existe (DPI, NIT o Correo duplicado)."; } else { responseData = "El registro ya existe en la base de datos."; } }
+        
         res.status(status).json({ responseData });
     }
 
