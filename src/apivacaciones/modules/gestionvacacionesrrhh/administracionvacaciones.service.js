@@ -41,3 +41,23 @@ export const cancelarSolicitudAutorizadaService = async (idSolicitud, fechaResol
         throw error;
     }
 }
+
+export const cancelarSolicitudParcialService = async (idSolicitud, fechaResolucion, motivoReprogramacion, diasGozados, idUsuarioSession, usuarioSession) => {
+    try {
+        const result = await cancelarSolicitudParcialDao(idSolicitud, fechaResolucion, motivoReprogramacion, diasGozados, idUsuarioSession, usuarioSession);
+        return result;
+    } catch (error) {
+        console.log("Error en cancelarSolicitudParcialService:", error);
+        throw error;
+    }
+}
+
+export const consultarSolicitudesCanceladasService = async () => {
+    try {
+        const result = await consultarSolicitudesCanceladasDao();
+        return result;
+    } catch (error) {
+        console.log("Error en consultarSolicitudesCanceladasService:", error);
+        throw error;
+    }
+}
