@@ -22,6 +22,27 @@ export const consultarSolicitudesVacacionesAutorizadasDao = async () => {
     }
 }
 
+export const consultarSolicitudesReprogramadasDao = async () => {
+    try{
+        const query = `select sl.idSolicitud, sl.idEmpleado, sl.idInfoPersonal,
+                        concat(i.primerNombre, ' ', i.segundoNombre, ' ', i.primerApellido, ' ', i.segundoApellido)nombres,
+                        e.puesto, e.coordinacion, e.unidad, sl.idCoordinador, c.nombreCoordinador,
+                        sl.fechainicioVacaciones, sl.fechaFinVacaciones, sl.fechaRetornoLabores, sl.cantidadDiasSolicitados, 
+                        sl.fechaSolicitud, sl.estadoSolicitud, sl.fechaResolucion, sl.motivoReprogramacion
+                        from solicitudes_vacaciones sl
+                        join infoPersonalEMpleados i on sl.idInfoPersonal = i.idInfoPersonal
+                        join empleados e on sl.idEmpleado = e.idEmpleado
+                        join coordinadores c on sl.idCoordinador = c.idCoordinador
+                        where sl.estadoSolicitud = 'reprogramacion';`;
+
+        const result = await Connection.execute(query);
+        return result.rows;
+    }catch(error){
+        console.log("Error en consultarSolicitudesReprogramadas:", error);
+        throw error;     
+    }
+}
+
 export const cancelarSolicitudAutorizadaDaDao = async (idSolicitud, fechaResolucion, motivoReprogramacion, idUsuarioSession, usuarioSession) => {
     try{
         // 1. Delete debited days in historial_vacaciones so the user gets their days refunded

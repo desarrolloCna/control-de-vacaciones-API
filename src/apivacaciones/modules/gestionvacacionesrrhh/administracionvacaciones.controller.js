@@ -1,4 +1,4 @@
-import { cancelarSolicitudAutorizadaService, consultarSolicitudesVacacionesAutorizadasService } from "./administracionvacaciones.service.js";
+import { cancelarSolicitudAutorizadaService, consultarSolicitudesVacacionesAutorizadasService, consultarSolicitudesReprogramadasService } from "./administracionvacaciones.service.js";
 
 export const consultarSolicitudesVacacionesAutorizadasController = async (req, res) => {
     try {

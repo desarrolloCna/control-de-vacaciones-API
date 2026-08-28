@@ -1,4 +1,4 @@
-import { cancelarSolicitudAutorizadaDaDao, consultarSolicitudesVacacionesAutorizadasDao } from "./administracionvacaciones.dao.js";
+import { cancelarSolicitudAutorizadaDaDao, consultarSolicitudesVacacionesAutorizadasDao, consultarSolicitudesReprogramadasDao } from "./administracionvacaciones.dao.js";
 
 
 export const consultarSolicitudesVacacionesAutorizadasService = async () => {
@@ -7,6 +7,16 @@ export const consultarSolicitudesVacacionesAutorizadasService = async () => {
         return result;
     }catch(error){
         console.log("Error en consultarSolicitudesVacacionesAutorizadasService:", error);
+        throw error;
+    }
+}
+
+export const consultarSolicitudesReprogramadasService = async () => {
+    try {
+        const result = await consultarSolicitudesReprogramadasDao();
+        return result;
+    } catch (error) {
+        console.log("Error en consultarSolicitudesReprogramadasService:", error);
         throw error;
     }
 }
