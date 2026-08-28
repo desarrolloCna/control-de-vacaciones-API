@@ -28,7 +28,7 @@ export const consultarSolicitudesReprogramadasDao = async () => {
                         concat(i.primerNombre, ' ', i.segundoNombre, ' ', i.primerApellido, ' ', i.segundoApellido)nombres,
                         e.puesto, e.coordinacion, e.unidad, sl.idCoordinador, c.nombreCoordinador,
                         sl.fechainicioVacaciones, sl.fechaFinVacaciones, sl.fechaRetornoLabores, sl.cantidadDiasSolicitados, 
-                        sl.fechaSolicitud, sl.estadoSolicitud, sl.fechaResolucion, sl.motivoReprogramacion
+                        sl.fechaSolicitud, sl.estadoSolicitud, sl.fechaResolucion, sl.descripcionRechazo as motivoReprogramacion
                         from solicitudes_vacaciones sl
                         join infoPersonalEMpleados i on sl.idInfoPersonal = i.idInfoPersonal
                         join empleados e on sl.idEmpleado = e.idEmpleado
