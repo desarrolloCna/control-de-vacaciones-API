@@ -6,7 +6,7 @@ export const IngresarInfoPersonalDao = async (data) => {
         // Verificar si el idDpi ya existe
         const existResult = await Connection.execute(
             "SELECT idDpi FROM infoPersonalEmpleados WHERE idDpi = ? AND estado = 'A'", 
-            [data.idDpi]
+            [data.idDpi === undefined ? null : data.idDpi]
         );
         
         if (existResult.rows.length === 1) {
