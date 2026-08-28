@@ -4,6 +4,11 @@ import { IngresarInfoDpiServices } from "../../services/dpi/informaciondpi.servi
 export const IngresarInfoDpiController = async (req, res) => {
     try {
         const idDpi = await IngresarInfoDpiServices(req.body);
+        
+        if (!idDpi) {
+            return res.status(409).json({ responseData: "El DPI ingresado ya se encuentra registrado en el sistema." });
+        }
+
         const responseData = {
             status: 200,
             message: "Datos ingresados correctamente",
