@@ -4,7 +4,7 @@ export const IngresarEmpleadoDao = async (data) => {
     try {
         const query = "INSERT INTO empleados (idInfoPersonal, puesto, salario, fechaIngreso, correoInstitucional, extensionTelefonica, unidad, renglon, observaciones, coordinacion, tipoContrato, numeroCuentaCHN, numeroContrato, numeroActa, numeroAcuerdo, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A');";
 
-        const result = await Connection.execute(query, [
+        const params = [
             data.idInfoPersonal,
             data.puesto,
             data.salario,
@@ -20,7 +20,9 @@ export const IngresarEmpleadoDao = async (data) => {
             data.numeroContrato,
             data.numeroActa,
             data.numeroAcuerdo
-        ]);
+        ].map(val => val === undefined ? null : val);
+
+        const result = await Connection.execute(query, params);
 
         return Number(result.lastInsertRowid);
     } catch (error) {

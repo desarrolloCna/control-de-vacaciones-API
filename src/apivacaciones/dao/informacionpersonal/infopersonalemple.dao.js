@@ -14,29 +14,31 @@ export const IngresarInfoPersonalDao = async (data) => {
         }
 
         // Insertar nueva información personal
+        const params = [
+            data.primerNombre,
+            data.segundoNombre,
+            data.tercerNombre,
+            data.primerApellido,
+            data.segundoApellido,
+            data.apellidoCasada,
+            data.numeroCelular,
+            data.correoPersonal,
+            data.direccionResidencia,
+            data.idDpi,
+            data.estadoCivil,
+            data.genero,
+            data.departamentoNacimiento,
+            data.municipioNacimiento,
+            data.nit,
+            data.numAfiliacionIgss,
+            data.fechaNacimiento,
+            data.numeroLicencia,
+            data.tipoLicencia
+        ].map(val => val === undefined ? null : val);
+
         const result = await Connection.execute(
             "INSERT INTO infoPersonalEmpleados (primerNombre, segundoNombre, tercerNombre, primerApellido, segundoApellido, apellidoCasada, numeroCelular, correoPersonal, direccionResidencia, idDpi, estadoCivil, Genero, departamentoNacimiento, municipioNacimiento, nit, numAfiliacionIgss, fechaNacimiento, numeroLicencia, tipoLicencia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-            [
-                data.primerNombre,
-                data.segundoNombre,
-                data.tercerNombre,
-                data.primerApellido,
-                data.segundoApellido,
-                data.apellidoCasada,
-                data.numeroCelular,
-                data.correoPersonal,
-                data.direccionResidencia,
-                data.idDpi,
-                data.estadoCivil,
-                data.genero,
-                data.departamentoNacimiento,
-                data.municipioNacimiento,
-                data.nit,
-                data.numAfiliacionIgss,
-                data.fechaNacimiento,
-                data.numeroLicencia,
-                data.tipoLicencia
-            ]
+            params
         );
 
         return Number(result.lastInsertRowid);
