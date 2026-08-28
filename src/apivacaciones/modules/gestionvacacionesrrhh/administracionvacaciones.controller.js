@@ -35,3 +35,19 @@ export const cancelarSolicitudAutorizadaController = async (req, res) => {
     }
 }
 
+export const consultarSolicitudesReprogramadasController = async (req, res) => {
+    try {
+        const solicitudes = await consultarSolicitudesReprogramadasService();
+        const responseData = {
+            status: 200,
+            message: "Data encontra correctamente",
+            solicitudes
+        };
+        res.status(200).json(responseData);
+        
+    } catch (error) {
+        const status = error?.codRes || 500;
+        const responseData = error?.message || error;
+        res.status(status).json({ responseData });
+    }
+}
