@@ -1,4 +1,4 @@
-import { cancelarSolicitudAutorizadaDaDao, consultarSolicitudesVacacionesAutorizadasDao, consultarSolicitudesReprogramadasDao } from "./administracionvacaciones.dao.js";
+import { cancelarSolicitudAutorizadaDaDao, consultarSolicitudesVacacionesAutorizadasDao, consultarSolicitudesReprogramadasDao, cancelarSolicitudParcialDao, consultarSolicitudesCanceladasDao } from "./administracionvacaciones.dao.js";
 
 
 export const consultarSolicitudesVacacionesAutorizadasService = async () => {
