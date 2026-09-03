@@ -1,5 +1,5 @@
 import { handleServiceError } from "../../../middlewares/handleserviceerror.js";
-import { consultarEmpleadosSinVacacionesDao, consultarEmpleadosUltimoAnioDao, IngresarEmpleadoDao, consultarEmpleadosIncompletosDao } from "../../dao/empleados/empleados.dao.js";
+import { consultarEmpleadosSinVacacionesDao, consultarEmpleadosUltimoAnioDao, IngresarEmpleadoDao, consultarEmpleadosIncompletosDao, EliminarEmpleadoDao } from "../../dao/empleados/empleados.dao.js";
 import { registrarCoordinadorServices } from "../coordinadores/coordinadores.service.js";
 import { obtenerInfoPersonalServices } from "../informacionpersonal/getinforpersonal.services.js";
 import { CrearUsuarioService } from "../usuarios/usuarios.service.js";
@@ -34,13 +34,19 @@ export const IngresarEmpleadosService = handleServiceError(async (data) => {
   const idEmpleado = await IngresarEmpleadoDao(data);
   data.idEmpleado = idEmpleado;
 
-  // Lógica para coordinadores
-  if (data.isCoordinador == 1) {
-    await manejarCoordinador(data);
+  try {
+      // Lógica para coordinadores
+      if (data.isCoordinador == 1) {
+        await manejarCoordinador(data);
+      }
+
+      // Creación de usuario asociado al empleado
+      await CrearUsuarioService(data);
+
+      return idEmpleado; // Retorna el ID del empleado creado
+  } catch (error) {
+      console.error("Error en IngresarEmpleadosService, haciendo rollback de empleado...", error);
+      await EliminarEmpleadoDao(idEmpleado);
+      throw error;
   }
-
-  // Creación de usuario asociado al empleado
-  await CrearUsuarioService(data);
-
-  return idEmpleado; // Retorna el ID del empleado creado
 });

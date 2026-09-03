@@ -236,6 +236,7 @@ const generarPayloadPorPeriodoAniosAtrasados = (data) => {
 const generarPayloadPeriodoAnioEncurso = (data) => {
   const { anioEnCurso } = destructurarFechaActual(); // Año en curso desestructurado
   const { anio: anioUpdate } = destructurarFecha(data.fechaUpdate); // Año de la última actualización
+  const { anio: anioIngreso } = destructurarFecha(data.fechaIngreso); // Año de ingreso
 
   // Verifica que el año de la última actualización coincide con el año en curso
   if (anioUpdate !== anioEnCurso) {
@@ -249,7 +250,15 @@ const generarPayloadPeriodoAnioEncurso = (data) => {
   const periodoVacaciones = GenerarPeriodo(data.fechaUpdate);
 
   // Calcular los días acumulados en el año en curso
-  let diasAcumuladosAnioEncurso = getDiasAnioEnCursoIncompleto(anioUpdate);
+  let diasAcumuladosAnioEncurso;
+  if (anioIngreso === anioEnCurso) {
+    // Si entró en el mismo año en curso, se calcula desde su fecha de ingreso, no desde el 1 de enero
+    diasAcumuladosAnioEncurso = getDiasInicioAnioEnCurso(data.fechaIngreso);
+  } else {
+    // Si entró en años anteriores, se calcula desde el 1 de enero del año en curso
+    diasAcumuladosAnioEncurso = getDiasAnioEnCursoIncompleto(anioUpdate);
+  }
+
   const descuentoSuspension = calcularDiasSuspendidosEnAnio(data.suspensiones, anioUpdate);
   
   diasAcumuladosAnioEncurso.diasAcumulados = Math.max(0, diasAcumuladosAnioEncurso.diasAcumulados - descuentoSuspension);

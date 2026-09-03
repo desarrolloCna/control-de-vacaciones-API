@@ -5,6 +5,8 @@ import { consultarCoordinadorService } from "../../coordinadores/coordinadores.s
 import { getSolicitudesByIdSolcitudDao } from "../../../dao/vacationapp/getsolicitudbyid.dao.js";
 import { consultarPeriodosYDiasPorEmpeladoDao } from "../../../dao/vacationapp/historialvacaciones/consultashistorial.dao.js";
 import { obtenerPeriodosParaVacaciones } from "../../vacationapp/hisotrialvacaciones/calculodedias.service.js";
+import dayjs from "dayjs";
+import { consultarGestionVacacionesEspecialesDao } from "../../../modules/vacacionesespeciales/vacacionesespeciales.dao.js";
 
 export const notificarSolicitudVacacionesIngresada = async (data) => {
   try {
@@ -21,7 +23,16 @@ export const notificarSolicitudVacacionesIngresada = async (data) => {
     const plantillaHtml = GenerarPlantillasCorreos("solicitud-vacaciones",dataSolicitud);
 
     //Generar pdf de la autorizacion
-    const periodos = await consultarPeriodosYDiasPorEmpeladoDao(data.idEmpleado);
+    const anioActual = dayjs().year();
+    const fechaActual = dayjs().format("YYYY-MM-DD");
+    let excluirAnioActual = anioActual;
+    
+    const permiso = await consultarGestionVacacionesEspecialesDao(data.idEmpleado, fechaActual);
+    if (permiso && permiso.isExist > 0) {
+        excluirAnioActual = null;
+    }
+    
+    const periodos = await consultarPeriodosYDiasPorEmpeladoDao(data.idEmpleado, excluirAnioActual);
     const diasPorPeriodo = obtenerPeriodosParaVacaciones(periodos, dataSolicitud.cantidadDiasSolicitados);
     const bufferPDF = await generateVacationRequestPDF(dataSolicitud,diasPorPeriodo);
 

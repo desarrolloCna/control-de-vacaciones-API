@@ -25,7 +25,7 @@ export const getSolicitudesByIdDao = async (idEmpleado, idInfoPersonal) => {
   }
 };
 
-export const getSolicitudesByIdSolcitudDao = async (idSolicitud, idEmpleado) => {
+export const getSolicitudesByIdSolcitudDao = async (idSolicitud) => {
   try {
     const query = `SELECT sl.idSolicitud, (inf.primerNombre || ' ' || inf.segundoNombre || 
                   ' ' || inf.primerApellido || ' ' || inf.segundoApellido) AS nombreCompleto, emp.correoInstitucional,
@@ -34,10 +34,9 @@ export const getSolicitudesByIdSolcitudDao = async (idSolicitud, idEmpleado) => 
                   FROM solicitudes_vacaciones sl, infoPersonalEmpleados inf, empleados emp
                   WHERE sl.idInfoPersonal = inf.idInfoPersonal
                   AND sl.idEmpleado = emp.idEmpleado
-                  AND idSolicitud = ?
-                  AND sl.idEmpleado = ?;`;
+                  AND idSolicitud = ?;`;
 
-    const result = await Connection.execute(query, [idSolicitud, idEmpleado]);
+    const result = await Connection.execute(query, [idSolicitud]);
     
     if (result.rows.length === 0) {
       return null;

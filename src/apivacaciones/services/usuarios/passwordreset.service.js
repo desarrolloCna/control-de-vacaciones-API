@@ -1,15 +1,15 @@
-import { findUserByDpiOrUsernameDao, updateTemporaryPasswordDao } from "../../dao/usuarios/passwordreset.dao.js";
+import { findUserByCuiOrEmailDao, updateTemporaryPasswordDao } from "../../dao/usuarios/passwordreset.dao.js";
 import { GenerarPassword } from "../generalservices/usergenerator.service.js";
 import { EnviarMailServices } from "../email/enviaremail.service.js";
 
 export const requestPasswordResetService = async (identifier) => {
     try {
-        // 1. Buscar usuario por DPI o Username
-        const user = await findUserByDpiOrUsernameDao(identifier);
+        // 1. Buscar usuario por CUI o correo institucional
+        const user = await findUserByCuiOrEmailDao(identifier);
         if (!user) {
             throw {
                 codRes: 404,
-                message: "No se encontró ningún usuario con los datos proporcionados."
+                message: "No se encontró ningún usuario con ese CUI o correo institucional."
             };
         }
 
@@ -34,8 +34,6 @@ export const requestPasswordResetService = async (identifier) => {
             nombre: `${user.primerNombre} ${user.primerApellido}`
         };
 
-        // Reutilizamos EnviarMailServices (enviará el template de "Bienvenida" ajustado con los datos)
-        // Podríamos crear un template específico si se desea, pero el actual es suficiente para enviar credenciales.
         await EnviarMailServices(emailData);
 
         return { message: "Se ha enviado una contraseña temporal a su correo institucional." };

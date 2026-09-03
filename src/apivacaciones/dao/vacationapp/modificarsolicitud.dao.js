@@ -2,24 +2,22 @@ import { Connection } from "../connection/conexionsqlite.dao.js";
 
 export const IngresarSolicitudDao = async (data) => {
     try {
-        // Obtener el año actual
-        const currentYear = new Date().getFullYear();
-        
-        // Buscar el último correlativo del año actual
-        const lastCorrelativo = await Connection.execute(
-            `SELECT MAX(numeroCorrelativo) as maxCor FROM solicitudes_vacaciones 
-             WHERE strftime('%Y', fechaSolicitud) = ?`, 
-            [currentYear.toString()]
-        );
-
-        const nextNum = (lastCorrelativo.rows[0].maxCor || 0) + 1;
-        const correlativoInicial = `SDVC-${nextNum}`;
-
-        const result = await Connection.execute(`INSERT INTO solicitudes_vacaciones (idEmpleado, idInfoPersonal, idCoordinador, 
-                                                unidadSolicitud, fechaInicioVacaciones, fechaFinVacaciones, 
-                                                fechaRetornoLabores, cantidadDiasSolicitados, numeroCorrelativo, correlativo, fechaSolicitud)
-                                                 VALUES 
-                                                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);`, 
+        // Ejecutamos la inserción con subconsultas para garantizar atomicidad 
+        // y evitar duplicidad de correlativos en solicitudes concurrentes exactas.
+        const result = await Connection.execute(`
+            INSERT INTO solicitudes_vacaciones (
+                idEmpleado, idInfoPersonal, idCoordinador, 
+                unidadSolicitud, fechaInicioVacaciones, fechaFinVacaciones, 
+                fechaRetornoLabores, cantidadDiasSolicitados, 
+                numeroCorrelativo, correlativo, fechaSolicitud
+            )
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, 
+                NULL, 
+                'Pendiente de Autorización', 
+                CURRENT_TIMESTAMP
+            );
+        `, 
             [data.idEmpleado,
              data.idInfoPersonal,
              data.idCoordinador,
@@ -27,10 +25,17 @@ export const IngresarSolicitudDao = async (data) => {
              data.fechaInicioVacaciones,
              data.fechaFinVacaciones,
              data.fechaRetornoLabores,
-             data.cantidadDiasSolicitados,
-             nextNum,
-             correlativoInicial
+             data.cantidadDiasSolicitados
             ]);
+
+        const insertId = Number(result.lastInsertRowid);
+        
+        // Obtener el correlativo generado para la bitácora
+        const resInserted = await Connection.execute(
+            `SELECT correlativo FROM solicitudes_vacaciones WHERE idSolicitud = ?`, 
+            [insertId]
+        );
+        const correlativoInicial = resInserted.rows.length > 0 ? resInserted.rows[0].correlativo : 'SDVC-?';
 
         // Registrar en Bitácora
         if (data.idUsuarioSession && result.rowsAffected > 0) {
@@ -80,7 +85,12 @@ export const actualizarEstadoSolicitudDao = async (data) => {
 
         // Lógica de Correlativo Oficial al autorizar
         if (data.estadoSolicitud === 'autorizadas') {
-            query += `, correlativo = 'CNA-SDVC-' || numeroCorrelativo || '-' || strftime('%Y', fechaSolicitud)`;
+            query += `, 
+            numeroCorrelativo = COALESCE(numeroCorrelativo, (SELECT COALESCE(MAX(numeroCorrelativo), 0) + 1 FROM solicitudes_vacaciones WHERE strftime('%Y', fechaSolicitud) = strftime('%Y', CURRENT_TIMESTAMP))),
+            correlativo = COALESCE(
+                CASE WHEN numeroCorrelativo IS NOT NULL THEN correlativo ELSE NULL END, 
+                'CNA-SDVC-' || (SELECT COALESCE(MAX(numeroCorrelativo), 0) + 1 FROM solicitudes_vacaciones WHERE strftime('%Y', fechaSolicitud) = strftime('%Y', CURRENT_TIMESTAMP)) || '-' || strftime('%Y', CURRENT_TIMESTAMP)
+            )`;
         }
 
         if (data.firmaCoordinador) {

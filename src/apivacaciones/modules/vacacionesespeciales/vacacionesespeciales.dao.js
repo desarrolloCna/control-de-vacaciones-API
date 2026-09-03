@@ -148,3 +148,21 @@ export const consultarExcepcionLimiteDao = async (idEmpleado, fechaEnCurso) => {
         throw error;
     }
 }
+
+export const marcarExcepcionComoUsadaDao = async (idEmpleado, fechaEnCurso) => {
+    try {
+        const query = `
+            UPDATE excepciones_limite_vacaciones
+            SET estado = 'U'
+            WHERE idEmpleado = ?
+            AND estado = 'A'
+            AND date(?) BETWEEN fechaInicioValidez AND fechaFinValidez
+            AND flagAutorizacion = 1;
+        `;
+        const result = await Connection.execute(query, [idEmpleado, fechaEnCurso]);
+        return result.rowsAffected > 0;
+    } catch (error) {
+        console.log("Error en marcarExcepcionComoUsadaDao:", error);
+        throw error;
+    }
+}

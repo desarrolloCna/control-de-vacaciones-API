@@ -13,12 +13,13 @@ export const obtenerDatosEmpleadoParaAcumulacionDao = async (idEmpleado) => {
 
 export const obtenerHistorialPorEmpleadoDao = async (idEmpleado) => {
   try {
-    const query = `SELECT idHistorial, idEmpleado, idSolicitudCorrelativo AS Gestion,
-                    idSolicitudOriginal, idSolicitudCorrelativo, idEmpleado, periodo, totalDiasAcreditados, diasAcreditados, diasSolicitados,
-                    totalDiasDebitados, diasDisponiblesTotales, fechaAcreditacion, fechaDebito, 
-                    tipoRegistro
-                    FROM HistorialVacaciones
-                    WHERE idEmpleado = ?`;
+    const query = `SELECT hv.idHistorial, hv.idEmpleado, hv.idSolicitudCorrelativo AS Gestion,
+                    hv.idSolicitudOriginal, hv.idSolicitudCorrelativo, hv.idEmpleado, hv.periodo, hv.totalDiasAcreditados, hv.diasAcreditados, hv.diasSolicitados,
+                    hv.totalDiasDebitados, hv.diasDisponiblesTotales, hv.fechaAcreditacion, hv.fechaDebito, 
+                    hv.tipoRegistro, t.diasDebitados
+                    FROM HistorialVacaciones hv
+                    JOIN historial_vacaciones t ON hv.idHistorial = t.idHistorial
+                    WHERE hv.idEmpleado = ?`;
 
     const result = await Connection.execute(query, [idEmpleado]);
     
@@ -63,28 +64,45 @@ export const consultarPeriodosYDiasPorEmpeladoDao = async (idEmpleado, excluirAn
 
 export const consultarDiasDebitadosPorAnioDao = async (idEmpleado, anio) => {
   try {
-    const query = `SELECT COALESCE(SUM(diasDebitados), 0) as diasDebitados 
-                    FROM historial_vacaciones 
-                    WHERE idEmpleado = ? AND estado = 'A';`;
+    // diasDebitadosPeriodo: débitos brutos del año menos devoluciones por cancelación del mismo año.
+    // Se usa MAX(0,...) para evitar que las devoluciones produzcan un valor negativo
+    // (ej: si la solicitud se debitó en periodo 2025 pero el crédito de cancelación quedó en 2026).
+    let queryPeriodo = `SELECT MAX(0,
+                          COALESCE(SUM(diasDebitados), 0) - 
+                          COALESCE(SUM(CASE WHEN tipoRegistro = 1 AND idSolicitud IS NOT NULL THEN diasAcreditados ELSE 0 END), 0)
+                        ) as diasDebitadosPeriodo 
+                  FROM historial_vacaciones 
+                  WHERE idEmpleado = ? AND estado = 'A' AND CAST(periodo AS INTEGER) = ?;`;
+                    
+    let queryGlobal = `SELECT MAX(0,
+                          COALESCE(SUM(diasDebitados), 0) - 
+                          COALESCE(SUM(CASE WHEN tipoRegistro = 1 AND idSolicitud IS NOT NULL THEN diasAcreditados ELSE 0 END), 0)
+                        ) as diasDebitadosTotales 
+                  FROM historial_vacaciones 
+                  WHERE idEmpleado = ? AND estado = 'A';`;
 
-    const result = await Connection.execute(query, [idEmpleado]);
+    const resultPeriodo = await Connection.execute(queryPeriodo, [idEmpleado, anio]);
+    const resultGlobal = await Connection.execute(queryGlobal, [idEmpleado]);
 
-    if (result.rows.length === 0) {
-      return { diasDebitados: 0 };
-    }
+    const diasDebitadosPeriodo = resultPeriodo.rows.length > 0 ? resultPeriodo.rows[0].diasDebitadosPeriodo : 0;
+    const diasDebitadosTotales = resultGlobal.rows.length > 0 ? resultGlobal.rows[0].diasDebitadosTotales : 0;
 
-    return result.rows[0];
+    return { 
+      diasDebitadosPeriodo: diasDebitadosPeriodo,
+      diasDebitadosTotales: diasDebitadosTotales
+    };
   } catch (error) {
     console.log("Error en consultarDiasDisponiblesDeVacacacionesDao:", error);
     throw error;
   }
 };
 
+
 export const consultarDiasDisponiblesDao = async (idEmpleado, excluirAnioActual = null) => {
   try {
     let query = `SELECT 
                     COALESCE(
-                        SUM(CASE WHEN tipoRegistro = 1 THEN diasAcreditados ELSE 0 END), 
+                        SUM(CASE WHEN tipoRegistro = 1 AND idSolicitud IS NULL THEN diasAcreditados ELSE 0 END), 
                         0
                     ) as diasDisponibles
                     FROM historial_vacaciones 
@@ -106,6 +124,29 @@ export const consultarDiasDisponiblesDao = async (idEmpleado, excluirAnioActual 
     return result.rows[0];
   } catch (error) {
     console.log("Error en consultarDiasDisponiblesDao:", error);
+    throw error;
+  }
+};
+
+export const consultarDiasDisponiblesPorPeriodoDao = async (idEmpleado, anio) => {
+  try {
+    let query = `SELECT 
+                    COALESCE(
+                        SUM(CASE WHEN tipoRegistro = 1 AND idSolicitud IS NULL THEN diasAcreditados ELSE 0 END), 
+                        0
+                    ) as diasDisponiblesPeriodo
+                    FROM historial_vacaciones 
+                    WHERE idEmpleado = ? AND estado = 'A' AND CAST(periodo AS INTEGER) = ?`;
+                    
+    const result = await Connection.execute(query, [idEmpleado, anio]);
+
+    if (result.rows.length === 0) {
+      return { diasDisponiblesPeriodo: 0 };
+    }
+
+    return result.rows[0];
+  } catch (error) {
+    console.log("Error en consultarDiasDisponiblesPorPeriodoDao:", error);
     throw error;
   }
 };

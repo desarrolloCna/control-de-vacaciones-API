@@ -54,8 +54,8 @@ export const consultarSolicitudesReprogramadasController = async (req, res) => {
 
 export const cancelarSolicitudParcialController = async (req, res) => {
     try {
-        const { idSolicitud, diasGozados, motivo, idUsuarioSession, usuarioSession } = req.body;
-        const result = await cancelarSolicitudParcialService(idSolicitud, diasGozados, motivo, idUsuarioSession, usuarioSession);
+        const { idSolicitud, diasGozados, motivo, tipoCancelacion, fechaReintegro, idUsuarioSession, usuarioSession } = req.body;
+        const result = await cancelarSolicitudParcialService(idSolicitud, diasGozados, motivo, tipoCancelacion, fechaReintegro, idUsuarioSession, usuarioSession);
         const responseData = {
             status: 200,
             message: "Cancelación parcial registrada correctamente",

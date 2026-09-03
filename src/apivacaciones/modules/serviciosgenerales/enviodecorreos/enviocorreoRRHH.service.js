@@ -54,3 +54,24 @@ export const EnviarMailReprogramacionRRHH = async (idSolicitud, motivoReprograma
     // Lanzar el error permitiría frenar el flujo, pero para correos solemos solo loggear.
   }
 };
+
+export const EnviarMailCancelacionParcialRRHH = async (data) => {
+  try {
+    const { PlantillaNotificacionCancelacionParcialRRHH } = await import("../../../plantillascorreos/plantilas.js");
+    const plantilla = PlantillaNotificacionCancelacionParcialRRHH(data);
+
+    console.log(`[EMAIL] Enviando correo de Cancelación Parcial a: ${data.correo}`);
+
+    const info = await transporter.sendMail({
+      from: `"Consejo Nacional de Adopciones" <${FROM_EMAIL}>`,
+      to: data.correo,
+      subject: `Actualización de Fechas de Vacaciones - Cancelación Parcial`,
+      html: plantilla
+    });
+
+    console.log("[EMAIL] Correo de Cancelación Parcial enviado exitosamente:", info.messageId);
+    return true;
+  } catch (error) {
+    console.error("[EMAIL] Error al enviar correo de Cancelación Parcial:", error);
+  }
+};

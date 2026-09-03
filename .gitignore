@@ -8,3 +8,4 @@ respaldos_db/
 
 # Bases de datos locales
 *.db
+.env*

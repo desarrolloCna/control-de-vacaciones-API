@@ -166,3 +166,14 @@ export const consultarEmpleadosIncompletosDao = async () => {
         throw error;
     }
 }
+
+export const EliminarEmpleadoDao = async (idEmpleado) => {
+    try {
+        const query = "DELETE FROM empleados WHERE idEmpleado = ?;";
+        const result = await Connection.execute(query, [idEmpleado]);
+        return result;
+    } catch (error) {
+        console.log("Error en EliminarEmpleadoDao:", error);
+        throw error;
+    }
+}

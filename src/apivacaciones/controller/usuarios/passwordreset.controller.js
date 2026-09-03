@@ -2,9 +2,10 @@ import { requestPasswordResetService } from "../../services/usuarios/passwordres
 
 export const requestPasswordResetController = async (req, res) => {
     try {
-        const { identifier } = req.body;
+        // Acepta el campo 'identifier' (CUI o correo) o 'correo' por compatibilidad
+        const identifier = req.body.identifier || req.body.correo;
         if (!identifier) {
-            return res.status(400).json({ responseData: "El identificador (DPI o Usuario) es obligatorio." });
+            return res.status(400).json({ responseData: "Ingrese su CUI o correo institucional." });
         }
 
         const result = await requestPasswordResetService(identifier);

@@ -1,7 +1,7 @@
 
 import { getDatosContactoEmpleadoDao } from "../../dao/empleados/getdataempleados.dao.js";
 import { ObtenerNombresDao } from "../../dao/informacionpersonal/infopersonalemple.dao.js";
-import { CrearUsuarioDao } from "../../dao/usuarios/usuarios.dao.js";
+import { CrearUsuarioDao, consultarExistenciaUsuarioDao } from "../../dao/usuarios/usuarios.dao.js";
 import { EnviarMailServices } from "../email/enviaremail.service.js";
 import { GenerarPassword, GenerarUsuarioService } from "../generalservices/usergenerator.service.js";
 
@@ -20,6 +20,19 @@ export const CrearUsuarioService = async (data) => {
             // Fallback en caso de que no tenga correo institucional registrado
             const nombres = await ObtenerNombresDao(data.idEmpleado);
             user = await GenerarUsuarioService(nombres);
+        }
+
+        let baseUser = user;
+        let suffix = 0;
+        let userExists = true;
+        while (userExists) {
+            const existingUser = await consultarExistenciaUsuarioDao(user);
+            if (existingUser) {
+                suffix++;
+                user = `${baseUser}${suffix}`;
+            } else {
+                userExists = false;
+            }
         }
 
         const pass = GenerarPassword();

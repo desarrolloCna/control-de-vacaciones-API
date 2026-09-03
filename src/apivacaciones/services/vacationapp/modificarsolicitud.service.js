@@ -12,6 +12,8 @@ import {
 import { GenerarPlantillasCorreos } from "../../plantillascorreos/plantilas.js";
 import { consultarCoordinadorService } from "../coordinadores/coordinadores.service.js";
 import { EnviarMailAutorizacionDeVacaciones } from "../email/envioemailvacacionesautorizadas.service.js";
+import dayjs from "dayjs";
+import { consultarGestionVacacionesEspecialesDao, marcarExcepcionComoUsadaDao, consultarExcepcionLimiteDao } from "../../modules/vacacionesespeciales/vacacionesespeciales.dao.js";
 import {
   obtenerPeriodosParaVacaciones,
   restarDiasEnTransito,
@@ -22,6 +24,13 @@ import { notificarSolicitudVacacionesIngresada } from "../serviciosgenerales/env
 
 export const IngresarSolicitudService = async (data) => {
   try {
+    // Validar límite de 20 días
+    if (data.cantidadDiasSolicitados > 20) {
+      const excepcion = await consultarExcepcionLimiteDao(data.idEmpleado, dayjs().format("YYYY-MM-DD"));
+      if (!excepcion || excepcion.isExist === 0) {
+        throw new Error("No tienes una excepción habilitada para solicitar más de 20 días.");
+      }
+    }
     //Consultar si exite una solicitud activa
     const solicitud = await getSolicitudesByIdDao(data.idEmpleado, data.idInfoPersonal);
 
@@ -33,6 +42,15 @@ export const IngresarSolicitudService = async (data) => {
     // Se ingresa la solicitud
     const idSolicitud = await IngresarSolicitudDao(data);
     data.idSolicitud = idSolicitud;
+
+    // Si se usaron más de 20 días, invalidar la excepción (marcarla como usada)
+    if (data.cantidadDiasSolicitados > 20) {
+      try {
+        await marcarExcepcionComoUsadaDao(data.idEmpleado, dayjs().format("YYYY-MM-DD"));
+      } catch (e) {
+        console.log("Error al marcar excepcion como usada:", e.message);
+      }
+    }
 
     try {
       await crearNotificacionDao({
@@ -68,6 +86,14 @@ export const IngresarSolicitudService = async (data) => {
     if (error.codRes === 409) {
       const idSolicitud = await IngresarSolicitudDao(data);
       data.idSolicitud = idSolicitud;
+
+      if (data.cantidadDiasSolicitados > 20) {
+        try {
+          await marcarExcepcionComoUsadaDao(data.idEmpleado, dayjs().format("YYYY-MM-DD"));
+        } catch (e) {
+          console.log("Error al marcar excepcion como usada (409):", e.message);
+        }
+      }
 
       // Reintentar notificacion In-App al coordinador
       try {
@@ -154,7 +180,16 @@ export const actualizarEstadoSolicitudService = async (data) => {
 
     //Generar pdf de la autorizacion
     if(data.estadoSolicitud === "autorizadas"){
-      let periodos = await consultarPeriodosYDiasPorEmpeladoDao(data.idEmpleado);
+      const anioActual = dayjs().year();
+      const fechaActual = dayjs().format("YYYY-MM-DD");
+      let excluirAnioActual = anioActual;
+      
+      const permiso = await consultarGestionVacacionesEspecialesDao(data.idEmpleado, fechaActual);
+      if (permiso && permiso.isExist > 0) {
+          excluirAnioActual = null;
+      }
+      
+      let periodos = await consultarPeriodosYDiasPorEmpeladoDao(data.idEmpleado, excluirAnioActual);
       
       // Restar días en tránsito de solicitudes más antiguas que aún no se han debitado
       const diasEnTransito = await consultarDiasEnTransitoDao(data.idEmpleado, data.idSolicitud);

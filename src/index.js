@@ -13,6 +13,8 @@ import { infoEmpleRoute } from "./apivacaciones/routes/informacionpersonal/infop
 import { familiaresRoute } from "./apivacaciones/routes/familiares/familiaremple.route.js";
 import { nivelEducativoRoute } from "./apivacaciones/routes/niveleducativo/niveleducativo.routes.js";
 import { pertenenciaSoLiRoute } from "./apivacaciones/routes/pertenenciasociolinguistica/pertenenciasoli.route.js";
+
+import movimientosRoute from './apivacaciones/routes/empleados/movimientos.routes.js';
 import { datosMedicosRoute } from "./apivacaciones/routes/datosmedicos/datosmedicos.route.js";
 import { empleadosRoute } from "./apivacaciones/routes/empleados/empleados.routes.js";
 import { loginRout } from "./apivacaciones/routes/login/login.route.js";
@@ -107,6 +109,7 @@ app.use('/api/', notificacionesRoute);
 app.use('/api/', calendarioRoute);
 app.use('/api/', autoservicioRouter);
 app.use('/api/', frasesRoutes);
+app.use('/api/movimientos', movimientosRoute);
 app.use('/api/', unidadesRoute);
 
 

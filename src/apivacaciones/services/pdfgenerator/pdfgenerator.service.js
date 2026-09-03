@@ -46,8 +46,18 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
     doc.fontSize(11).fillColor(secondaryColor)
       .text("UNIDAD DE RECURSOS HUMANOS", 0, 68, { align: "center", width: doc.page.width });
 
+    const isCancelada = employeeData.estadoSolicitud === 'cancelada';
+    const isOriginalAnulado = employeeData.isOriginalAnulado === true;
+    
+    let tituloBoleta = `BOLETA DE SOLICITUD DE VACACIONES No. ${numeroBoleta}`;
+    if (isCancelada) {
+        tituloBoleta = `BOLETA DE CANCELACIÓN PARCIAL DE VACACIONES`;
+    } else if (isOriginalAnulado) {
+        tituloBoleta = `BOLETA DE SOLICITUD DE VACACIONES No. ${numeroBoleta} (ANULADA)`;
+    }
+
     doc.fontSize(12).fillColor(primaryColor)
-      .text(`BOLETA DE SOLICITUD DE VACACIONES No. ${numeroBoleta}`, 0, 95, { align: "center", width: doc.page.width });
+      .text(tituloBoleta, 0, 95, { align: "center", width: doc.page.width });
 
     // Línea decorativa del encabezado
     doc.moveTo(50, 115).lineTo(562, 115).lineWidth(1.5).strokeColor(primaryColor).stroke();
@@ -90,8 +100,94 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
 
     currentY += 115;
 
+    if (isCancelada) {
+        /* =====================================================
+           DETALLE DE CANCELACIÓN PARCIAL
+        ===================================================== */
+        currentY += 15;
+        doc.font("Helvetica-Bold").fontSize(11).fillColor(primaryColor)
+           .text("DETALLE DE CANCELACIÓN:", 50, currentY);
+        currentY += 15;
+
+        doc.font("Helvetica").fontSize(9).fillColor("#555555")
+           .text(`En referencia a la solicitud original No. ${numeroBoleta}, se actualizan los días solicitados a los días efectivamente gozados.`, 50, currentY);
+        currentY += 15;
+
+        const gozados = employeeData.cantidadDiasSolicitados;
+        const devueltos = employeeData.diasDevueltosCancelacion || 0;
+        const totalOriginal = gozados + devueltos;
+
+        doc.font("Helvetica").fontSize(10).fillColor("#000000");
+        doc.text(`Período Actualizado: `, 50, currentY, { continued: true }).font("Helvetica-Bold").text(`${formatDateToDisplay(employeeData.fechaInicioVacaciones)} al ${formatDateToDisplay(employeeData.fechaFinVacaciones)}`);
+        currentY += 20;
+
+        doc.font("Helvetica-Bold").text("Períodos Originalmente Afectados:", 50, currentY);
+        currentY += 15;
+        
+        if (diasPorPeriodo && diasPorPeriodo.length > 0) {
+            diasPorPeriodo.forEach((periodo) => {
+                doc.font("Helvetica").fontSize(9)
+                    .text("• ", 70, currentY, { continued: true })
+                    .font("Helvetica-Bold").text(`01/01/${periodo.periodo} al 31/12/${periodo.periodo}`, { continued: true })
+                    .font("Helvetica").text(`: ${periodo.diasTomados} días originalmente solicitados.`);
+                currentY += 14;
+            });
+        }
+        currentY += 6;
+
+        doc.font("Helvetica").fontSize(10);
+        doc.text(`Total Días Originalmente Solicitados: `, 50, currentY, { continued: true }).font("Helvetica-Bold").text(`${totalOriginal}`);
+        currentY += 20;
+        
+        doc.font("Helvetica").text(`Días Gozados: `, 50, currentY, { continued: true }).font("Helvetica-Bold").text(`${gozados}`);
+        currentY += 20;
+        
+        doc.font("Helvetica").text(`Días Devueltos al Balance: `, 50, currentY, { continued: true }).font("Helvetica-Bold").text(`${devueltos > 0 ? devueltos : 0}`);
+        currentY += 20;
+
+        doc.font("Helvetica").text(`Saldo Disponible Actual: `, 50, currentY, { continued: true }).font("Helvetica-Bold").text(`${employeeData.diasDisponiblesActuales}`);
+        currentY += 20;
+        
+        doc.font("Helvetica-Bold").text(`Motivo de Cancelación:`, 50, currentY);
+        currentY += 15;
+        doc.font("Helvetica").text(employeeData.descripcionRechazo || employeeData.observaciones || "Cancelación Parcial", 50, currentY, { width: 500 });
+        currentY += 60;
+
+        /* =====================================================
+           SECCIÓN DE FIRMAS (CANCELACIÓN)
+        ===================================================== */
+        currentY = 550;
+        const colWidth = 220;
+        const col1X = 60;
+        const col2X = 330;
+
+        doc.moveTo(col1X, currentY).lineTo(col1X + colWidth, currentY).strokeColor("#000").lineWidth(1).stroke();
+        doc.moveTo(col2X, currentY).lineTo(col2X + colWidth, currentY).stroke();
+
+        currentY += 8;
+        doc.font("Helvetica-Bold").fontSize(9).fillColor("#000");
+        doc.text(employeeData.nombreCompleto, col1X, currentY, { width: colWidth, align: "center" });
+        doc.text("FIRMA RECURSOS HUMANOS", col2X, currentY, { width: colWidth, align: "center" });
+
+        currentY += 12;
+        doc.font("Helvetica").fontSize(8).fillColor("#666");
+        doc.text(employeeData.puesto, col1X, currentY, { width: colWidth, align: "center" });
+        doc.text("Consejo Nacional de Adopciones", col2X, currentY, { width: colWidth, align: "center" });
+
+        /* =====================================================
+           FOOTER INSTITUCIONAL
+        ===================================================== */
+        const footerY = 720;
+        doc.moveTo(50, footerY).lineTo(562, footerY).lineWidth(0.5).strokeColor("#eeeeee").stroke();
+        doc.fillColor("#999").fontSize(8).font("Helvetica-Oblique")
+          .text("Boleta de cancelación parcial de vacaciones. Conservar para sus registros.", 0, footerY + 10, { align: "center", width: doc.page.width });
+        
+        doc.end();
+        return;
+    }
+
     /* =====================================================
-       SECCIÓN: DETALLE DE LA SOLICITUD
+       SECCIÓN: DETALLE DE LA SOLICITUD (NORMAL)
     ===================================================== */
     currentY += 15; // Más espacio
     doc.font("Helvetica").fontSize(11).fillColor("#333333")
@@ -119,24 +215,38 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
     doc.text(formatDateToDisplay(employeeData.fechaFinVacaciones), 230, dateY + 12, { width: 150, align: "center" });
     doc.text(formatDateToDisplay(employeeData.fechaRetornoLabores), 395, dateY + 12, { width: 150, align: "center" });
 
-    currentY += 100; // Más espacio antes de periodos
+    // ---------- ADAPTACIÓN DE PERÍODOS ----------
+    currentY += 60; // Mover hacia abajo para no sobreescribir la caja de fechas
 
-    /* =====================================================
-       DETALLE DE PERÍODOS
-    ===================================================== */
-    doc.font("Helvetica").fontSize(11).fillColor("#000000").text("Los días solicitados corresponden a los siguientes períodos:", 50, currentY);
+    // Determinamos la zona disponible para los periodos (dejamos espacio para footer y firmas)
+    const bottomMargin = 220; // Espacio reservado para justificación, firmas y footer
+    const availableHeight = doc.page.height - currentY - bottomMargin;
+    const periodosAImprimir = Array.isArray(diasPorPeriodo) ? diasPorPeriodo : (diasPorPeriodo.periodos || []);
+    const totalPeriods = periodosAImprimir.length;
+    // Tamaño de fuente base y altura de línea
+    let periodFontSize = 9;
+    let lineHeight = 14;
+    // Si no caben, reducimos proporcionalmente (pero nunca menos de 6pt y 6px de línea)
+    if (totalPeriods * lineHeight > availableHeight) {
+      const maxFont = Math.max(6, Math.floor((availableHeight / totalPeriods) * 0.8)); // 80% del espacio para fuente
+      periodFontSize = maxFont;
+      lineHeight = Math.max(6, Math.floor(availableHeight / totalPeriods));
+    }
+    // Aplicamos el tamaño de fuente antes de dibujar los periodos
+    doc.fontSize(11).fillColor("#000000").text("Los días solicitados corresponden a los siguientes períodos:", 50, currentY);
     currentY += 18;
-
-    diasPorPeriodo.forEach((periodo) => {
-      doc.font("Helvetica").fontSize(9).fillColor("#000000")
-        .text("• ", 70, currentY, { continued: true })
+    
+    doc.fontSize(periodFontSize);
+    // Dibujamos cada periodo con el espaciado calculado
+    periodosAImprimir.forEach((periodo) => {
+      doc.font("Helvetica").text("• ", 70, currentY, { continued: true })
         .font("Helvetica-Bold").text(`01/01/${periodo.periodo} al 31/12/${periodo.periodo}`, { continued: true })
         .font("Helvetica").text(`: se tomarán ${periodo.diasTomados} días, quedando ${periodo.diasDisponibles} días disponibles.`);
-      currentY += 14;
+      currentY += lineHeight;
     });
-
-    currentY += 30; // Más espacio antes de justificación
-
+    // Restauramos el tamaño de fuente original para el resto del documento
+    doc.fontSize(11);
+    // --------------------------------------------
     /* =====================================================
        JUSTIFICACIÓN
     ===================================================== */
@@ -150,37 +260,38 @@ export const generateVacationRequestPDF = async (employeeData, diasPorPeriodo) =
     currentY = doc.y + 8;
     doc.rect(50, currentY, 512, 65).strokeColor("#cccccc").lineWidth(0.5).stroke();
 
-    currentY += 125; // Más espacio antes de firmas
+    // Asegurar que las firmas queden en la parte inferior de la primera página
+    currentY = Math.max(currentY + 85, 620);
 
     /* =====================================================
        SECCIÓN DE FIRMAS
     ===================================================== */
-    const colWidth = 220;
-    const col1X = 60;
-    const col2X = 330;
+    const colWidthN = 220;
+    const col1XN = 60;
+    const col2XN = 330;
 
     // Líneas
-    doc.moveTo(col1X, currentY).lineTo(col1X + colWidth, currentY).strokeColor("#000").lineWidth(1).stroke();
-    doc.moveTo(col2X, currentY).lineTo(col2X + colWidth, currentY).stroke();
+    doc.moveTo(col1XN, currentY).lineTo(col1XN + colWidthN, currentY).strokeColor("#000").lineWidth(1).stroke();
+    doc.moveTo(col2XN, currentY).lineTo(col2XN + colWidthN, currentY).stroke();
 
     currentY += 8;
     doc.font("Helvetica-Bold").fontSize(9).fillColor("#000");
-    doc.text(employeeData.nombreCompleto, col1X, currentY, { width: colWidth, align: "center" });
-    doc.text(employeeData.nombreCoordinador || "PENDIENTE DE AUTORIZACIÓN", col2X, currentY, { width: colWidth, align: "center" });
+    doc.text(employeeData.nombreCompleto, col1XN, currentY, { width: colWidthN, align: "center" });
+    doc.text(employeeData.nombreCoordinador || "PENDIENTE DE AUTORIZACIÓN", col2XN, currentY, { width: colWidthN, align: "center" });
 
     currentY += 12;
     doc.font("Helvetica").fontSize(8).fillColor("#666");
-    doc.text(employeeData.puesto, col1X, currentY, { width: colWidth, align: "center" });
-    doc.text(employeeData.puestoCoordinador || "COORDINACIÓN / SUBDIRECCIÓN", col2X, currentY, { width: colWidth, align: "center" });
+    doc.text(employeeData.puesto, col1XN, currentY, { width: colWidthN, align: "center" });
+    doc.text(employeeData.puestoCoordinador || "COORDINACIÓN / SUBDIRECCIÓN", col2XN, currentY, { width: colWidthN, align: "center" });
 
     /* =====================================================
        FOOTER INSTITUCIONAL
     ===================================================== */
-    const footerY = 720;
-    doc.moveTo(50, footerY).lineTo(562, footerY).lineWidth(0.5).strokeColor("#eeeeee").stroke();
+    const footerYN = 720;
+    doc.moveTo(50, footerYN).lineTo(562, footerYN).lineWidth(0.5).strokeColor("#eeeeee").stroke();
     
     doc.fillColor("#999").fontSize(8).font("Helvetica-Oblique")
-      .text("Este formulario debe ser impreso, firmado y entregado en las Unidad de Recursos Humanos, antes del día que el trabajador inicie su periodo vacacional.", 0, footerY + 10, { align: "center", width: doc.page.width });
+      .text("Este formulario debe ser impreso, firmado y entregado en las Unidad de Recursos Humanos, antes del día que el trabajador inicie su periodo vacacional.", 0, footerYN + 10, { align: "center", width: doc.page.width });
     
     doc.end();
   });

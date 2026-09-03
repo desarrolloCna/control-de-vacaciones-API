@@ -42,9 +42,47 @@ export const cancelarSolicitudAutorizadaService = async (idSolicitud, fechaResol
     }
 }
 
-export const cancelarSolicitudParcialService = async (idSolicitud, fechaResolucion, motivoReprogramacion, diasGozados, idUsuarioSession, usuarioSession) => {
+import { getDiasFestivosServices } from "../../services/diasfestivos/diasfestivos.service.js";
+import { calcularRetornoYFestivosBackend } from "../../utils/dateutils.js";
+
+import { EnviarMailCancelacionParcialRRHH } from "../serviciosgenerales/enviodecorreos/enviocorreoRRHH.service.js";
+
+export const cancelarSolicitudParcialService = async (idSolicitud, diasGozados, motivo, tipoCancelacion, fechaReintegro, idUsuarioSession, usuarioSession) => {
     try {
-        const result = await cancelarSolicitudParcialDao(idSolicitud, fechaResolucion, motivoReprogramacion, diasGozados, idUsuarioSession, usuarioSession);
+        // 1. Calculate new return date based on diasGozados
+        const solicitudData = await getSolicitudesByIdSolcitudDao(idSolicitud);
+        if (!solicitudData) throw new Error("Solicitud no encontrada para recálculo");
+        
+        let fechaFinCalculada = solicitudData.fechaFinVacaciones;
+        let proximaFechaLaboralCalculada = solicitudData.fechaRetornoLabores;
+
+        if (diasGozados > 0) {
+            const diasFestivos = await getDiasFestivosServices();
+            const calc = calcularRetornoYFestivosBackend(solicitudData.fechaInicioVacaciones, diasGozados, diasFestivos);
+            fechaFinCalculada = calc.fechaFin;
+            proximaFechaLaboralCalculada = calc.proximaFechaLaboral;
+        }
+
+        const motivoCompleto = tipoCancelacion ? `[${tipoCancelacion}] ${motivo}` : motivo;
+
+        // 2. Ejecutar la cancelación en BD
+        const result = await cancelarSolicitudParcialDao(idSolicitud, diasGozados, motivoCompleto, fechaReintegro, fechaFinCalculada, proximaFechaLaboralCalculada, idUsuarioSession, usuarioSession);
+        
+        // 3. Enviar correo al empleado notificando
+        if (solicitudData.correoInstitucional) {
+            await EnviarMailCancelacionParcialRRHH({
+                correo: solicitudData.correoInstitucional,
+                nombre: solicitudData.nombreCompleto,
+                diasOriginales: solicitudData.cantidadDiasSolicitados,
+                diasGozados,
+                diasDevueltos: result.diasDevueltos,
+                motivo: motivoCompleto,
+                fechaReintegro: fechaReintegro || proximaFechaLaboralCalculada,
+                fechaInicio: solicitudData.fechaInicioVacaciones,
+                nuevaFechaFin: fechaFinCalculada
+            });
+        }
+
         return result;
     } catch (error) {
         console.log("Error en cancelarSolicitudParcialService:", error);

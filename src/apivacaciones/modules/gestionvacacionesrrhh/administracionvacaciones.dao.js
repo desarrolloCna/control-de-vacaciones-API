@@ -99,10 +99,10 @@ export const cancelarSolicitudAutorizadaDaDao = async (idSolicitud, fechaResoluc
     }
 }
 
-export const cancelarSolicitudParcialDao = async (idSolicitud, diasGozados, motivo, idUsuarioSession, usuarioSession) => {
+export const cancelarSolicitudParcialDao = async (idSolicitud, diasGozados, motivo, fechaReintegro, fechaFinCalculada, proximaFechaLaboralCalculada, idUsuarioSession, usuarioSession) => {
     try{
         // 1. Fetch the request to know the original days requested
-        const qSol = `SELECT idEmpleado, cantidadDiasSolicitados FROM solicitudes_vacaciones WHERE idSolicitud = ? AND estadoSolicitud = 'autorizadas'`;
+        const qSol = `SELECT idEmpleado, idInfoPersonal, cantidadDiasSolicitados, fechaInicioVacaciones, fechaFinVacaciones FROM solicitudes_vacaciones WHERE idSolicitud = ? AND estadoSolicitud = 'autorizadas'`;
         const resSol = await Connection.execute(qSol, [idSolicitud]);
         if (resSol.rows.length === 0) {
             throw { codRes: 400, message: "Solicitud no encontrada o no está en estado 'autorizadas'" };
@@ -116,31 +116,61 @@ export const cancelarSolicitudParcialDao = async (idSolicitud, diasGozados, moti
             throw { codRes: 400, message: "Los días gozados no pueden ser mayores a los solicitados" };
         }
         
-        if (diasDevueltos > 0) {
-            // 2. Fetch the debits for this request
-            const qDebits = `SELECT idHistorial, diasSolicitados, diasDebitados, periodo FROM historial_vacaciones WHERE idSolicitud = ? AND tipoRegistro = 2 ORDER BY idHistorial DESC`;
-            const resDebits = await Connection.execute(qDebits, [idSolicitud]);
+        // Only credit days if the request was ALREADY debited (tipoRegistro = 2 exists)
+        const qCheckDebito = `SELECT * FROM historial_vacaciones WHERE idSolicitud = ? AND tipoRegistro = 2`;
+        const resCheckDebito = await Connection.execute(qCheckDebito, [idSolicitud]);
+        const wasDebited = resCheckDebito.rows.length > 0;
+
+        if (diasDevueltos > 0 && wasDebited) {
+            // 2. Fetch current diasDisponibles for the employee (last record)
+            const qLastHistorial = `SELECT diasDisponibles FROM historial_vacaciones WHERE idEmpleado = ? ORDER BY idHistorial DESC LIMIT 1`;
+            const resLastHistorial = await Connection.execute(qLastHistorial, [solicitud.idEmpleado]);
             
-            let remainingRefund = diasDevueltos;
-            
-            for (const row of resDebits.rows) {
-                if (remainingRefund <= 0) break;
-                
-                // We can refund up to what was debited in this row
-                const refundAmount = Math.min(remainingRefund, row.diasDebitados);
-                
-                if (refundAmount > 0) {
-                    const qUpdateDebit = `UPDATE historial_vacaciones SET diasSolicitados = diasSolicitados - ?, diasDebitados = diasDebitados - ? WHERE idHistorial = ?`;
-                    await Connection.execute(qUpdateDebit, [refundAmount, refundAmount, row.idHistorial]);
-                    remainingRefund -= refundAmount;
-                }
+            let currentDiasDisponibles = 0;
+            if (resLastHistorial.rows.length > 0) {
+                currentDiasDisponibles = resLastHistorial.rows[0].diasDisponibles;
             }
+            
+            const newDiasDisponibles = currentDiasDisponibles + diasDevueltos;
+            const fechaActual = new Date().toISOString().split('T')[0];
+            const qInsertCredito = `
+                INSERT INTO historial_vacaciones 
+                (idEmpleado, idInfoPersonal, idSolicitud, periodo, diasAcreditados, diasDisponibles, fechaActualizacion, fechaAcreditacion, tipoRegistro, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 'A')
+            `;
+            
+            // Usamos el periodo del débito original para que el crédito quede en el mismo año fiscal
+            // Esto evita que el cálculo de "consumidos" del año actual sea negativo
+            const periodoDelDebito = resCheckDebito.rows[0].periodo || new Date().getFullYear().toString();
+            
+            await Connection.execute(qInsertCredito, [
+                solicitud.idEmpleado,
+                solicitud.idInfoPersonal,
+                idSolicitud,
+                periodoDelDebito,
+                diasDevueltos, 
+                newDiasDisponibles, // diasDisponibles acumulados
+                fechaActual, // fechaActualizacion
+                fechaActual // fechaAcreditacion
+            ]);
         }
         
-        // 3. Update status to 'cancelada' and store the reason
+        // 3. Update status to 'cancelada', update requested days and reason
+        // Nota: El usuario quiere actualizar "cantidadDiasSolicitados" al número real gozado
         const fechaResolucion = new Date().toISOString().split('T')[0];
-        const qUpdateSol = `UPDATE solicitudes_vacaciones SET estadoSolicitud = 'cancelada', descripcionRechazo = ?, fechaResolucion = ? WHERE idSolicitud = ?`;
-        const result = await Connection.execute(qUpdateSol, [motivo, fechaResolucion, idSolicitud]);
+        const qUpdateSol = `
+            UPDATE solicitudes_vacaciones 
+            SET estadoSolicitud = 'cancelada', 
+                cantidadDiasSolicitados = ?,
+                descripcionRechazo = ?, 
+                fechaResolucion = ?,
+                fechaFinVacaciones = ?,
+                fechaRetornoLabores = ?
+            WHERE idSolicitud = ?
+        `;
+        // Guardamos el motivo completo
+        const motivoCompleto = fechaReintegro ? `${motivo} | Fecha Reintegro: ${fechaReintegro}` : motivo;
+        await Connection.execute(qUpdateSol, [diasGozados, motivoCompleto, fechaResolucion, fechaFinCalculada, proximaFechaLaboralCalculada, idSolicitud]);
 
         // Registrar en bitácora
         await registrarBitacoraDao({
@@ -149,9 +179,9 @@ export const cancelarSolicitudParcialDao = async (idSolicitud, diasGozados, moti
             accion: 'UPDATE',
             tabla: 'solicitudes_vacaciones',
             idRegistroAfectado: idSolicitud,
-            detallesAnteriores: { estadoSolicitud: 'autorizadas', cantidadDiasSolicitados: cantidadOriginal },
-            detallesNuevos: { estadoSolicitud: 'cancelada', descripcionRechazo: motivo, fechaResolucion, diasGozados, diasDevueltos },
-            descripcion: `Cancelación Parcial de vacaciones ID: ${idSolicitud}. Días gozados: ${diasGozados}, devueltos: ${diasDevueltos}. Motivo: ${motivo}`
+            detallesAnteriores: { estadoSolicitud: 'autorizadas', cantidadDiasSolicitados: cantidadOriginal, fechaFinVacaciones: solicitud.fechaFinVacaciones },
+            detallesNuevos: { estadoSolicitud: 'cancelada', descripcionRechazo: motivoCompleto, fechaResolucion, diasGozados, diasDevueltos, fechaFinVacaciones: fechaFinCalculada },
+            descripcion: `Cancelación Parcial de vacaciones ID: ${idSolicitud}. Días gozados: ${diasGozados}, devueltos: ${diasDevueltos}. Motivo: ${motivoCompleto}`
         });
 
         return { success: true, diasDevueltos, diasGozados };

@@ -34,7 +34,8 @@ export const employeesListDao = async () => {
           em.tipoContrato AS tipoContrato, 
           em.estado AS estado,
           strftime('%d/%m/%Y', em.fechaIngreso) AS fechaIngresoLabores,
-          COALESCE((SELECT SUM(diasDisponibles) FROM historial_vacaciones WHERE idEmpleado = em.idEmpleado AND tipoRegistro = 1), 0) AS diasTotales
+          COALESCE((SELECT SUM(diasDisponibles) FROM historial_vacaciones WHERE idEmpleado = em.idEmpleado AND tipoRegistro = 1), 0) AS diasTotales,
+          COALESCE((SELECT SUM(diasDisponibles) FROM historial_vacaciones WHERE idEmpleado = em.idEmpleado AND tipoRegistro = 1 AND cast(periodo as text) != strftime('%Y', 'now')), 0) AS diasTotalesSinActual
       FROM 
           dpiEmpleados dp
       INNER JOIN 
@@ -65,7 +66,7 @@ export const employeesListDao = async () => {
 
 export const obtenerDatosLaboralesDao = async (idInfoPersonal) => {
   try {
-    const query = `SELECT idEmpleado, puesto, salario, fechaIngreso, 
+    const query = `SELECT idEmpleado, puesto, salario, fechaIngreso, fechaIngresoPuesto,
                     correoInstitucional, extensionTelefonica, 
                     unidad, renglon, observaciones, coordinacion, tipoContrato,
                     numeroCuentaCHN, numeroContrato, numeroActa,

@@ -313,3 +313,50 @@ export const PlantillaRecordatorioAnual = (nombreCompleto, anio) => {
     </html>
   `;
 };
+
+export const PlantillaNotificacionCancelacionParcialRRHH = (data) => {
+    return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); overflow: hidden; }
+            .header { background: #d32f2f; color: #ffffff; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; }
+            .content { padding: 30px; line-height: 1.6; }
+            .content p { font-size: 16px; margin: 10px 0; }
+            .highlight { color: #d32f2f; font-weight: bold; }
+            .details-box { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #d32f2f; }
+            .details-box p { margin: 5px 0; font-size: 15px; }
+            .footer { background: #f1f1f1; text-align: center; padding: 15px; font-size: 12px; color: #777; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                Actualización de Vacaciones
+            </div>
+            <div class="content">
+                <p>Estimado/a <strong>${data.nombre}</strong>,</p>
+                <p>La unidad de Recursos Humanos ha registrado una cancelación parcial de tus vacaciones programadas a partir del <strong class="highlight">${data.fechaInicio}</strong>.</p>
+                <div class="details-box">
+                    <p><strong>Días Solicitados Originalmente:</strong> ${data.diasOriginales}</p>
+                    <p><strong>Días Gozados:</strong> ${data.diasGozados}</p>
+                    <p><strong>Días Devueltos a tu Saldo:</strong> ${data.diasDevueltos}</p>
+                    <p><strong>Nueva Fecha de Fin:</strong> ${data.nuevaFechaFin}</p>
+                    <p><strong>Fecha de Reintegro:</strong> ${data.fechaReintegro}</p>
+                    <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
+                    <p><strong>Motivo / Tipo:</strong> ${data.motivo}</p>
+                </div>
+                <p>Tus días devueltos ya se encuentran nuevamente disponibles en tu saldo de vacaciones.</p>
+            </div>
+            <div class="footer">
+                Este es un correo generado automáticamente. Por favor no responder a esta dirección.
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+};
