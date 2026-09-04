@@ -5,8 +5,8 @@ export const registrarVacacionesEspecialesDao = async (data) => {
     try {
         const queryInsert = `
             INSERT INTO vacaciones_especiales (idEmpleado, idInfoPersonal, 
-            idUsuario, flagAutorizacion, descripcion, fechaInicioValidez, fechaFinValidez, fechaIngresoGestion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            idUsuario, flagAutorizacion, descripcion, fechaInicioValidez, fechaFinValidez, fechaIngresoGestion, diasAutorizados, estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'A');
         `;
 
         const result = await Connection.execute(queryInsert, [
@@ -18,6 +18,7 @@ export const registrarVacacionesEspecialesDao = async (data) => {
             data.fechaInicioValidez,
             data.fechaFinValidez,
             data.fechaIngresoGestion,
+            data.diasAutorizados || 0
         ]);
 
         // Log bitácora
@@ -26,18 +27,18 @@ export const registrarVacacionesEspecialesDao = async (data) => {
             usuario: data.usuarioSession || "Admin", 
             accion: 'INSERT',
             tabla: 'vacaciones_especiales',
-            idRegistroAfectado: Number(result.lastInsertRowid),
-            detallesAnteriores: null,
-            detallesNuevos: {
+            idRegistro: Number(result.lastInsertRowid),
+            datosAnteriores: null,
+            datosNuevos: {
                idEmpleado: data.idEmpleado,
                descripcion: data.descripcion,
+               diasAutorizados: data.diasAutorizados,
                fechaInicio: data.fechaInicioValidez,
                fechaFin: data.fechaFinValidez
             },
-            descripcion: `Se habilitó un beneficio de vacaciones adelantadas para el empleado ID: ${data.idEmpleado}`
+            descripcion: `Se habilitó un beneficio de vacaciones adelantadas para el empleado ID: ${data.idEmpleado} (${data.diasAutorizados} días)`
         });
 
-        // En SQLite usamos lastInsertRowid en lugar de insertId
         return Number(result.lastInsertRowid);
     } catch (error) {
         console.log("Error en registrarVacacionesEspecialesDao:", error);
@@ -48,12 +49,13 @@ export const registrarVacacionesEspecialesDao = async (data) => {
 export const consultarGestionVacacionesEspecialesDao = async (idEmpleado, fechaEnCurso) => {    
     try{
 
-        const query = `SELECT count(*) as isExist
+        const query = `SELECT count(*) as isExist, diasAutorizados
                         FROM vacaciones_especiales
                         WHERE idEmpleado = ?
-                        AND estado = 'A'
+                        AND (estado = 'A' OR estado IS NULL)
                         AND date(?) BETWEEN fechaInicioValidez AND fechaFinValidez
-                        AND flagAutorizacion = 1;`
+                        AND flagAutorizacion = 1
+                        ORDER BY idVacacionesEspeciales DESC LIMIT 1;`
 
         const result = await Connection.execute(query, [idEmpleado, fechaEnCurso]);
 

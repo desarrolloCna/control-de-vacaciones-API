@@ -86,9 +86,9 @@ export const cancelarSolicitudAutorizadaDaDao = async (idSolicitud, fechaResoluc
             usuario: usuarioSession || "Admin/RRHH",
             accion: 'UPDATE',
             tabla: 'solicitudes_vacaciones',
-            idRegistroAfectado: idSolicitud,
-            detallesAnteriores: { estadoSolicitud: 'autorizadas' },
-            detallesNuevos: { estadoSolicitud: 'reprogramacion', descripcionRechazo: motivoReprogramacion, fechaResolucion },
+            idRegistro: idSolicitud,
+            datosAnteriores: { estadoSolicitud: 'autorizadas' },
+            datosNuevos: { estadoSolicitud: 'reprogramacion', descripcionRechazo: motivoReprogramacion, fechaResolucion },
             descripcion: `Se canceló y reprogramó la solicitud de vacaciones autorizada ID: ${idSolicitud} por motivo: ${motivoReprogramacion}`
         });
 
@@ -116,44 +116,69 @@ export const cancelarSolicitudParcialDao = async (idSolicitud, diasGozados, moti
             throw { codRes: 400, message: "Los días gozados no pueden ser mayores a los solicitados" };
         }
         
-        // Only credit days if the request was ALREADY debited (tipoRegistro = 2 exists)
+        // Check if the request was ALREADY debited (tipoRegistro = 2 exists)
         const qCheckDebito = `SELECT * FROM historial_vacaciones WHERE idSolicitud = ? AND tipoRegistro = 2`;
         const resCheckDebito = await Connection.execute(qCheckDebito, [idSolicitud]);
         const wasDebited = resCheckDebito.rows.length > 0;
 
-        if (diasDevueltos > 0 && wasDebited) {
-            // 2. Fetch current diasDisponibles for the employee (last record)
-            const qLastHistorial = `SELECT diasDisponibles FROM historial_vacaciones WHERE idEmpleado = ? ORDER BY idHistorial DESC LIMIT 1`;
-            const resLastHistorial = await Connection.execute(qLastHistorial, [solicitud.idEmpleado]);
-            
-            let currentDiasDisponibles = 0;
-            if (resLastHistorial.rows.length > 0) {
-                currentDiasDisponibles = resLastHistorial.rows[0].diasDisponibles;
+        // Fetch current diasDisponibles for the employee (last record)
+        const qLastHistorial = `SELECT diasDisponibles FROM historial_vacaciones WHERE idEmpleado = ? ORDER BY idHistorial DESC LIMIT 1`;
+        const resLastHistorial = await Connection.execute(qLastHistorial, [solicitud.idEmpleado]);
+        let currentDiasDisponibles = 0;
+        if (resLastHistorial.rows.length > 0) {
+            currentDiasDisponibles = resLastHistorial.rows[0].diasDisponibles;
+        }
+
+        const fechaActual = new Date().toISOString().split('T')[0];
+
+        if (wasDebited) {
+            // CASO 1: La solicitud YA fue debitada (pasó por finalizadas)
+            // Solo necesitamos acreditar los días devueltos
+            if (diasDevueltos > 0) {
+                const newDiasDisponibles = currentDiasDisponibles + diasDevueltos;
+                const qInsertCredito = `
+                    INSERT INTO historial_vacaciones 
+                    (idEmpleado, idInfoPersonal, idSolicitud, periodo, diasAcreditados, diasDisponibles, fechaActualizacion, fechaAcreditacion, tipoRegistro, estado) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 'A')
+                `;
+                const periodoDelDebito = resCheckDebito.rows[0].periodo || new Date().getFullYear().toString();
+                
+                await Connection.execute(qInsertCredito, [
+                    solicitud.idEmpleado,
+                    solicitud.idInfoPersonal,
+                    idSolicitud,
+                    periodoDelDebito,
+                    diasDevueltos, 
+                    newDiasDisponibles,
+                    fechaActual,
+                    fechaActual
+                ]);
             }
+        } else if (diasGozados > 0) {
+            // CASO 2: La solicitud NO fue debitada (estaba en 'autorizadas', nunca llegó a 'finalizadas')
+            // Pero el empleado SÍ gozó días, así que debemos insertar un débito por los días realmente consumidos
+            const newDiasDisponibles = currentDiasDisponibles - diasGozados;
             
-            const newDiasDisponibles = currentDiasDisponibles + diasDevueltos;
-            const fechaActual = new Date().toISOString().split('T')[0];
-            const qInsertCredito = `
+            // Determinar el periodo usando la fecha de inicio de vacaciones (FIFO)
+            const anioVacaciones = new Date(solicitud.fechaInicioVacaciones).getFullYear().toString();
+            
+            const qInsertDebito = `
                 INSERT INTO historial_vacaciones 
-                (idEmpleado, idInfoPersonal, idSolicitud, periodo, diasAcreditados, diasDisponibles, fechaActualizacion, fechaAcreditacion, tipoRegistro, estado) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 'A')
+                (idEmpleado, idInfoPersonal, idSolicitud, periodo, diasDebitados, diasDisponibles, fechaActualizacion, tipoRegistro, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, 2, 'A')
             `;
             
-            // Usamos el periodo del débito original para que el crédito quede en el mismo año fiscal
-            // Esto evita que el cálculo de "consumidos" del año actual sea negativo
-            const periodoDelDebito = resCheckDebito.rows[0].periodo || new Date().getFullYear().toString();
-            
-            await Connection.execute(qInsertCredito, [
+            await Connection.execute(qInsertDebito, [
                 solicitud.idEmpleado,
                 solicitud.idInfoPersonal,
                 idSolicitud,
-                periodoDelDebito,
-                diasDevueltos, 
-                newDiasDisponibles, // diasDisponibles acumulados
-                fechaActual, // fechaActualizacion
-                fechaActual // fechaAcreditacion
+                anioVacaciones,
+                diasGozados,
+                newDiasDisponibles,
+                fechaActual
             ]);
         }
+        // CASO 3: wasDebited=false Y diasGozados=0 → Cancelación total sin goce, no se toca el historial
         
         // 3. Update status to 'cancelada', update requested days and reason
         // Nota: El usuario quiere actualizar "cantidadDiasSolicitados" al número real gozado
@@ -178,9 +203,9 @@ export const cancelarSolicitudParcialDao = async (idSolicitud, diasGozados, moti
             usuario: usuarioSession || "Admin/RRHH",
             accion: 'UPDATE',
             tabla: 'solicitudes_vacaciones',
-            idRegistroAfectado: idSolicitud,
-            detallesAnteriores: { estadoSolicitud: 'autorizadas', cantidadDiasSolicitados: cantidadOriginal, fechaFinVacaciones: solicitud.fechaFinVacaciones },
-            detallesNuevos: { estadoSolicitud: 'cancelada', descripcionRechazo: motivoCompleto, fechaResolucion, diasGozados, diasDevueltos, fechaFinVacaciones: fechaFinCalculada },
+            idRegistro: idSolicitud,
+            datosAnteriores: { estadoSolicitud: 'autorizadas', cantidadDiasSolicitados: cantidadOriginal, fechaFinVacaciones: solicitud.fechaFinVacaciones },
+            datosNuevos: { estadoSolicitud: 'cancelada', descripcionRechazo: motivoCompleto, fechaResolucion, diasGozados, diasDevueltos, fechaFinVacaciones: fechaFinCalculada },
             descripcion: `Cancelación Parcial de vacaciones ID: ${idSolicitud}. Días gozados: ${diasGozados}, devueltos: ${diasDevueltos}. Motivo: ${motivoCompleto}`
         });
 

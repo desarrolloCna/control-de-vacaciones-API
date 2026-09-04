@@ -33,10 +33,33 @@ export const descargarPDFController = async (req, res) => {
         const resultDias = await Connection.execute(queryDias, [idEmpleado]);
         const diasDisponiblesActuales = resultDias.rows.length > 0 ? resultDias.rows[0].diasDisponibles : 0;
         
-        // Check if there was a partial cancellation (tipoRegistro = 1 for this solicitud)
+        // Check if there was a partial cancellation (tipoRegistro = 1 for this solicitud = credit/refund)
         const queryDevueltos = `SELECT SUM(diasAcreditados) AS devueltos FROM historial_vacaciones WHERE idSolicitud = ? AND tipoRegistro = 1`;
         const resultDevueltos = await Connection.execute(queryDevueltos, [idSolicitud]);
         let diasDevueltosCancelacion = resultDevueltos.rows.length > 0 && resultDevueltos.rows[0].devueltos ? Number(resultDevueltos.rows[0].devueltos) : 0;
+        
+        // CASO 2: Si no hay crédito pero la solicitud fue cancelada y tiene un débito,
+        // calculamos los devueltos buscando en la bitácora inicial (INSERT) los días originales solicitados
+        if (diasDevueltosCancelacion === 0 && solicitud.estadoSolicitud === 'cancelada') {
+            try {
+                // Buscamos el registro inicial para saber cuántos días se pidieron originalmente
+                const queryBit = `SELECT datosNuevos FROM bitacora_cambios WHERE idRegistro = ? AND tabla = 'solicitudes_vacaciones' AND accion = 'INSERT' ORDER BY idBitacora ASC LIMIT 1`;
+                const resBit = await Connection.execute(queryBit, [idSolicitud]);
+                if (resBit.rows.length > 0 && resBit.rows[0].datosNuevos) {
+                    const detalles = typeof resBit.rows[0].datosNuevos === 'string' ? JSON.parse(resBit.rows[0].datosNuevos) : resBit.rows[0].datosNuevos;
+                    if (detalles.diasSolicitados !== undefined) {
+                        const originalDias = Number(detalles.diasSolicitados);
+                        // Los días devueltos son el original menos los que finalmente se gozaron
+                        const gozados = Number(solicitud.cantidadDiasSolicitados);
+                        if (originalDias > gozados) {
+                            diasDevueltosCancelacion = originalDias - gozados;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("PDF: No se pudo obtener diasDevueltos desde bitácora:", e.message);
+            }
+        }
         let originalDevueltos = diasDevueltosCancelacion;
 
         // Si el usuario solicita explícitamente el PDF normal, ignoramos los días devueltos para generar la boleta normal (la actualizada)
