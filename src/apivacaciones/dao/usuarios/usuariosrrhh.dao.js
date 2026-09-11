@@ -72,5 +72,19 @@ export const UsuariosRRHHDao = {
         const query = `UPDATE usuarios SET pass = ?, requiereCambioPass = 1 WHERE idUsuario = ?`;
         const result = await Connection.execute(query, [hashedPass, idUsuario]);
         return result;
+    },
+
+    // Datos necesarios para notificar al usuario que su contraseña fue reseteada
+    obtenerDatosParaReset: async (idUsuario) => {
+        const query = `
+            SELECT u.idUsuario, u.usuario, em.correoInstitucional,
+                   ip.primerNombre, ip.primerApellido
+            FROM usuarios u
+            JOIN empleados em ON u.idEmpleado = em.idEmpleado
+            JOIN infoPersonalEmpleados ip ON em.idInfoPersonal = ip.idInfoPersonal
+            WHERE u.idUsuario = ?
+        `;
+        const result = await Connection.execute(query, [idUsuario]);
+        return result.rows[0];
     }
 };

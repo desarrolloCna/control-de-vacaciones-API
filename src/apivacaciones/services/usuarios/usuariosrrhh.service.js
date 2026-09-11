@@ -1,4 +1,7 @@
 import { UsuariosRRHHDao } from "../../dao/usuarios/usuariosrrhh.dao.js";
+import { GenerarPassword } from "../generalservices/usergenerator.service.js";
+import { EnviarMailServices } from "../email/enviaremail.service.js";
+import bcrypt from "bcryptjs";
 
 export const UsuariosRRHHService = {
     obtenerUsuariosRRHH: async () => {
@@ -22,8 +25,25 @@ export const UsuariosRRHHService = {
 
     resetPassword: async (idUsuario) => {
         if (!idUsuario) throw new Error("ID de usuario no proporcionado");
-        const bcrypt = await import('bcryptjs');
-        const hashedPass = await bcrypt.default.hash("CNA.2024*", 10);
-        return await UsuariosRRHHDao.resetPassword(idUsuario, hashedPass);
+
+        const datos = await UsuariosRRHHDao.obtenerDatosParaReset(idUsuario);
+        if (!datos) throw new Error("Usuario no encontrado");
+        if (!datos.correoInstitucional) {
+            throw new Error("El usuario no tiene correo institucional registrado; no se puede notificar la nueva contraseña.");
+        }
+
+        // Contraseña temporal aleatoria (nunca un valor fijo/predecible) enviada solo por correo.
+        const tempPass = GenerarPassword();
+        const hashedPass = await bcrypt.hash(tempPass, 10);
+        await UsuariosRRHHDao.resetPassword(idUsuario, hashedPass);
+
+        await EnviarMailServices({
+            correo: datos.correoInstitucional,
+            user: datos.usuario,
+            pass: tempPass,
+            nombre: `${datos.primerNombre} ${datos.primerApellido}`
+        });
+
+        return { message: "Contraseña reseteada. Se envió una contraseña temporal al correo institucional del usuario." };
     }
 };

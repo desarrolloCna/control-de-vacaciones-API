@@ -38,11 +38,13 @@ import { unidadesRoute } from "./apivacaciones/routes/unidades/unidades.routes.j
 const app = express();
 
 // ===== CORS: Resolver errores 401/403 en preflight OPTIONS =====
+// Nota: la autenticación es 100% por Bearer token (no cookies), por lo que
+// "credentials" no es necesario aquí; quitarlo evita exponer la API a
+// peticiones cross-site autenticadas por cookie desde cualquier origen.
 const corsOptions = {
     origin: true, // Permite todos los orígenes (Vercel genera subdominios dinámicos)
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-    credentials: true,
     optionsSuccessStatus: 200 // Algunos navegadores legacy (IE11) fallan con 204
 };
 app.use(cors(corsOptions));
@@ -68,6 +70,16 @@ const limiter = rateLimit({
     message: { message: 'Demasiadas peticiones, intenta de nuevo más tarde.' }
 });
 app.use('/api/', limiter);
+
+// Límite estricto específico para login: mitiga fuerza bruta de credenciales.
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    validate: { xForwardedForHeader: false, trustProxy: false },
+    message: { message: 'Demasiados intentos de inicio de sesión. Intenta de nuevo más tarde.' },
+    skipSuccessfulRequests: true
+});
+app.use('/api/login', loginLimiter);
 
 app.use(express.json());
 

@@ -5,9 +5,10 @@ export const getLoginDataDao = async (data) => {
     try {
         // Buscamos el usuario SIN comparar la contraseña en la query
         // para poder hacer comparación híbrida (texto plano viejo vs bcrypt nuevo)
-        const query = `SELECT dp.idDpi, 
-                        ip.idInfoPersonal, 
-                        em.idEmpleado, 
+        const query = `SELECT dp.idDpi,
+                        ip.idInfoPersonal,
+                        em.idEmpleado,
+                        us.idUsuario,
                         ip.primerNombre, 
                         ip.primerApellido, 
                         dp.numeroDocumento, 
@@ -60,6 +61,17 @@ export const getLoginDataDao = async (data) => {
         } else {
             // Contraseña legacy en texto plano
             passwordValid = (inputPass === storedPass);
+
+            if (passwordValid) {
+                // Migración transparente a bcrypt tras un login legacy exitoso,
+                // para que las contraseñas dejen de quedar almacenadas en texto plano.
+                try {
+                    const nuevoHash = await bcrypt.hash(inputPass, 10);
+                    await Connection.execute(`UPDATE usuarios SET pass = ? WHERE idEmpleado = ?`, [nuevoHash, user.idEmpleado]);
+                } catch (migrationError) {
+                    console.error("No se pudo migrar contraseña legacy a bcrypt:", migrationError);
+                }
+            }
         }
 
         if (!passwordValid) {

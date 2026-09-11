@@ -1,8 +1,8 @@
 import { createClient } from "@libsql/client";
 import "dotenv/config";
 
-const PROD_URL = "libsql://vacacionesapp-desarrollocna.aws-us-east-1.turso.io";
-const PROD_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzY2OTgyNTgsImlkIjoiYjk5MDQ3YjctNDcwNy00OWQyLWE3MjgtNmM2N2Q4YWQ3YzVmIiwicmlkIjoiMDBjNTUyNWMtYjM4Yi00NWVjLWFiMDYtMTQzZjYxMDMzNGUyIn0.vRuaC-4K7HUJG37kGgUB-NouZSLSRkiKtrsxQziRW3xS2HstbLeaxKI0-5m5u_BSKQpYJQYUgG0b_VPrvsjwDQ";
+const PROD_URL = process.env.DB_TURSO_URL;
+const PROD_TOKEN = process.env.DB_TURSO_AUTH_TOKEN;
 const LOCAL_URL = "file:./vacaciones.db";
 
 async function replicateAll() {

@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { consultarExistenciaUsuarioDao } from "../../dao/usuarios/usuarios.dao.js";
 
 
@@ -30,7 +31,7 @@ export const GenerarPassword = () => {
     let password = '';
 
     for (let i = 0; i < longitudMinima; i++) {
-        const caracterAleatorio = caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+        const caracterAleatorio = caracteres.charAt(randomInt(caracteres.length));
         password += caracterAleatorio;
     }
 

@@ -7,7 +7,7 @@ export const loginController = async (req, res) => {
         const userData = await loginServices(req.body);
         
         const token = jwt.sign(
-            { idEmpleado: userData.idEmpleado, idRol: userData.idRol, usuario: userData.usuario, puesto: userData.puesto },
+            { idUsuario: userData.idUsuario, idEmpleado: userData.idEmpleado, idRol: userData.idRol, usuario: userData.usuario, puesto: userData.puesto },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
         );

@@ -9,16 +9,7 @@ import { PlantillaRecordatorioAnual } from "../../plantillascorreos/plantilas.js
  */
 export const recordatorioAnualController = async (req, res) => {
   try {
-    // Seguridad: Solo Vercel Cron o admins pueden ejecutar esto
-    const authHeader = req.headers["authorization"];
-    const cronSecret = process.env.CRON_SECRET;
-
-    // En producción, Vercel envía el header automaticamente
-    // En local, lo permitimos sin restricción para pruebas
-    if (process.env.NODE_ENV === "production" && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return res.status(401).json({ message: "No autorizado para ejecutar este CRON." });
-    }
-
+    // La verificación de CRON_SECRET ya la hace el middleware verifyCronSecret en la ruta.
     const anioActual = new Date().getFullYear();
 
     // Obtener todos los empleados activos con su correo y nombre
